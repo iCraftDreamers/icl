@@ -1,13 +1,7 @@
 import 'package:get/get.dart';
 
 class ThemesController extends GetxController {
-  late RxBool adaptive;
-
-  @override
-  void onInit() {
-    super.onInit();
-    adaptive = false.obs;
-  }
+  RxBool adaptive = false.obs;
 
   void updateState(var state) {
     adaptive = state;

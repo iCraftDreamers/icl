@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
 
 import 'components/window_surface.dart';
 import 'components/window_bar.dart';
@@ -24,24 +23,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void ThemeChange() {}
-    return GetMaterialApp(
-      theme: ThemeData.light(),
-      themeMode: ThemeMode.light,
-      darkTheme: ThemeData.dark(),
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    Widget home() {
+      return Scaffold(
         body: Column(
           children: [
             const WindowsBar(),
             Divider(
-              color: Get.isDarkMode ? Colors.white12 : Colors.black12,
+              color: Get.theme.cardColor,
               height: 1,
             ),
             const Expanded(child: MyHomePage()),
           ],
         ),
-      ),
+      );
+    }
+
+    return GetMaterialApp(
+      theme: ThemeData.light(),
+      themeMode: ThemeMode.light,
+      darkTheme: ThemeData.dark(),
+      debugShowCheckedModeBanner: false,
+      home: home(),
     );
   }
 }
