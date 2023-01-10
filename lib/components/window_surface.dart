@@ -1,4 +1,3 @@
-import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:imcl/controllers/pages.dart';
@@ -13,11 +12,11 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [leftSize(), rightSize()],
+      children: [navigationAppBar(), navigationView()],
     );
   }
 
-  Widget leftSize() {
+  Widget navigationAppBar() {
     return Container(
       width: 200,
       color: Get.theme.tabBarTheme.labelColor,
@@ -79,9 +78,10 @@ class MyHomePage extends StatelessWidget {
 
   //----------------RightSize----------------
 
-  Widget rightSize() {
+  Widget navigationView() {
     return Expanded(
       child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
         color: Get.theme.splashColor,
         child: _buildContentByIndex(),
       ),
@@ -117,7 +117,7 @@ class MyHomePage extends StatelessWidget {
           case '/home':
             return createRoute(const HomePage());
           case '/appearance':
-            return createRoute(const AppearancePage());
+            return createRoute(AppearancePage());
           case '/setting':
             return createRoute(const SettingPage());
         }

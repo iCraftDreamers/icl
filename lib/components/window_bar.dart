@@ -15,11 +15,14 @@ class WindowsBar extends StatelessWidget {
             child: Container(
               color: Get.theme.tabBarTheme.labelColor,
               child: MoveWindow(
-                child: const Align(
+                child: Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: EdgeInsets.only(left: 10),
-                    child: Text("IMCL"),
+                    padding: const EdgeInsets.only(left: 10),
+                    child: Text(
+                      "IMCL",
+                      style: TextStyle(color: Get.theme.tabBarTheme.labelColor),
+                    ),
                   ),
                 ),
               ),
@@ -37,13 +40,14 @@ class WindowButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var iconColor = Get.theme.tabBarTheme.labelColor;
     var buttonColors = WindowButtonColors(
-      normal: Get.theme.tabBarTheme.labelColor,
-      iconNormal: Colors.black,
-      mouseOver: Get.theme.tabBarTheme.labelColor,
+      normal: Colors.transparent,
+      mouseOver: Get.theme.hoverColor,
       mouseDown: Get.theme.focusColor,
-      iconMouseOver: const Color.fromRGBO(0, 0, 0, 1),
-      iconMouseDown: const Color.fromRGBO(0, 0, 0, 1),
+      iconNormal: iconColor,
+      iconMouseOver: iconColor,
+      iconMouseDown: iconColor,
     );
 
     return Row(children: [

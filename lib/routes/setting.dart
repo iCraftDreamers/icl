@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:imcl/widgets/page.dart';
 
-class SettingPage extends StatelessWidget {
+class SettingPage extends BasePage with BasicPage {
   const SettingPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Text("<---待完善--->", style: TextStyle(fontSize: 30));
-  }
+  String pageName() => "设置";
 }

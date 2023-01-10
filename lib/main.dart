@@ -26,13 +26,13 @@ class MyApp extends StatelessWidget {
     Widget home() {
       return Scaffold(
         body: Column(
-          children: [
-            const WindowsBar(),
-            Divider(
-              color: Get.theme.cardColor,
-              height: 1,
-            ),
-            const Expanded(child: MyHomePage()),
+          children: const [
+            WindowsBar(),
+            // Divider(
+            //   color: Get.theme.cardColor,
+            //   height: 1,
+            // ),
+            Expanded(child: MyHomePage()),
           ],
         ),
       );

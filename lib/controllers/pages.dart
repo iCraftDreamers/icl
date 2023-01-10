@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 class PagesController extends GetxController {
-  late RxString indexName;
   late RxInt current;
 
   late RxList<String> routeName = [
