@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
 
-class WindowsBar extends StatelessWidget {
-  const WindowsBar({super.key});
+class WindowBar extends StatelessWidget {
+  const WindowBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,14 +15,11 @@ class WindowsBar extends StatelessWidget {
             child: Container(
               color: Get.theme.tabBarTheme.labelColor,
               child: MoveWindow(
-                child: Align(
+                child: const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Text(
-                      "IMCL",
-                      style: TextStyle(color: Get.theme.tabBarTheme.labelColor),
-                    ),
+                    padding: EdgeInsets.only(left: 10),
+                    child: Text("IMCL"),
                   ),
                 ),
               ),

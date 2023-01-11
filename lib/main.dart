@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       return Scaffold(
         body: Column(
           children: const [
-            WindowsBar(),
+            WindowBar(),
             // Divider(
             //   color: Get.theme.cardColor,
             //   height: 1,
