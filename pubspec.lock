@@ -11,9 +11,9 @@ packages:
   bitsdojo_window:
     dependency: "direct main"
     description:
-      path: "packages/bitsdojo_window/bitsdojo_window"
-      relative: true
-    source: path
+      name: bitsdojo_window
+      url: "https://pub.flutter-io.cn"
+    source: hosted
     version: "0.1.5"
   bitsdojo_window_linux:
     dependency: transitive
@@ -217,13 +217,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.5"
-  menubar:
-    dependency: "direct main"
-    description:
-      path: "packages/flutter-desktop-embedding/plugins/menubar"
-      relative: true
-    source: path
-    version: "0.2.0"
   meta:
     dependency: transitive
     description:
@@ -376,13 +369,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.12"
-  testbed:
-    dependency: "direct main"
-    description:
-      path: "packages/flutter-desktop-embedding/testbed"
-      relative: true
-    source: path
-    version: "0.0.0"
   typed_data:
     dependency: transitive
     description:
@@ -404,13 +390,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "3.0.0"
-  window_size:
-    dependency: "direct main"
-    description:
-      path: "packages/flutter-desktop-embedding/plugins/window_size"
-      relative: true
-    source: path
-    version: "0.1.0"
   xdg_directories:
     dependency: transitive
     description:
@@ -419,5 +398,5 @@ packages:
     source: hosted
     version: "0.2.0+2"
 sdks:
-  dart: ">=2.18.2 <3.0.0"
+  dart: ">=2.18.6 <3.0.0"
   flutter: ">=3.0.0"
