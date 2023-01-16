@@ -14,21 +14,17 @@ class HomePage extends BasePage with BasicPage {
   List<Widget> get body => [
         Align(
           alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-            child: ElevatedButton(
-              onPressed: () async {
-                FilePickerResult? result =
-                    await FilePicker.platform.pickFiles();
-                if (result != null) {
-                  File file = File(result.files.single.path.toString());
-                  print(file);
-                } else {
-                  print("Exit");
-                }
-              },
-              child: const Text('开始游戏'),
-            ),
+          child: ElevatedButton(
+            onPressed: () async {
+              FilePickerResult? result = await FilePicker.platform.pickFiles();
+              if (result != null) {
+                File file = File(result.files.single.path.toString());
+                print(file);
+              } else {
+                print("Exit");
+              }
+            },
+            child: const Text('开始游戏'),
           ),
         ),
       ];

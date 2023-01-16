@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
+import 'package:imcl/widgets/theme.dart';
 
 import 'components/window_surface.dart';
 import 'components/window_bar.dart';
@@ -39,9 +40,9 @@ class MyApp extends StatelessWidget {
     }
 
     return GetMaterialApp(
-      theme: ThemeData.light(),
+      theme: lightTheme,
       themeMode: ThemeMode.light,
-      darkTheme: ThemeData.dark(),
+      darkTheme: darkTheme,
       debugShowCheckedModeBanner: false,
       home: home(),
     );

@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:imcl/controllers/themes.dart';
 
-import '../controllers/themes.dart';
 import '../widgets/page.dart';
 
 class AppearancePage extends BasePage with BasicPage {
-  AppearancePage({super.key});
-  final c = Get.put(ThemesController());
+  const AppearancePage({super.key});
 
   @override
   String pageName() => "外观";

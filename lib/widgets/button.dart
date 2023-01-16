@@ -23,6 +23,11 @@ class NavigationButton extends Button {
   @override
   Widget build(BuildContext context) {
     final c = Get.put(PagesController()); // Controller
+    const List<String> routeName = [
+      "/home",
+      "/appearance",
+      "/setting",
+    ];
 
     return SizedBox(
       height: 54,
@@ -30,7 +35,7 @@ class NavigationButton extends Button {
         onTap: () {
           if (c.current.value != index) {
             c.updateCurrent(index.obs);
-            Get.offAndToNamed(c.routeName[c.current.value], id: 1);
+            Get.offAndToNamed(routeName[c.current.value], id: 1);
           }
         },
         child: GetBuilder<PagesController>(
