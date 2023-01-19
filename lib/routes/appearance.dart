@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:imcl/controllers/themes.dart';
 
-import '../widgets/page.dart';
+import '/widgets/page.dart';
 
 class AppearancePage extends BasePage with BasicPage {
   const AppearancePage({super.key});
@@ -11,8 +10,33 @@ class AppearancePage extends BasePage with BasicPage {
   @override
   String pageName() => "外观";
 
-  @override
-  List<Widget> get body => [
+  Widget body(context) {
+    ThemeMode? themeModeChange(index) {
+      switch (index) {
+        case 0:
+          return ThemeMode.system;
+        case 1:
+          return ThemeMode.light;
+        case 2:
+          return ThemeMode.dark;
+      }
+      return null;
+    }
+
+    Widget toggleButton(IconData i, lable) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 5),
+        child: Row(
+          children: [Icon(i), const SizedBox(width: 5), Text(lable)],
+        ),
+      );
+    }
+
+    Get.put(ThemesController());
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
         const Text("主题", style: TextStyle(fontSize: 24)),
         const SizedBox(height: 5),
         Container(
@@ -20,27 +44,45 @@ class AppearancePage extends BasePage with BasicPage {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(7.5),
-            color: Get.theme.highlightColor,
+            color: Theme.of(context).highlightColor,
           ),
           child: Row(
             children: [
-              const Text("深色模式"),
+              const Text("颜色"),
               const Spacer(),
-              ValueBuilder<bool?>(
-                initialValue: Get.isDarkMode,
-                builder: (value, updateFn) => CupertinoSwitch(
-                  trackColor: Get.theme.highlightColor,
-                  value: value!,
-                  onChanged: updateFn,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: GetBuilder<ThemesController>(
+                  builder: (c) => ToggleButtons(
+                    borderRadius: const BorderRadius.all(Radius.circular(7.5)),
+                    isSelected: c.isSelected,
+                    onPressed: (index) => {
+                      c.updateIsSelected(index),
+                      Get.changeThemeMode(themeModeChange(index)!),
+                    },
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5),
+                        child: Text("跟随系统"),
+                      ),
+                      toggleButton(Icons.light_mode, "浅色"),
+                      toggleButton(Icons.nights_stay, "深色"),
+                    ],
+                  ),
                 ),
-                onUpdate: (value) {
-                  Get.changeTheme(
-                    value! ? ThemeData.dark() : ThemeData.light(),
-                  );
-                },
               ),
             ],
           ),
         ),
-      ];
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [head(), body(context)],
+    );
+  }
 }

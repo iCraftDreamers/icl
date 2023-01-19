@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/themes.dart';
 
 class WindowBar extends StatelessWidget {
   const WindowBar({super.key});
@@ -31,7 +30,7 @@ class WindowBar extends StatelessWidget {
 
     return WindowTitleBarBox(
       child: Container(
-        color: Get.theme.canvasColor,
+        color: Theme.of(context).appBarTheme.backgroundColor,
         child: Row(
           children: [
             Expanded(

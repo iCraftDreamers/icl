@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
-import 'package:imcl/widgets/theme.dart';
 
+import 'widgets/theme.dart';
 import 'components/window_surface.dart';
 import 'components/window_bar.dart';
 
@@ -29,10 +29,9 @@ class MyApp extends StatelessWidget {
         body: Column(
           children: const [
             WindowBar(),
-            // Divider(
-            //   color: Get.theme.cardColor,
-            //   height: 1,
-            // ),
+            Divider(
+              height: 1,
+            ),
             Expanded(child: MyHomePage()),
           ],
         ),
@@ -40,9 +39,9 @@ class MyApp extends StatelessWidget {
     }
 
     return GetMaterialApp(
-      theme: lightTheme,
+      theme: MyThemes.lightTheme,
+      darkTheme: MyThemes.darkTheme,
       themeMode: ThemeMode.light,
-      darkTheme: darkTheme,
       debugShowCheckedModeBanner: false,
       home: home(),
     );

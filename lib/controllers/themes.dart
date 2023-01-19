@@ -1,5 +1,19 @@
 import 'package:get/get.dart';
 
 class ThemesController extends GetxController {
-  RxBool adaptive = false.obs;
+  RxList<bool> isSelected = [
+    true,
+    false,
+    false,
+  ].obs;
+
+  void updateIsSelected(index) {
+    isSelected = [
+      false,
+      false,
+      false,
+    ].obs;
+    isSelected[index] = true;
+    update();
+  }
 }

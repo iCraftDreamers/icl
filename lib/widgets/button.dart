@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/pages.dart';
+
+import '/controllers/pages.dart';
 
 abstract class Button extends StatelessWidget {
   const Button({super.key});
@@ -22,30 +23,30 @@ class NavigationButton extends Button {
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(PagesController()); // Controller
+    final c = Get.put(PagesController());
     const List<String> routeName = [
       "/home",
       "/appearance",
       "/setting",
     ];
 
-    return SizedBox(
-      height: 54,
-      child: GestureDetector(
-        onTap: () {
-          if (c.current.value != index) {
-            c.updateCurrent(index.obs);
-            Get.offAndToNamed(routeName[c.current.value], id: 1);
-          }
-        },
+    return GestureDetector(
+      onTap: () {
+        if (c.current.value != index) {
+          c.updateCurrent(index.obs);
+          Get.offAndToNamed(routeName[c.current.value], id: 1);
+        }
+      },
+      child: SizedBox(
+        height: 54,
         child: GetBuilder<PagesController>(
           builder: (c) => AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
               color: c.current.value == index
-                  ? Get.theme.highlightColor
-                  : Get.theme.tabBarTheme.labelColor,
+                  ? Theme.of(context).highlightColor
+                  : Theme.of(context).appBarTheme.backgroundColor,
             ),
             child: Row(
               children: [

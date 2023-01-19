@@ -38,8 +38,6 @@ dependencies:
 
   google_fonts:
 
-  fluent_ui:
-
   page_transition:
 
   file_picker:
