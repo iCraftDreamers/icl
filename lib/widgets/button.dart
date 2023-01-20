@@ -9,8 +9,8 @@ abstract class Button extends StatelessWidget {
   final borderRadius = 7.5;
 }
 
-class NavigationButton extends Button {
-  const NavigationButton({
+class MyNavigator extends Button {
+  const MyNavigator({
     super.key,
     required this.lable,
     required this.icon,
@@ -37,25 +37,22 @@ class NavigationButton extends Button {
           Get.offAndToNamed(routeName[c.current.value], id: 1);
         }
       },
-      child: SizedBox(
-        height: 54,
-        child: GetBuilder<PagesController>(
-          builder: (c) => AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
-              color: c.current.value == index
-                  ? Theme.of(context).highlightColor
-                  : Theme.of(context).appBarTheme.backgroundColor,
-            ),
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                Icon(icon),
-                const SizedBox(width: 5),
-                Text(lable),
-              ],
-            ),
+      child: GetBuilder<PagesController>(
+        builder: (c) => Container(
+          height: 54,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(borderRadius),
+            color: c.current.value == index
+                ? Theme.of(context).highlightColor
+                : const Color.fromRGBO(255, 255, 255, 0),
+          ),
+          child: Row(
+            children: [
+              const SizedBox(width: 10),
+              Icon(icon),
+              const SizedBox(width: 5),
+              Text(lable),
+            ],
           ),
         ),
       ),

@@ -9,8 +9,13 @@ abstract class BasePage extends StatelessWidget {
 mixin BasicPage on BasePage {
   Widget head() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 0),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Text(pageName(), style: const TextStyle(fontSize: 32)),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return head();
   }
 }

@@ -19,10 +19,10 @@ class MyHomePage extends StatelessWidget {
         "设置": Icons.settings
       };
       int index = 0;
-      List<Widget> children = <Widget>[];
+      List<Widget> children = [];
       items.forEach((key, value) {
         if (index == items.length - 1) children.add(const Spacer());
-        children.add(NavigationButton(lable: key, icon: value, index: index++));
+        children.add(MyNavigator(lable: key, icon: value, index: index++));
       });
 
       return Container(
@@ -39,7 +39,7 @@ class MyHomePage extends StatelessWidget {
     Widget navigationView() {
       return Expanded(
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Navigator(
             key: Get.nestedKey(1), // create a key by index
@@ -61,7 +61,13 @@ class MyHomePage extends StatelessWidget {
     }
 
     return Row(
-      children: [navigationBar(), navigationView()],
+      children: [
+        navigationBar(),
+        const VerticalDivider(
+          width: 1,
+        ),
+        navigationView()
+      ],
     );
   }
 }

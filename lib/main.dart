@@ -29,9 +29,7 @@ class MyApp extends StatelessWidget {
         body: Column(
           children: const [
             WindowBar(),
-            Divider(
-              height: 1,
-            ),
+            Divider(height: 1),
             Expanded(child: MyHomePage()),
           ],
         ),
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       theme: MyThemes.lightTheme,
       darkTheme: MyThemes.darkTheme,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: home(),
     );
