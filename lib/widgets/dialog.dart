@@ -1,7 +1,26 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:imcl/controllers/home.dart';
 
 class AddGameDialog extends StatelessWidget {
   const AddGameDialog({super.key});
+
+  Widget textField(Widget left, String lable) {
+    return Row(
+      children: [
+        left,
+        Expanded(
+          child: TextField(
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              label: Text(lable),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +35,27 @@ class AddGameDialog extends StatelessWidget {
           padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text("添加游戏", style: TextStyle(fontSize: 24)),
               Divider(),
               SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text("Java路径"),
-                ),
+              Row(
+                children: [
+                  CupertinoButton(
+                    color: Theme.of(context).primaryColor,
+                    child: const Icon(Icons.file_open),
+                    onPressed: () {},
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        label: Text("Java路径"),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 10),
               TextField(
@@ -77,40 +108,39 @@ class LoginDialog extends StatelessWidget {
 
   Widget _buildBar() {
     //标题
-    return SizedBox(
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: Row(
-          children: const [
-            Text(
-              "添加用户",
-              style: TextStyle(color: Color(0xff5CC5E9), fontSize: 24),
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        children: const [
+          Text(
+            "添加用户",
+            style: TextStyle(color: Color(0xff5CC5E9), fontSize: 24),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildChoiseMethod() {
-    //选择登录方式
+    Get.put(HomeController());
+    // 选择登录方式
     return SizedBox(
       width: 300,
       child: Padding(
         padding: const EdgeInsets.all(15),
-        child: DropdownButton(
-          items: const [
-            DropdownMenuItem(child: Text('离线模式')),
-            //DropdownMenuItem(child: Text('正版登录'))
-          ],
-          onChanged: (value) {},
-          // ExpansionTile(
-          //   leading: const Text("选择登录方式", style: TextStyle()),
-          //   title: const Text(""),
-          //   onExpansionChanged: (value) => {},
-          //   initiallyExpanded: false,
-          //   children: const [],
-          // ),
+        child: GetBuilder<HomeController>(
+          builder: (c) => DropdownButton(
+            value: c.loginMode,
+            items: HomeController.data
+                .map(
+                  (item) => DropdownMenuItem(
+                    value: item,
+                    child: Text(item['name']),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) => c.updateLoginMode(value),
+          ),
         ),
       ),
     );
