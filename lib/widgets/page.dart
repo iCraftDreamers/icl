@@ -9,7 +9,7 @@ abstract class BasePage extends StatelessWidget {
 mixin BasicPage on BasePage {
   Widget head() {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Text(pageName(), style: const TextStyle(fontSize: 32)),
     );
   }

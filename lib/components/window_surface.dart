@@ -22,7 +22,7 @@ class MyHomePage extends StatelessWidget {
       List<Widget> children = [];
       items.forEach((key, value) {
         if (index == items.length - 1) children.add(const Spacer());
-        children.add(MyNavigator(lable: key, icon: value, index: index++));
+        children.add(MyNavigationBar(lable: key, icon: value, index: index++));
       });
 
       return Container(
@@ -39,7 +39,7 @@ class MyHomePage extends StatelessWidget {
     Widget navigationView() {
       return Expanded(
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          // padding: const EdgeInsets.symmetric(horizontal: 15),
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Navigator(
             key: Get.nestedKey(1), // create a key by index
@@ -63,10 +63,8 @@ class MyHomePage extends StatelessWidget {
     return Row(
       children: [
         navigationBar(),
-        const VerticalDivider(
-          width: 1,
-        ),
-        navigationView()
+        const VerticalDivider(width: 1),
+        navigationView(),
       ],
     );
   }

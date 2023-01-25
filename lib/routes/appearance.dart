@@ -10,11 +10,8 @@ class AppearancePage extends BasePage with BasicPage {
   @override
   String pageName() => "外观";
 
-  Widget body() {
-    Get.put(ThemesController());
-    const radioValues = [1, 2, 3];
+  Widget radio(e, c) {
     const labes = ["跟随系统", "浅色", "深色"];
-
     ThemeMode? themeModeChange(index) {
       switch (index) {
         case 1:
@@ -27,35 +24,42 @@ class AppearancePage extends BasePage with BasicPage {
       return null;
     }
 
-    Widget radio(e, c) {
-      return Row(
-        children: [
-          Radio(
-            value: e,
-            groupValue: c.thememode.value,
-            onChanged: (value) => {
-              Get.changeThemeMode(themeModeChange(value)!),
-              c.updateThemeMode(value!),
-            },
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 5),
-            child: Text(labes[e - 1]),
-          )
-        ],
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        const Text("主题", style: TextStyle(fontSize: 24)),
-        const SizedBox(height: 5),
-        GetBuilder<ThemesController>(
-          builder: (c) =>
-              Column(children: radioValues.map((e) => radio(e, c)).toList()),
+        Radio(
+          value: e,
+          groupValue: c.thememode.value,
+          onChanged: (value) => {
+            Get.changeThemeMode(themeModeChange(value)!),
+            c.updateThemeMode(value!),
+          },
         ),
+        Padding(
+          padding: const EdgeInsets.only(left: 5),
+          child: Text(labes[e - 1]),
+        )
       ],
+    );
+  }
+
+  Widget body() {
+    Get.put(ThemesController());
+    const radioValues = [1, 2, 3];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text("主题", style: TextStyle(fontSize: 24)),
+          const SizedBox(height: 5),
+          GetBuilder<ThemesController>(
+            builder: (c) => Column(
+              children: radioValues.map((e) => radio(e, c)).toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

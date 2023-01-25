@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyThemes {
+  //浅色
   static final ThemeData lightTheme = ThemeData.light().copyWith(
     useMaterial3: true,
     highlightColor: Colors.white,

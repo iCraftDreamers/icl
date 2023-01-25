@@ -2,14 +2,55 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:imcl/widgets/dialog.dart';
 
-import '/widgets/page.dart';
-
-class HomePage extends BasePage with BasicPage {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  String pageName() => "主页";
+  Widget head() {
+    return Container(
+      height: 65,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Row(
+        children: [
+          ElevatedButton(
+            onPressed: () => showDialog(
+              context: Get.context!,
+              builder: (context) => const LoginDialog(),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: const [
+                  Icon(Icons.add),
+                  Text("添加用户"),
+                  SizedBox(width: 7),
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          ElevatedButton(
+            onPressed: () => showDialog(
+              context: Get.context!,
+              builder: (context) => const AddGameDialog(),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                children: const [
+                  Icon(Icons.add),
+                  Text("添加游戏"),
+                  SizedBox(width: 7),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget body() {
     final data = List.generate(20, (index) => Color(0xFFBAABBA - 2 * index));
@@ -35,16 +76,13 @@ class HomePage extends BasePage with BasicPage {
       children: [
         ListView(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [head(), body()],
-            ),
+            Column(children: [head(), const Divider(height: 1), body()]),
           ],
         ),
         Align(
           alignment: Alignment.bottomRight,
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
+            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
             child: FloatingActionButton(
               onPressed: () async {
                 FilePickerResult? result = await FilePicker.platform.pickFiles(

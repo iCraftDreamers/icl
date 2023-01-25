@@ -9,8 +9,8 @@ abstract class Button extends StatelessWidget {
   final borderRadius = 7.5;
 }
 
-class MyNavigator extends Button {
-  const MyNavigator({
+class MyNavigationBar extends Button {
+  const MyNavigationBar({
     super.key,
     required this.lable,
     required this.icon,
