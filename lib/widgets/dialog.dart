@@ -123,25 +123,27 @@ class LoginDialog extends StatelessWidget {
 
   Widget _buildChoiseMethod() {
     Get.put(HomeController());
-    // 选择登录方式
+    // 选择登录方式的下拉框
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         const SizedBox(
-          width: 100,
+          width: 80,
           child: Text("登录方式: "),
         ),
         SizedBox(
             width: 200,
             child: GetBuilder<HomeController>(
               builder: (c) => DropdownButton(
+                isExpanded: true, //下拉箭头靠右
                 value: c.loginMode,
                 items: HomeController.data
                     .map(
                       (item) => DropdownMenuItem(
-                        value: item,
-                        child: Text(item['name']),
-                      ),
+                          value: item,
+                          child: Container(
+                              alignment: Alignment.center,
+                              child: Text(item['name']))),
                     )
                     .toList(),
                 onChanged: (value) => c.updateLoginMode(value),
@@ -156,8 +158,8 @@ Widget _buildImportUsername() {
   //离线模式用户名
   return Padding(
     padding: const EdgeInsets.all(15),
-    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      SizedBox(width: 100, child: Text("用户名: ")),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
+      SizedBox(width: 80, child: Text("用户名: ")),
       SizedBox(
           width: 200,
           child: Expanded(
