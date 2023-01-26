@@ -73,6 +73,7 @@ class AddGameDialog extends StatelessWidget {
 }
 
 class LoginDialog extends StatelessWidget {
+  //添加登录方式对话框
   const LoginDialog({super.key});
 
   @override
@@ -97,8 +98,7 @@ class LoginDialog extends StatelessWidget {
         children: [
           _buildBar(),
           const Divider(height: 1),
-          _buildChoiseMethod(),
-          _buildImportUsername(),
+          _buildContainer(),
           const Divider(height: 1),
           _buildFooter(context)
         ],
@@ -116,6 +116,19 @@ class LoginDialog extends StatelessWidget {
             "添加用户",
             style: TextStyle(color: Color(0xff5CC5E9), fontSize: 24),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContainer() {
+    return SizedBox(
+      height: 300,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildChoiseMethod(),
+          _buildImportUsername(),
         ],
       ),
     );
