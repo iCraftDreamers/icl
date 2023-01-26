@@ -124,54 +124,50 @@ class LoginDialog extends StatelessWidget {
   Widget _buildChoiseMethod() {
     Get.put(HomeController());
     // 选择登录方式
-    return SizedBox(
-      width: 300,
-      child: Padding(
-        padding: const EdgeInsets.all(15),
-        child: GetBuilder<HomeController>(
-          builder: (c) => DropdownButton(
-            value: c.loginMode,
-            items: HomeController.data
-                .map(
-                  (item) => DropdownMenuItem(
-                    value: item,
-                    child: Text(item['name']),
-                  ),
-                )
-                .toList(),
-            onChanged: (value) => c.updateLoginMode(value),
-          ),
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const SizedBox(
+          width: 100,
+          child: Text("登录方式: "),
         ),
-      ),
+        SizedBox(
+            width: 200,
+            child: GetBuilder<HomeController>(
+              builder: (c) => DropdownButton(
+                value: c.loginMode,
+                items: HomeController.data
+                    .map(
+                      (item) => DropdownMenuItem(
+                        value: item,
+                        child: Text(item['name']),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => c.updateLoginMode(value),
+              ),
+            ))
+      ]),
     );
   }
 }
 
 Widget _buildImportUsername() {
   //离线模式用户名
-  return SizedBox(
-    width: 300,
-    child: Padding(
-      padding: const EdgeInsets.all(15),
-      child: TextField(
-        // controller: _controller,
-        decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: '用户名',
-        ),
-        // onEditingComplete: () {
-        //   print('onEditingComplete');
-        // },
-        // onChanged: (v) {
-        //   print('onChanged:' + v);
-        // },
-        onSubmitted: (v) {
-          // FocusScope.of(context).requestFocus(_focusNode);
-          print('onSubmitted:' + v);
-          // _controller.clear();
-        },
-      ),
-    ),
+  return Padding(
+    padding: const EdgeInsets.all(15),
+    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      SizedBox(width: 100, child: Text("用户名: ")),
+      SizedBox(
+          width: 200,
+          child: Expanded(
+              child: TextField(
+            decoration: InputDecoration(
+              border: OutlineInputBorder(),
+              // labelText: '用户名',
+            ),
+          )))
+    ]),
   );
 }
 
