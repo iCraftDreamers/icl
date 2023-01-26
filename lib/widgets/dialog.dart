@@ -1,20 +1,31 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/home.dart';
+import 'package:imcl/controllers/login.dart';
 
 class AddGameDialog extends StatelessWidget {
   const AddGameDialog({super.key});
 
-  Widget textField(Widget left, String lable) {
+  Widget textField(IconData icon, String lable) {
     return Row(
       children: [
-        left,
+        CupertinoButton(
+          padding: const EdgeInsets.all(0),
+          color: Get.theme.primaryColor,
+          child: Icon(icon),
+          onPressed: () {},
+        ),
+        const SizedBox(width: 10),
         Expanded(
-          child: TextField(
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              label: Text(lable),
+          child: SizedBox(
+            height: 42,
+            child: TextField(
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(7.5)),
+                ),
+                label: Text(lable),
+              ),
             ),
           ),
         ),
@@ -36,34 +47,12 @@ class AddGameDialog extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("添加游戏", style: TextStyle(fontSize: 24)),
-              Divider(),
-              SizedBox(height: 10),
-              Row(
-                children: [
-                  CupertinoButton(
-                    color: Theme.of(context).primaryColor,
-                    child: const Icon(Icons.file_open),
-                    onPressed: () {},
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(),
-                        label: Text("Java路径"),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text("Minecraft路径"),
-                ),
-              ),
+              const Text("添加游戏", style: TextStyle(fontSize: 24)),
+              const Divider(),
+              const SizedBox(height: 10),
+              textField(Icons.file_open, "Java路径"),
+              const SizedBox(height: 10),
+              textField(Icons.folder_open, "Minecraft路径"),
             ],
           ),
         ),
@@ -78,115 +67,133 @@ class LoginDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget title() {
+      return Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          children: const [
+            Text(
+              "添加用户",
+              style: TextStyle(color: Color(0xff5CC5E9), fontSize: 24),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget dropdownButtons() {
+      final c = Get.put(LoginController());
+      const data = {
+        0: '离线模式',
+        1: '正版登录',
+        2: '外置登录',
+      };
+      // 选择登录方式的下拉框
+      return Padding(
+        padding: const EdgeInsets.all(15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(width: 80, child: Text("登录方式: ")),
+            SizedBox(
+              width: 200,
+              child: Obx(
+                () => DropdownButton(
+                  isExpanded: true,
+                  value: c.loginMode.value,
+                  items: data.keys
+                      .map(
+                        (value) => DropdownMenuItem(
+                          value: value,
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(data[value]!),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (value) => c.loginMode(value),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget containerOfAuth() {
+      //选择不同的登录方法时,展示的内容
+      Widget typefield(String title, String descirbe) {
+        //定义输入框, title 为输入框前的标题, describe为输入框内的描述
+        return Padding(
+          padding: const EdgeInsets.all(15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 80, child: Text(title)),
+              SizedBox(
+                width: 200,
+                child: Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: descirbe,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      }
+
+      List<Widget> children(int loginMode) {
+        switch (loginMode) {
+          case 1:
+            return [];
+          case 2:
+            return [typefield("用户名", ""), typefield("密码", "")];
+          default:
+            return [typefield("用户名: ", "")];
+        }
+      }
+
+      final c = Get.put(LoginController());
+
+      return SizedBox(
+        height: 300,
+        child: Obx(
+          () => Column(children: children(c.loginMode.value)),
+        ),
+      );
+    }
+
     //初始化对话框
     return Dialog(
-      // backgroundColor: Colors.white,
       elevation: 5,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: _buildDialog(context),
-    );
-  }
-
-  Widget _buildDialog(BuildContext context) {
-    //给对话框放入内容
-    return SizedBox(
-      width: 520,
-      // height: 666,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildBar(),
-          const Divider(height: 1),
-          _buildContainer(),
-          const Divider(height: 1),
-          _buildFooter(context)
-        ],
+        borderRadius: BorderRadius.all(Radius.circular(10)),
       ),
-    );
-  }
-
-  Widget _buildBar() {
-    //标题
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Row(
-        children: const [
-          Text(
-            "添加用户",
-            style: TextStyle(color: Color(0xff5CC5E9), fontSize: 24),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContainer() {
-    return SizedBox(
-      height: 300,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildChoiseMethod(),
-          _buildImportUsername(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChoiseMethod() {
-    Get.put(HomeController());
-    // 选择登录方式的下拉框
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const SizedBox(
-          width: 80,
-          child: Text("登录方式: "),
+      child: SizedBox(
+        width: 520,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            title(),
+            const Divider(height: 1),
+            dropdownButtons(),
+            containerOfAuth(),
+            const Divider(height: 1),
+            footer(context)
+          ],
         ),
-        SizedBox(
-            width: 200,
-            child: GetBuilder<HomeController>(
-              builder: (c) => DropdownButton(
-                isExpanded: true, //下拉箭头靠右
-                value: c.loginMode,
-                items: HomeController.data
-                    .map(
-                      (item) => DropdownMenuItem(
-                          value: item,
-                          child: Container(
-                              alignment: Alignment.center,
-                              child: Text(item['name']))),
-                    )
-                    .toList(),
-                onChanged: (value) => c.updateLoginMode(value),
-              ),
-            ))
-      ]),
+      ),
     );
   }
 }
 
-Widget _buildImportUsername() {
-  //离线模式用户名
-  return Padding(
-    padding: const EdgeInsets.all(15),
-    child: Row(mainAxisAlignment: MainAxisAlignment.center, children: const [
-      SizedBox(width: 80, child: Text("用户名: ")),
-      SizedBox(
-          width: 200,
-          child: Expanded(
-              child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              // labelText: '用户名',
-            ),
-          )))
-    ]),
-  );
-}
-
-Widget _buildFooter(context) {
+Widget footer(context) {
+  //底部的按钮
   return Padding(
     padding: const EdgeInsets.only(bottom: 15.0, top: 10, left: 10, right: 10),
     child: Row(
@@ -203,6 +210,7 @@ Widget _buildFooter(context) {
           child: const Text('添加', style: TextStyle(fontSize: 16)),
         ),
         InkWell(
+          borderRadius: const BorderRadius.all(Radius.circular(30)),
           onTap: () => Navigator.of(context).pop(),
           child: Container(
             alignment: Alignment.center,

@@ -33,12 +33,12 @@ class MyNavigationBar extends Button {
     return GestureDetector(
       onTap: () {
         if (c.current.value != index) {
-          c.updateCurrent(index.obs);
+          c.current(index);
           Get.offAndToNamed(routeName[c.current.value], id: 1);
         }
       },
-      child: GetBuilder<PagesController>(
-        builder: (c) => Container(
+      child: Obx(
+        () => Container(
           height: 54,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),

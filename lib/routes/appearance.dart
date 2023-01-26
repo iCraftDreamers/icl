@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/themes.dart';
 
 import '/widgets/page.dart';
 
@@ -10,15 +9,16 @@ class AppearancePage extends BasePage with BasicPage {
   @override
   String pageName() => "外观";
 
-  Widget radio(e, c) {
+  Widget radio(e, themeMode) {
     const labes = ["跟随系统", "浅色", "深色"];
+
     ThemeMode? themeModeChange(index) {
       switch (index) {
-        case 1:
+        case 0:
           return ThemeMode.system;
-        case 2:
+        case 1:
           return ThemeMode.light;
-        case 3:
+        case 2:
           return ThemeMode.dark;
       }
       return null;
@@ -28,23 +28,23 @@ class AppearancePage extends BasePage with BasicPage {
       children: [
         Radio(
           value: e,
-          groupValue: c.thememode.value,
+          groupValue: themeMode.value,
           onChanged: (value) => {
+            themeMode(value),
             Get.changeThemeMode(themeModeChange(value)!),
-            c.updateThemeMode(value!),
           },
         ),
         Padding(
           padding: const EdgeInsets.only(left: 5),
-          child: Text(labes[e - 1]),
+          child: Text(labes[e]),
         )
       ],
     );
   }
 
   Widget body() {
-    Get.put(ThemesController());
-    const radioValues = [1, 2, 3];
+    const radioValues = [0, 1, 2];
+    var themeMode = 0.obs;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -53,9 +53,9 @@ class AppearancePage extends BasePage with BasicPage {
         children: [
           const Text("主题", style: TextStyle(fontSize: 24)),
           const SizedBox(height: 5),
-          GetBuilder<ThemesController>(
-            builder: (c) => Column(
-              children: radioValues.map((e) => radio(e, c)).toList(),
+          Obx(
+            () => Column(
+              children: radioValues.map((e) => radio(e, themeMode)).toList(),
             ),
           ),
         ],

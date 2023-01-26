@@ -20,18 +20,15 @@ class MyHomePage extends StatelessWidget {
       };
       int index = 0;
       List<Widget> children = [];
-      items.forEach((key, value) {
-        if (index == items.length - 1) children.add(const Spacer());
-        children.add(MyNavigationBar(lable: key, icon: value, index: index++));
-      });
+      items.forEach((key, value) => children
+          .add(MyNavigationBar(lable: key, icon: value, index: index++)));
+      children.insert(children.length - 1, const Spacer());
 
       return Container(
         width: 200,
         color: Theme.of(context).appBarTheme.backgroundColor,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-        child: Column(
-          children: children,
-        ),
+        child: Column(children: children),
       );
     }
 

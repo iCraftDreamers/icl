@@ -8,6 +8,10 @@ class MyThemes {
     scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
     dividerColor: const Color.fromRGBO(197, 197, 197, 1),
   );
+  static final DividerThemeData lightThemeDividerTheme =
+      ThemeData.light().dividerTheme.copyWith(
+            color: const Color.fromRGBO(197, 197, 197, 1),
+          );
 
   // 深色
   static final ThemeData darkTheme = ThemeData.dark().copyWith(
