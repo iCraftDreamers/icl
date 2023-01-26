@@ -39,7 +39,7 @@ class WindowBar extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Padding(
                     padding: EdgeInsets.only(left: 15),
-                    child: Text("IMCL"),
+                    child: Text("iCraft Launcher"),
                   ),
                 ),
               ),
