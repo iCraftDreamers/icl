@@ -8,7 +8,7 @@ import 'package:imcl/widgets/dialog.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  Widget head() {
+  Widget toolBar() {
     return Container(
       height: 65,
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget body() {
+  Widget gridView() {
     final data = List.generate(20, (index) => Color(0xFFBAABBA - 2 * index));
     return GridView.extent(
       maxCrossAxisExtent: 150,
@@ -72,35 +72,45 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Column(
       children: [
-        ListView(
-          children: [
-            Column(children: [head(), const Divider(height: 1), body()]),
-          ],
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-            child: FloatingActionButton(
-              onPressed: () async {
-                FilePickerResult? result = await FilePicker.platform.pickFiles(
-                  type: FileType.custom,
-                  initialDirectory: 'C:',
-                  allowedExtensions: ['exe'],
-                );
-                if (result != null) {
-                  File file = File(result.files.single.path.toString());
-                  print(file);
-                } else {
-                  print("Exit");
-                }
-              },
-              child: const Icon(Icons.play_arrow),
-            ),
+        Expanded(
+          child: Stack(
+            children: [
+              ListView(
+                children: [
+                  Column(children: [gridView()])
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  child: FloatingActionButton(
+                    onPressed: () async {
+                      FilePickerResult? result =
+                          await FilePicker.platform.pickFiles(
+                        type: FileType.custom,
+                        initialDirectory: 'C:',
+                        allowedExtensions: ['exe'],
+                      );
+                      if (result != null) {
+                        File file = File(result.files.single.path.toString());
+                        print(file);
+                      } else {
+                        print("Exit");
+                      }
+                    },
+                    child: const Icon(Icons.play_arrow),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+        const Divider(height: 1),
+        toolBar(),
       ],
     );
   }
