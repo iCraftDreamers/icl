@@ -14,7 +14,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget navigationBar() {
       const Map<String, IconData> items = {
-        "主页": Icons.home,
+        "开始": Icons.home,
         "外观": Icons.palette,
         "设置": Icons.settings
       };

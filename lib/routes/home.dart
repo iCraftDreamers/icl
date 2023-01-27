@@ -54,19 +54,22 @@ class HomePage extends StatelessWidget {
 
   Widget gridView() {
     final data = List.generate(20, (index) => Color(0xFFBAABBA - 2 * index));
-    return GridView.extent(
-      maxCrossAxisExtent: 150,
-      mainAxisSpacing: 5,
-      crossAxisSpacing: 5,
-      childAspectRatio: 1 / 1.333,
-      shrinkWrap: true,
-      children: data
-          .map(
-            (e) => Card(
-              color: e,
-            ),
-          )
-          .toList(),
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: GridView.extent(
+        maxCrossAxisExtent: 150,
+        mainAxisSpacing: 5,
+        crossAxisSpacing: 5,
+        childAspectRatio: 1 / 1.333,
+        shrinkWrap: true,
+        children: data
+            .map(
+              (e) => Card(
+                color: e,
+              ),
+            )
+            .toList(),
+      ),
     );
   }
 
@@ -75,37 +78,22 @@ class HomePage extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: Stack(
+          child: ListView(
             children: [
-              ListView(
-                children: [
-                  Column(children: [gridView()])
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                  child: FloatingActionButton(
-                    onPressed: () async {
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        initialDirectory: 'C:',
-                        allowedExtensions: ['exe'],
-                      );
-                      if (result != null) {
-                        File file = File(result.files.single.path.toString());
-                        print(file);
-                      } else {
-                        print("Exit");
-                      }
-                    },
-                    child: const Icon(Icons.play_arrow),
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
+                child: Row(
+                  children: [
+                    const Text("游戏列表", style: TextStyle(fontSize: 32)),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.more_horiz),
+                      onPressed: () {},
+                    )
+                  ],
                 ),
               ),
+              gridView(),
             ],
           ),
         ),

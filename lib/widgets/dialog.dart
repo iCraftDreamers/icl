@@ -2,20 +2,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:imcl/controllers/login.dart';
+import 'package:imcl/utils/file_picker.dart';
 
 class AddGameDialog extends StatelessWidget {
   const AddGameDialog({super.key});
 
-  Widget textField(IconData icon, String lable) {
+  Widget textField(IconData icon, String lable, String hintText,
+      [Function? onPressed]) {
     return Row(
       children: [
-        CupertinoButton(
-          padding: const EdgeInsets.all(0),
-          color: Get.theme.primaryColor,
-          child: Icon(icon),
-          onPressed: () {},
-        ),
-        const SizedBox(width: 10),
+        IconButton(onPressed: () => onPressed!(), icon: Icon(icon)),
+        const SizedBox(width: 5),
         Expanded(
           child: SizedBox(
             height: 42,
@@ -24,6 +21,7 @@ class AddGameDialog extends StatelessWidget {
                 border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(7.5)),
                 ),
+                hintText: hintText,
                 label: Text(lable),
               ),
             ),
@@ -50,9 +48,11 @@ class AddGameDialog extends StatelessWidget {
               const Text("添加游戏", style: TextStyle(fontSize: 24)),
               const Divider(),
               const SizedBox(height: 10),
-              textField(Icons.file_open, "Java路径"),
+              textField(Icons.file_open, "Java路径", "java.exe",
+                  () => filePicker(["exe"])),
               const SizedBox(height: 10),
-              textField(Icons.folder_open, "Minecraft路径"),
+              textField(Icons.folder_open, "Minecraft路径", ".minecraft",
+                  () => folderPicker()),
             ],
           ),
         ),
@@ -134,6 +134,7 @@ class LoginDialog extends StatelessWidget {
               SizedBox(
                 width: 200,
                 child: TextField(
+                  controller: ImporterCotroller().getUsername,
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
                     labelText: descirbe,
@@ -166,8 +167,55 @@ class LoginDialog extends StatelessWidget {
       );
     }
 
-    //初始化对话框
+    void saving() {
+      print("Hi WDNMD");
+      final importerController = ImporterCotroller();
+      print(importerController.getUsername.text);
+    }
+
+    Widget footer(context) {
+      //底部的按钮
+      return Padding(
+        padding:
+            const EdgeInsets.only(bottom: 15, top: 10, left: 10, right: 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
+              onTap: () => saving(),
+              child: Container(
+                alignment: Alignment.center,
+                height: 40,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(30)),
+                  color: Theme.of(context).highlightColor,
+                ),
+                child: const Text('添加', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+            InkWell(
+              borderRadius: const BorderRadius.all(Radius.circular(30)),
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                alignment: Alignment.center,
+                height: 40,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(30)),
+                  color: Theme.of(context).highlightColor,
+                ),
+                child: const Text('取消', style: TextStyle(fontSize: 16)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Dialog(
+      //初始化对话框
       elevation: 5,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -188,40 +236,4 @@ class LoginDialog extends StatelessWidget {
       ),
     );
   }
-}
-
-Widget footer(context) {
-  //底部的按钮
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 15.0, top: 10, left: 10, right: 10),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Container(
-          alignment: Alignment.center,
-          height: 40,
-          width: 100,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.circular(30)),
-            color: Theme.of(context).primaryColor,
-          ),
-          child: const Text('添加', style: TextStyle(fontSize: 16)),
-        ),
-        InkWell(
-          borderRadius: const BorderRadius.all(Radius.circular(30)),
-          onTap: () => Navigator.of(context).pop(),
-          child: Container(
-            alignment: Alignment.center,
-            height: 40,
-            width: 100,
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(30)),
-              color: Theme.of(context).highlightColor,
-            ),
-            child: const Text('取消', style: TextStyle(fontSize: 16)),
-          ),
-        ),
-      ],
-    ),
-  );
 }
