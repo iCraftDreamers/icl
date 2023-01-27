@@ -133,12 +133,10 @@ class LoginDialog extends StatelessWidget {
               SizedBox(width: 80, child: Text(title)),
               SizedBox(
                 width: 200,
-                child: Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: const OutlineInputBorder(),
-                      labelText: descirbe,
-                    ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    labelText: descirbe,
                   ),
                 ),
               )
