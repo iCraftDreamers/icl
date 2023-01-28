@@ -176,10 +176,7 @@ class LoginDialog extends StatelessWidget {
     Widget footer() {
       void addAccount() {
         final acc = AccountsManaging();
-        // List<List<Object>> users = [];
         final c = Get.put(LoginController());
-        // List<List> haha;
-        // haha.add(c.loginMode.value);
         switch (c.loginMode.value) {
           case 1:
             // users.add([c.loginMode.value, c.loginUsername]);
