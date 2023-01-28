@@ -23,7 +23,7 @@ class WindowBar extends StatelessWidget {
         children: [
           MinimizeWindowButton(colors: buttonColors, animate: true),
           MaximizeWindowButton(colors: buttonColors, animate: true),
-          CloseWindowButton(colors: buttonColors, animate: true)
+          CloseWindowButton(colors: buttonColors, animate: true),
         ],
       );
     }

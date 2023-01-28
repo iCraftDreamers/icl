@@ -36,7 +36,6 @@ class MyHomePage extends StatelessWidget {
     Widget navigationView() {
       return Expanded(
         child: Container(
-          // padding: const EdgeInsets.symmetric(horizontal: 15),
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Navigator(
             key: Get.nestedKey(1), // create a key by index

@@ -9,11 +9,17 @@ class MyThemes {
     highlightColor: Colors.white,
     scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
     dividerTheme: lightDividerTheme,
+    textTheme: lightTextTheme,
   );
   static final DividerThemeData lightDividerTheme =
       ThemeData.light().dividerTheme.copyWith(
             color: const Color.fromRGBO(197, 197, 197, 1),
           );
+  static final TextTheme lightTextTheme = ThemeData.light().textTheme.copyWith(
+      // titleLarge: const TextStyle(fontSize: 32),
+      // titleMedium: const TextStyle(fontSize: 24),
+      // titleSmall: const TextStyle(fontSize: 16),
+      );
 
   //
   //  深色主题
@@ -23,6 +29,7 @@ class MyThemes {
     highlightColor: const Color.fromRGBO(84, 84, 84, 1),
     appBarTheme: darkAppBarTheme,
     dividerTheme: darkDividerTheme,
+    textTheme: darkTextTheme,
   );
   static final AppBarTheme darkAppBarTheme =
       ThemeData.dark().appBarTheme.copyWith(
@@ -32,4 +39,9 @@ class MyThemes {
       ThemeData.dark().dividerTheme.copyWith(
             color: const Color.fromRGBO(104, 104, 104, 1),
           );
+  static final TextTheme darkTextTheme = ThemeData.dark().textTheme.copyWith(
+      // titleLarge: const TextStyle(fontSize: 32),
+      // titleMedium: const TextStyle(fontSize: 24),
+      // titleSmall: const TextStyle(fontSize: 16),
+      );
 }

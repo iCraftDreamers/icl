@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 
 class LoginController extends GetxController {
   var loginMode = 0.obs;
-}
-
-class ImporterCotroller {
-  TextEditingController getUsername = TextEditingController();
+  final loginUsername = TextEditingController();
+  final loginPassword = TextEditingController();
 }
