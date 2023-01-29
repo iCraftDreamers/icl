@@ -114,7 +114,8 @@ class LoginDialog extends StatelessWidget {
       );
     }
 
-    Widget typefield(String title, TextEditingController controller,
+    Widget typefield(
+        String title, TextEditingController controller, bool obscureText,
         [String? descirbe]) {
       //定义输入框, title 为输入框前的标题, describe为输入框内的描述
       return Padding(
@@ -137,6 +138,7 @@ class LoginDialog extends StatelessWidget {
               width: 200,
               child: TextFormField(
                 controller: controller,
+                obscureText: obscureText,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: descirbe ?? "",
@@ -157,11 +159,11 @@ class LoginDialog extends StatelessWidget {
             return [];
           case 2:
             return [
-              typefield("用户名 :", c.loginUsername),
-              typefield("密码 :", c.loginPassword)
+              typefield("用户名 :", c.loginUsername, false),
+              typefield("密码 :", c.loginPassword, true)
             ];
           default:
-            return [typefield("用户名 :", c.loginUsername)];
+            return [typefield("用户名 :", c.loginUsername, false)];
         }
       }
 
