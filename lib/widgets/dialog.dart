@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:imcl/controllers/login.dart';
 import 'package:imcl/utils/file_picker.dart';
-import 'package:imcl/utils/accounts.dart';
 import 'package:imcl/widgets/text_field.dart';
 
 class AddGameDialog extends StatelessWidget {
@@ -118,6 +117,7 @@ class LoginDialog extends StatelessWidget {
         String title, TextEditingController controller, bool obscureText,
         [String? descirbe]) {
       //定义输入框, title 为输入框前的标题, describe为输入框内的描述
+      final c = LoginController();
       return Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Row(
@@ -139,6 +139,7 @@ class LoginDialog extends StatelessWidget {
               child: TextFormField(
                 controller: controller,
                 obscureText: obscureText,
+                validator: (value) => c.userNameValidator(value!),
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   labelText: descirbe ?? "",
@@ -170,38 +171,24 @@ class LoginDialog extends StatelessWidget {
       return SizedBox(
         // height: 300,
         child: Obx(
-          () => Column(children: children(c.loginMode.value)),
+          () => Form(
+            key: c.formKey,
+            child: Column(
+              children: children(c.loginMode.value),
+            ),
+          ),
         ),
       );
     }
 
     Widget footer() {
-      void addAccount() {
-        final acc = AccountsManaging();
-        final c = Get.put(LoginController());
-        switch (c.loginMode.value) {
-          case 1:
-            // users.add([c.loginMode.value, c.loginUsername]);
-            break;
-          case 2:
-            // users.add([c.loginMode.value, c.loginUsername, c.loginPassword]);
-            break;
-          default:
-            acc.add({
-              "loginMode": c.loginMode.value,
-              "username": c.loginUsername.text
-            });
-            break;
-        }
-        print(acc.accounts);
-      }
-
+      final c = LoginController();
       //底部的按钮
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ElevatedButton(
-            onPressed: () => addAccount(),
+            onPressed: () => c.addAccount(),
             child: const Padding(
               padding: EdgeInsets.all(10),
               child: Text('添加', style: TextStyle(fontSize: 16)),
