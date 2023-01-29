@@ -32,9 +32,9 @@ class IconTextField extends StatelessWidget {
               controller: controller,
               cursorHeight: 20,
               decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(10),
                 border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(7.5)),
-                ),
+                    borderRadius: BorderRadius.all(Radius.circular(7.5))),
                 hintText: hintText,
                 label: Text(lable),
               ),

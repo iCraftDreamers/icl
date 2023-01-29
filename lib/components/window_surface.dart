@@ -21,7 +21,7 @@ class MyHomePage extends StatelessWidget {
       int index = 0;
       List<Widget> children = [];
       items.forEach((key, value) => children
-          .add(MyNavigationBar(lable: key, icon: value, index: index++)));
+          .add(NavigationButton(lable: key, icon: value, index: index++)));
       children.insert(children.length - 1, const Spacer());
 
       return Container(

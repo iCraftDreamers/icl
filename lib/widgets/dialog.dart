@@ -19,9 +19,10 @@ class AddGameDialog extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(7.5)),
       ),
       child: Container(
-        width: 400,
+        width: 600,
         padding: const EdgeInsets.all(15),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("添加游戏", style: TextStyle(fontSize: 24)),
@@ -33,8 +34,8 @@ class AddGameDialog extends StatelessWidget {
               hintText: "java.exe",
               controller: javaDirController,
               onPressed: () async {
-                final File file = await filePicker(['exe']);
-                javaDirController.text = file.path;
+                final File? file = await filePicker(['exe']);
+                javaDirController.text = file!.path;
               },
             ),
             const SizedBox(height: 10),
@@ -44,9 +45,22 @@ class AddGameDialog extends StatelessWidget {
               hintText: ".minecraft",
               controller: gameDirController,
               onPressed: () async {
-                final File file = await folderPicker();
-                gameDirController.text = file.path;
+                final File? file = await folderPicker();
+                gameDirController.text = file!.path;
               },
+            ),
+            const SizedBox(height: 30),
+            Row(
+              children: [
+                const Spacer(),
+                FilledButton(
+                    onPressed: () {},
+                    child: const Text("确定", style: TextStyle(fontSize: 16))),
+                const SizedBox(width: 15),
+                TextButton(
+                    onPressed: () => Get.back(),
+                    child: const Text("取消", style: TextStyle(fontSize: 16))),
+              ],
             ),
           ],
         ),
@@ -187,7 +201,7 @@ class LoginDialog extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          ElevatedButton(
+          FilledButton(
             onPressed: () => c.addAccount(),
             child: const Padding(
               padding: EdgeInsets.all(10),

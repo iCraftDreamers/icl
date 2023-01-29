@@ -46,28 +46,25 @@ class AppearancePage extends BasePage with BasicPage {
     const radioValues = [0, 1, 2];
     var themeMode = 0.obs;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("主题", style: TextStyle(fontSize: 24)),
-          const SizedBox(height: 5),
-          Obx(
-            () => Column(
-              children: radioValues.map((e) => radio(e, themeMode)).toList(),
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("主题", style: TextStyle(fontSize: 24)),
+        const SizedBox(height: 5),
+        Obx(
+          () => Column(
+            children: radioValues.map((e) => radio(e, themeMode)).toList(),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [head(), body()],
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [head(), const SizedBox(height: 10), body()],
     );
   }
 }

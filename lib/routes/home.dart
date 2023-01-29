@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
   Widget gridView() {
     final data = List.generate(20, (index) => Color(0xFFBAABBA - 2 * index));
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(vertical: 0),
       child: GridView.extent(
         maxCrossAxisExtent: 150,
         mainAxisSpacing: 5,
@@ -78,19 +78,24 @@ class HomePage extends StatelessWidget {
           child: ListView(
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
-                child: Row(
+                padding: const EdgeInsets.all(15),
+                child: Column(
                   children: [
-                    const Text("游戏列表", style: TextStyle(fontSize: 32)),
-                    const Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.more_horiz),
-                      onPressed: () {},
-                    )
+                    Row(
+                      children: [
+                        const Text("游戏列表", style: TextStyle(fontSize: 32)),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.more_horiz),
+                          onPressed: () {},
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    gridView(),
                   ],
                 ),
               ),
-              gridView(),
             ],
           ),
         ),
