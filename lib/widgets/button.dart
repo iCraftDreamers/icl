@@ -14,11 +14,13 @@ class NavigationButton extends Button {
     super.key,
     required this.lable,
     required this.icon,
+    required this.unselectedIcon,
     required this.index,
   });
 
-  final IconData icon;
   final String lable;
+  final IconData icon;
+  final IconData unselectedIcon;
   final int index;
 
   @override
@@ -43,15 +45,21 @@ class NavigationButton extends Button {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(borderRadius),
             color: c.current.value == index
-                ? Theme.of(context).highlightColor
+                ? Theme.of(context).colorScheme.primary
                 : const Color.fromRGBO(255, 255, 255, 0),
           ),
           child: Row(
             children: [
               const SizedBox(width: 10),
-              Icon(icon),
+              c.current.value == index
+                  ? Icon(icon, color: Colors.white)
+                  : Icon(unselectedIcon),
               const SizedBox(width: 5),
-              Text(lable),
+              Text(
+                lable,
+                style: TextStyle(
+                    color: c.current.value == index ? Colors.white : null),
+              ),
             ],
           ),
         ),

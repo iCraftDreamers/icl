@@ -26,18 +26,16 @@ class IconTextField extends StatelessWidget {
         ),
         const SizedBox(width: 5),
         Expanded(
-          child: SizedBox(
-            height: 42,
-            child: TextField(
-              controller: controller,
-              cursorHeight: 20,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(10),
-                border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.5))),
-                hintText: hintText,
-                label: Text(lable),
-              ),
+          child: TextField(
+            controller: controller,
+            // cursorHeight: 20,
+            decoration: InputDecoration(
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(7.5))),
+              hintText: hintText,
+              label: Text(lable),
             ),
           ),
         ),
