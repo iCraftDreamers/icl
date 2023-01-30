@@ -26,7 +26,7 @@ class AddGameDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("添加游戏", style: TextStyle(fontSize: 24)),
-            const Divider(),
+            const Divider(color: Colors.white),
             const SizedBox(height: 10),
             IconTextField(
               icon: Icons.file_open,
@@ -231,12 +231,11 @@ class LoginDialog extends StatelessWidget {
           // mainAxisSize: MainAxisSize.min,
           children: [
             title(),
-            const Divider(),
+            const Divider(color: Colors.white),
             dropdownButtons(),
             const SizedBox(height: 10),
             textFieldBar(),
             const Spacer(),
-            const Divider(),
             footer(),
           ],
         ),
