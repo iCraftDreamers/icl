@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/login.dart';
+import 'package:imcl/controllers/accounts.dart';
 import 'package:imcl/utils/file_picker.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
           ElevatedButton(
             onPressed: () => showDialog(
               context: Get.context!,
-              builder: (context) => loginDialog(),
+              builder: (context) => addAccountsDialog(),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -52,8 +52,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget loginDialog() {
-    final c = Get.put(LoginController());
+  Widget addAccountsDialog() {
+    final c = Get.put(AccountsController());
     const data = {
       0: '离线模式',
       1: '正版登录',

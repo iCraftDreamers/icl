@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:imcl/utils/accounts.dart';
 
-class LoginController extends GetxController {
+class AccountsController extends GetxController {
   final formKey = GlobalKey<FormState>();
   var loginMode = 0.obs;
   final loginUsername = TextEditingController();
