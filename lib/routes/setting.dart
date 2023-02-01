@@ -27,12 +27,14 @@ class SettingPage extends BasePage with BasicPage {
             onChanged: (value) => updater(value),
           ),
         ),
-        Row(children: [
-          FilledButton(
-            onPressed: () => getJavaEnvironmentVariable(),
-            child: const Text("测试"),
-          )
-        ]),
+        Row(
+          children: [
+            FilledButton(
+              onPressed: () => getJavaOnEnvironmentVariable(),
+              child: const Text("测试"),
+            ),
+          ],
+        ),
       ],
     );
   }
