@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/utils/get_environment_variable.dart';
+import 'package:icl/utils/get_environment_variable.dart';
 
 import '/widgets/page.dart';
 

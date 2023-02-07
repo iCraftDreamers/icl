@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:imcl/controllers/accounts.dart';
-import 'package:imcl/utils/file_picker.dart';
+import 'package:icl/controllers/accounts.dart';
+import 'package:icl/utils/file_picker.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

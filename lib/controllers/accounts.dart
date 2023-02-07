@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:imcl/utils/accounts.dart';
+import 'package:icl/utils/accounts.dart';
 
 class AccountsController extends GetxController {
   final formKey = GlobalKey<FormState>();
