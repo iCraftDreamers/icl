@@ -74,13 +74,12 @@ class HomePage extends StatelessWidget {
             child: TextFormField(
               controller: controller,
               obscureText: obscureText,
-              validator: (value) => c.userNameValidator(value!),
-              decoration: const InputDecoration(
-                contentPadding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7.5))),
-              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '此空不得留空！';
+                }
+                return null;
+              },
             ),
           ),
         ],
@@ -155,7 +154,14 @@ class HomePage extends StatelessWidget {
       ),
       actions: [
         FilledButton(
-            onPressed: () {},
+            onPressed: () {
+              if (c.formKey.currentState!.validate()) {
+                c.addAccount();
+                Get.back();
+                c.loginUsername.clear();
+                c.loginPassword.clear();
+              }
+            },
             child: const Text("确定", style: TextStyle(fontSize: 16))),
         TextButton(
             onPressed: () => Get.back(),
