@@ -8,14 +8,6 @@ class AccountsController extends GetxController {
   TextEditingController loginUsername = TextEditingController();
   TextEditingController loginPassword = TextEditingController();
 
-  String? userNameValidator(String value) {
-    print("validating...");
-    if (value.isEmpty || value.length < 4) {
-      return 'Password must be at least 4 characters long.';
-    }
-    return null;
-  }
-
   void addAccount() {
     final acc = AccountsManaging();
     switch (loginMode.value) {
