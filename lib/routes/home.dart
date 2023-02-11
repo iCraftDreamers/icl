@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/controllers/accounts.dart';
 import 'package:icl/utils/file_picker.dart';
+import 'package:icl/utils/games.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -254,8 +255,12 @@ class HomePage extends StatelessWidget {
                   const Text("游戏列表", style: TextStyle(fontSize: 32)),
                   const Spacer(),
                   IconButton(
-                    icon: const Icon(Icons.more_horiz),
+                    icon: const Icon(Icons.refresh),
                     onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_horiz),
+                    onPressed: () => GamesManaging.searchGames(),
                   )
                 ],
               ),

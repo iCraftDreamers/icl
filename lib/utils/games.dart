@@ -4,7 +4,7 @@ import 'dart:convert';
 class GamesManaging {
   static late List<Map> installedGames = [];
 
-  Future<void> searchGames() async {
+  static Future<void> searchGames() async {
     installedGames.clear();
     final myDir = Directory('C:');
     final subDirs = myDir.listSync().where((element) => element is Directory);

@@ -37,7 +37,7 @@ class SettingPage extends BasePage with BasicPage {
             ),
             FilledButton(
               onPressed: () {
-                GamesManaging().searchGames();
+                GamesManaging.searchGames();
                 GetJava.init();
               },
               child: const Text("搜索游戏"),
