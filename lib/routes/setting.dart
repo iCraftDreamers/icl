@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/utils/games.dart';
 import 'package:icl/utils/get_environment_variable.dart';
 
 import '/widgets/page.dart';
@@ -31,6 +32,10 @@ class SettingPage extends BasePage with BasicPage {
           children: [
             FilledButton(
               onPressed: () => getJavaOnEnvironmentVariable(),
+              child: const Text("测试"),
+            ),
+            FilledButton(
+              onPressed: () => GamesManaging().searchGames(),
               child: const Text("测试"),
             ),
           ],
