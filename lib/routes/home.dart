@@ -154,18 +154,20 @@ class HomePage extends StatelessWidget {
       ),
       actions: [
         FilledButton(
-            onPressed: () {
-              if (c.formKey.currentState!.validate()) {
-                c.addAccount();
-                Get.back();
-                c.loginUsername.clear();
-                c.loginPassword.clear();
-              }
-            },
-            child: const Text("确定", style: TextStyle(fontSize: 16))),
+          onPressed: () {
+            if (c.formKey.currentState!.validate()) {
+              c.addAccount();
+              Get.back();
+              c.loginUsername.clear();
+              c.loginPassword.clear();
+            }
+          },
+          child: const Text("确定", style: TextStyle(fontSize: 16)),
+        ),
         TextButton(
-            onPressed: () => Get.back(),
-            child: const Text("取消", style: TextStyle(fontSize: 16))),
+          onPressed: () => Get.back(),
+          child: const Text("取消", style: TextStyle(fontSize: 16)),
+        ),
       ],
     );
   }

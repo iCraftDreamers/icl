@@ -32,20 +32,23 @@ class SettingPage extends BasePage with BasicPage {
         Row(
           children: [
             FilledButton(
-              onPressed: () => getJavaOnEnvironmentVariable(),
+              onPressed: () => print(GetJava.javas),
               child: const Text("测试"),
             ),
             FilledButton(
-              onPressed: () => GamesManaging().searchGames(),
-              child: const Text("测试"),
+              onPressed: () {
+                GamesManaging().searchGames();
+                GetJava.init();
+              },
+              child: const Text("搜索游戏"),
             ),
             FilledButton(
-              onPressed: () => print(installedGames),
-              child: const Text("测试"),
+              onPressed: () => print(GamesManaging.installedGames),
+              child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(
-              onPressed: () => print(gameAccounts),
-              child: const Text("测试"),
+              onPressed: () => print(AccountsManaging.gameAccounts),
+              child: const Text("打印存储的账号"),
             ),
           ],
         ),

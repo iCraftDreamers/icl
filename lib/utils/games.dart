@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'dart:convert';
 
-final List<Map> installedGames = [];
-
 class GamesManaging {
+  static late List<Map> installedGames = [];
+
   Future<void> searchGames() async {
     installedGames.clear();
-    final myDir = Directory('.minecraft\\versions');
+    final myDir = Directory('C:');
     final subDirs = myDir.listSync().where((element) => element is Directory);
     for (var dir in subDirs) {
       final jarFile = File('${dir.path}\\${dir.path.split('\\').last}.jar');

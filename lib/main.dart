@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
+import 'package:icl/utils/get_environment_variable.dart';
 
 import 'widgets/theme.dart';
 import 'components/window_surface.dart';
 import 'components/window_bar.dart';
 
+void init() {}
+
 void main() {
   runApp(const MyApp());
 
+  GetJava.init();
   doWhenWindowReady(() {
     const initialSize = Size(960, 593);
     appWindow.minSize = initialSize;

@@ -1,32 +1,35 @@
 import 'dart:io';
 
-void getJavaOnEnvironmentVariable() async {
-  final command = Platform.isWindows ? "where java" : "which -a java";
-  final arguments = <String>[];
-  final process = await Process.run(command, arguments, runInShell: true);
-  final exitCode = process.exitCode;
-  print(await stringToList(process.stdout));
-  print('Exit code: $exitCode');
-}
+class GetJava {
+  static late var paths;
+  static late var versions;
+  static late var javas;
 
-Future<Map<String, String>> stringToList(String string) async {
-  List<String> path = string.trim().split("\r\n");
-  List<String> versions = [];
-  ProcessResult process;
+  static void init() async {
+    final command = Platform.isWindows ? "where java" : "which -a java";
+    final processResult = await Process.run(command, [], runInShell: true);
+    var versions = [];
+    paths = processResult.stdout.trim().split("\r\n");
 
-  await Future.forEach(
-    path,
-    (e) async {
-      process = await Process.run(
-        e.replaceFirst('java', 'javac', e.lastIndexOf('java')),
-        ['-version'],
-        runInShell: true,
-      );
-      versions.add(
-        (process.stdout == "" ? process.stderr : process.stdout).substring(6),
-      );
-    },
-  );
+    paths.forEach(
+      (e) {
+        final regExp = RegExp(r'\\bin\\java\.exe$');
+        final javaPath = e.replaceAll(regExp, '');
 
-  return Map.fromIterables(versions, path);
+        final releaseFile = File('$javaPath/release');
+        if (!releaseFile.existsSync()) {
+          throw 'Java release 文件未找到';
+        }
+
+        final versionLine = releaseFile
+            .readAsLinesSync()
+            .firstWhere((line) => line.startsWith('JAVA_VERSION='));
+        final versionString = versionLine.substring('JAVA_VERSION='.length);
+        versions.add(versionString);
+      },
+    );
+
+    GetJava.versions = versions;
+    javas = Map.fromIterables(paths, versions);
+  }
 }
