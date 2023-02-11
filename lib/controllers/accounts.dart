@@ -21,6 +21,5 @@ class AccountsController extends GetxController {
         acc.add({"loginMode": loginMode.value, "username": loginUsername.text});
         break;
     }
-    print(acc.accounts);
   }
 }

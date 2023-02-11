@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
 
+final List<Map> installedGames = [];
+
 class GamesManaging {
-  final List<Map> installedGames = [];
   Future<void> searchGames() async {
     installedGames.clear();
     final myDir = Directory('.minecraft\\versions');
@@ -19,6 +20,5 @@ class GamesManaging {
         "jarFile": jarFile.path
       });
     }
-    print(installedGames);
   }
 }

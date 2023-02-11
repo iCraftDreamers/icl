@@ -1,7 +1,7 @@
-class AccountsManaging {
-  List<Map> accounts = [];
+List<Map> gameAccounts = [];
 
+class AccountsManaging {
   void add(Map user) {
-    accounts.add(user);
+    gameAccounts.add(user);
   }
 }

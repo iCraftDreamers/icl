@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/utils/accounts.dart';
 import 'package:icl/utils/games.dart';
 import 'package:icl/utils/get_environment_variable.dart';
 
@@ -36,6 +37,14 @@ class SettingPage extends BasePage with BasicPage {
             ),
             FilledButton(
               onPressed: () => GamesManaging().searchGames(),
+              child: const Text("测试"),
+            ),
+            FilledButton(
+              onPressed: () => print(installedGames),
+              child: const Text("测试"),
+            ),
+            FilledButton(
+              onPressed: () => print(gameAccounts),
               child: const Text("测试"),
             ),
           ],
