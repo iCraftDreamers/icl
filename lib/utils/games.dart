@@ -2,8 +2,9 @@ import 'dart:io';
 import 'dart:convert';
 
 class GamesManaging {
-  List<Map> installedGames = [];
+  final List<Map> installedGames = [];
   Future<void> searchGames() async {
+    installedGames.clear();
     final myDir = Directory('.minecraft\\versions');
     final subDirs = myDir.listSync().where((element) => element is Directory);
     for (var dir in subDirs) {
