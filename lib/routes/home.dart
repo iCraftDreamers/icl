@@ -104,8 +104,6 @@ class HomePage extends StatelessWidget {
 
     return AlertDialog(
       title: const Text("添加用户"),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15))),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -179,8 +177,6 @@ class HomePage extends StatelessWidget {
 
     return AlertDialog(
       title: const Text("添加游戏"),
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15))),
       content: SizedBox(
         width: 600,
         child: Column(
