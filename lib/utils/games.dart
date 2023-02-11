@@ -6,7 +6,7 @@ class GamesManaging {
 
   static Future<void> searchGames() async {
     installedGames.clear();
-    final myDir = Directory('C:');
+    final myDir = Directory('.minecraft\\versions');
     final subDirs = myDir.listSync().where((element) => element is Directory);
     for (var dir in subDirs) {
       final jarFile = File('${dir.path}\\${dir.path.split('\\').last}.jar');

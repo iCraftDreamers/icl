@@ -43,7 +43,15 @@ class SettingPage extends BasePage with BasicPage {
               child: const Text("搜索游戏"),
             ),
             FilledButton(
-              onPressed: () => print(GamesManaging.installedGames),
+              onPressed: () {
+                showDialog(
+                  context: Get.context!,
+                  builder: (context) => SimpleDialog(
+                    title: Text("测试"),
+                    children: [Text(GamesManaging.installedGames.toString())],
+                  ),
+                );
+              },
               child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(

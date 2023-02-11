@@ -255,6 +255,10 @@ class HomePage extends StatelessWidget {
                   const Text("游戏列表", style: TextStyle(fontSize: 32)),
                   const Spacer(),
                   IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {},
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.refresh),
                     onPressed: () {},
                   ),
