@@ -67,9 +67,9 @@ class HomePage extends StatelessWidget {
       return Row(
         children: [
           SizedBox(
-              width: 60,
-              child:
-                  Align(alignment: Alignment.centerRight, child: Text(title))),
+            width: 60,
+            child: Align(alignment: Alignment.centerRight, child: Text(title)),
+          ),
           const SizedBox(width: 15),
           Expanded(
             child: TextFormField(
@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
               obscureText: obscureText,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return '此空不得留空！';
+                  return '此处不得留空！';
                 }
                 return null;
               },
