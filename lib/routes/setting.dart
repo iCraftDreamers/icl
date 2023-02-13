@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/utils/accounts.dart';
-import 'package:icl/utils/games.dart';
+import 'package:icl/utils/get_game.dart';
 import 'package:icl/utils/get_environment_variable.dart';
 
 import '/widgets/page.dart';
@@ -55,7 +55,7 @@ class SettingPage extends BasePage with BasicPage {
               child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(
-              onPressed: () => print(AccountsManaging.gameAccounts),
+              onPressed: () => print(AccountManaging.gameAccounts),
               child: const Text("打印存储的账号"),
             ),
           ],

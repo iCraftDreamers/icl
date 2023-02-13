@@ -98,5 +98,5 @@ class AccNvgButtonTheme extends ThemeExtension<AccNvgButtonTheme> {
       AccNvgButtonTheme(background: Color.fromRGBO(247, 247, 247, .9));
   // the dark theme
   static const dark =
-      AccNvgButtonTheme(background: Color.fromRGBO(255, 255, 255, .1));
+      AccNvgButtonTheme(background: Color.fromRGBO(66, 66, 66, .9));
 }

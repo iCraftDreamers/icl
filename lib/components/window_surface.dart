@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
-import '../controllers/pages.dart';
-import '../routes/account.dart';
+import '/controllers/pages.dart';
+import '/routes/account.dart';
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
@@ -64,7 +64,8 @@ class WindowSurface extends StatelessWidget {
                 Text(
                   "账号",
                   style: TextStyle(
-                      color: c.current.value == index ? Colors.white : null),
+                    color: c.current.value == index ? Colors.white : null,
+                  ),
                 ),
               ],
             ),

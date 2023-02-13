@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:icl/utils/games.dart';
+import 'package:icl/utils/get_game.dart';
 import 'package:icl/utils/get_environment_variable.dart';
 
 import 'components/app.dart';

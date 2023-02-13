@@ -2,9 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/controllers/accounts.dart';
 import 'package:icl/utils/file_picker.dart';
-import 'package:icl/utils/games.dart';
+import 'package:icl/utils/get_game.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -15,22 +14,6 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
-          ElevatedButton(
-            onPressed: () => showDialog(
-              context: Get.context!,
-              builder: (context) => addAccountsDialog(),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: const [
-                  Icon(Icons.add),
-                  Text("添加账号"),
-                  SizedBox(width: 7),
-                ],
-              ),
-            ),
-          ),
           const Spacer(),
           ElevatedButton(
             onPressed: () => showDialog(
@@ -53,124 +36,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget addAccountsDialog() {
-    final c = Get.put(AccountsController());
-    const data = {
-      0: '离线模式',
-      1: '正版登录',
-      2: '外置登录',
-    };
-
-    Widget typefield(
-        String title, TextEditingController controller, bool obscureText) {
-      //定义输入框, title 为输入框前的标题, describe为输入框内的描述
-      return Row(
-        children: [
-          SizedBox(
-            width: 60,
-            child: Align(alignment: Alignment.centerRight, child: Text(title)),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: TextFormField(
-              controller: controller,
-              obscureText: obscureText,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '此处不得留空！';
-                }
-                return null;
-              },
-            ),
-          ),
-        ],
-      );
-    }
-
-    List<Widget> children(int loginMode) {
-      switch (loginMode) {
-        case 1:
-          return [];
-        case 2:
-          return [
-            typefield("用户名:", c.loginUsername, false),
-            const SizedBox(height: 15),
-            typefield("密码:", c.loginPassword, true)
-          ];
-        default:
-          return [typefield("用户名:", c.loginUsername, false)];
-      }
-    }
-
-    return AlertDialog(
-      title: const Text("添加用户"),
-      content: SizedBox(
-        width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                const Text("登录方式:"),
-                const SizedBox(width: 15),
-                SizedBox(
-                  width: 100,
-                  child: Obx(
-                    () => DropdownButton(
-                      isExpanded: true,
-                      value: c.loginMode.value,
-                      items: data.keys
-                          .map(
-                            (value) => DropdownMenuItem(
-                              value: value,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  data[value]!,
-                                  style: Get.textTheme.titleSmall,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) => c.loginMode(value),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Obx(
-              () => Form(
-                key: c.formKey,
-                child: Column(
-                  children: children(c.loginMode.value),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        FilledButton(
-          onPressed: () {
-            if (c.formKey.currentState!.validate()) {
-              c.addAccount();
-              Get.back();
-              c.loginUsername.clear();
-              c.loginPassword.clear();
-            }
-          },
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
-      ],
-    );
-  }
-
   Widget addGameDialog() {
     final javaDirController = TextEditingController();
     final gameDirController = TextEditingController();
@@ -184,7 +49,7 @@ class HomePage extends StatelessWidget {
           children: [
             IconTextField(
               icon: Icons.file_open,
-              lable: "Java路径",
+              label: "Java路径",
               hintText: "java.exe",
               controller: javaDirController,
               onPressed: () async {
@@ -195,7 +60,7 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 10),
             IconTextField(
               icon: Icons.folder_open,
-              lable: "Minecraft路径",
+              label: "Minecraft路径",
               hintText: ".minecraft",
               controller: gameDirController,
               onPressed: () async {
@@ -280,14 +145,14 @@ class IconTextField extends StatelessWidget {
   const IconTextField({
     super.key,
     required this.icon,
-    required this.lable,
+    required this.label,
     required this.hintText,
     required this.controller,
     this.onPressed,
   });
 
   final IconData icon;
-  final String lable;
+  final String label;
   final String hintText;
   final TextEditingController controller;
   final void Function()? onPressed;
@@ -310,7 +175,7 @@ class IconTextField extends StatelessWidget {
               border: const OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(7.5))),
               hintText: hintText,
-              label: Text(lable),
+              label: Text(label),
             ),
           ),
         ),

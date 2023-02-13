@@ -1,52 +1,115 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 
 import '../controllers/accounts.dart';
 import '../utils/accounts.dart';
+import '../widgets/dialog.dart';
+import '../widgets/typefield.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
 
-  // get groupValue => null;
+  Widget accountItem(user) {
+    return Container(
+      height: 60,
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(7.5)),
+        color: Get.theme.scaffoldBackgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.15), // 阴影的颜色
+            offset: Offset(0, 5), // 阴影与容器的距离
+            blurRadius: 20.0, // 高斯的标准偏差与盒子的形状卷积。
+            spreadRadius: 5.0, // 在应用模糊之前，框应该膨胀的量。
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Wrap(
+            spacing: 15,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Image.asset('steve.png', height: 35, width: 35),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(user['username']),
+                  Text(user['loginmode'].toString())
+                ],
+              ),
+            ],
+          ),
+          Spacer(),
+          Wrap(
+            spacing: 10,
+            children: [
+              IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              IconButton(
+                  onPressed: () => AccountManaging.removeAccount(user),
+                  icon: Icon(Icons.delete)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
-  // get onChanged => null;
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [
+        Row(
+          children: [
+            const Text("用户列表", style: TextStyle(fontSize: 32)),
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () => showDialog(
+                context: Get.context!,
+                builder: (context) => AddAccountDialog(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: const [
+                    Icon(Icons.add),
+                    Text("添加用户"),
+                    SizedBox(width: 7),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Obx(
+          () => Column(
+            children: AccountManaging.gameAccounts
+                .map((element) => accountItem(element))
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-  // get value => null;
-  Widget addAccountsDialog() {
+class AddAccountDialog extends StatelessWidget {
+  const AddAccountDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     final c = Get.put(AccountsController());
+    final TextEditingController username = TextEditingController();
+    final TextEditingController password = TextEditingController();
+    final formKey = GlobalKey<FormState>();
     const data = {
-      0: '离线模式',
+      0: '离线登录',
       1: '正版登录',
       2: '外置登录',
     };
-
-    Widget typefield(
-        String title, TextEditingController controller, bool obscureText) {
-      //定义输入框, title 为输入框前的标题, describe为输入框内的描述
-      return Row(
-        children: [
-          SizedBox(
-            width: 60,
-            child: Align(alignment: Alignment.centerRight, child: Text(title)),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: TextFormField(
-              controller: controller,
-              obscureText: obscureText,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return '此处不得留空！';
-                }
-                return null;
-              },
-            ),
-          ),
-        ],
-      );
-    }
 
     List<Widget> children(int loginMode) {
       switch (loginMode) {
@@ -54,17 +117,31 @@ class AccountPage extends StatelessWidget {
           return [];
         case 2:
           return [
-            typefield("用户名:", c.loginUsername, false),
+            MyTextFormField(
+              obscureText: false,
+              textEditingController: username,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
             const SizedBox(height: 15),
-            typefield("密码:", c.loginPassword, true)
+            MyTextFormField(
+              obscureText: true,
+              textEditingController: password,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
           ];
         default:
-          return [typefield("用户名:", c.loginUsername, false)];
+          return [
+            MyTextFormField(
+              obscureText: false,
+              textEditingController: username,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
+          ];
       }
     }
 
     return AlertDialog(
-      title: const Text("添加用户"),
+      title: const Text("添加用户", style: TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -78,6 +155,7 @@ class AccountPage extends StatelessWidget {
                   width: 100,
                   child: Obx(
                     () => DropdownButton(
+                      borderRadius: BorderRadius.circular(7.5),
                       isExpanded: true,
                       value: c.loginMode.value,
                       items: data.keys
@@ -103,7 +181,7 @@ class AccountPage extends StatelessWidget {
             const SizedBox(height: 15),
             Obx(
               () => Form(
-                key: c.formKey,
+                key: formKey,
                 child: Column(
                   children: children(c.loginMode.value),
                 ),
@@ -113,153 +191,13 @@ class AccountPage extends StatelessWidget {
         ),
       ),
       actions: [
-        FilledButton(
-          onPressed: () {
-            if (c.formKey.currentState!.validate()) {
-              c.addAccount();
-              Get.back();
-              c.loginUsername.clear();
-              c.loginPassword.clear();
-            }
-          },
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
-      ],
-    );
-  }
-
-  Widget deleteAccountDialog(Map user) {
-    return AlertDialog(
-      title: Text("移除账号",
-          style: TextStyle(
-              color: Color.fromARGB(238, 248, 97, 95),
-              fontWeight: FontWeight.bold)),
-      content: Text(
-        "确定要移除这个账号吗？此操作将无法撤销！",
-      ),
-      backgroundColor: Color.fromARGB(255, 250, 248, 248),
-      actions: [
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Color.fromARGB(255, 255, 117, 117),
-          ),
-          onPressed: () {
-            AccountsManaging().delete(user);
+        DialogConfirmButton(onPressed: () {
+          if (formKey.currentState!.validate()) {
+            AccountManaging.addAccount(username.text, password.text);
             Get.back();
-          },
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var value;
-    var groupValue;
-    var onChanged;
-    List<Widget> searchAccounts(List<Map> acc) {
-      List<Widget> children = [];
-      acc.forEach((e) {
-        children.add(
-          Padding(
-            padding: EdgeInsets.all(5),
-            child: Container(
-              height: 75,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(7.5),
-                  border: Border.all(
-                    color: Colors.black12,
-                  )),
-              child: Row(
-                children: [
-                  // const SizedBox(width: 5),
-                  Radio(
-                      value: value,
-                      groupValue: groupValue,
-                      onChanged: (value) => onChanged.value),
-                  Image.asset(
-                    'steve.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 15),
-                      Text(
-                        e['username'].toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => {
-                      showDialog(
-                          context: Get.context!,
-                          builder: (context) => deleteAccountDialog(e))
-                    },
-                  )
-                ],
-              ),
-            ),
-          ),
-        );
-      });
-      return children;
-    }
-
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              Row(
-                children: [
-                  const Text("账号列表", style: TextStyle(fontSize: 32)),
-                  const Spacer(),
-                  ElevatedButton(
-                    onPressed: () => showDialog(
-                      context: Get.context!,
-                      builder: (context) => addAccountsDialog(),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Row(
-                        children: const [
-                          Icon(Icons.add),
-                          Text("添加账号"),
-                          SizedBox(width: 7),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                children: searchAccounts(AccountsManaging.gameAccounts),
-              )
-            ],
-          ),
-        ),
-        // const Divider(height: 1),
+          }
+        }),
+        DialogCancelButton(onPressed: () => Get.back())
       ],
     );
   }
