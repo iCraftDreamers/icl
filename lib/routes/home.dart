@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
               child: Row(
                 children: const [
                   Icon(Icons.add),
-                  Text("添加用户"),
+                  Text("添加账号"),
                   SizedBox(width: 7),
                 ],
               ),

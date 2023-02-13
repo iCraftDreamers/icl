@@ -132,14 +132,43 @@ class AccountPage extends StatelessWidget {
     );
   }
 
+  Widget deleteAccountDialog(Map user) {
+    return AlertDialog(
+      title: Text("移除账号",
+          style: TextStyle(
+              color: Color.fromARGB(238, 248, 97, 95),
+              fontWeight: FontWeight.bold)),
+      content: Text(
+        "确定要移除这个账号吗？此操作将无法撤销！",
+      ),
+      backgroundColor: Color.fromARGB(255, 250, 248, 248),
+      actions: [
+        TextButton(
+          style: TextButton.styleFrom(
+            foregroundColor: Color.fromARGB(255, 255, 117, 117),
+          ),
+          onPressed: () {
+            AccountsManaging().delete(user);
+            Get.back();
+          },
+          child: const Text("确定", style: TextStyle(fontSize: 16)),
+        ),
+        TextButton(
+          onPressed: () => Get.back(),
+          child: const Text("取消", style: TextStyle(fontSize: 16)),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var value;
     var groupValue;
     var onChanged;
-    List<Widget> searchAccounts() {
+    List<Widget> searchAccounts(List<Map> acc) {
       List<Widget> children = [];
-      AccountsManaging.gameAccounts.forEach((e) {
+      acc.forEach((e) {
         children.add(
           Padding(
             padding: EdgeInsets.all(5),
@@ -156,7 +185,7 @@ class AccountPage extends StatelessWidget {
                   Radio(
                       value: value,
                       groupValue: groupValue,
-                      onChanged: onChanged),
+                      onChanged: (value) => onChanged.value),
                   Image.asset(
                     'steve.png',
                     height: 30,
@@ -173,6 +202,19 @@ class AccountPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => {
+                      showDialog(
+                          context: Get.context!,
+                          builder: (context) => deleteAccountDialog(e))
+                    },
+                  )
                 ],
               ),
             ),
@@ -202,7 +244,7 @@ class AccountPage extends StatelessWidget {
                       child: Row(
                         children: const [
                           Icon(Icons.add),
-                          Text("添加用户"),
+                          Text("添加账号"),
                           SizedBox(width: 7),
                         ],
                       ),
@@ -212,7 +254,7 @@ class AccountPage extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Column(
-                children: searchAccounts(),
+                children: searchAccounts(AccountsManaging.gameAccounts),
               )
             ],
           ),
