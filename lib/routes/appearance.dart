@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/widgets/theme.dart';
 
 import '/widgets/page.dart';
 
@@ -8,6 +9,14 @@ class AppearancePage extends BasePage with BasicPage {
 
   @override
   String pageName() => "外观";
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [head(context), const SizedBox(height: 10), body()],
+    );
+  }
 
   Widget radio(e, themeMode) {
     const labes = ["跟随系统", "浅色", "深色"];
@@ -49,7 +58,7 @@ class AppearancePage extends BasePage with BasicPage {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("主题", style: TextStyle(fontSize: 24)),
+        Text("主题", style: MyThemes.secondTitle),
         const SizedBox(height: 5),
         Obx(
           () => Column(
@@ -57,14 +66,6 @@ class AppearancePage extends BasePage with BasicPage {
           ),
         ),
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(15),
-      children: [head(), const SizedBox(height: 10), body()],
     );
   }
 }

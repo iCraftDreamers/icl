@@ -9,12 +9,16 @@ class MyThemes {
     brightness: Brightness.light,
     colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
     useMaterial3: true,
-    extensions: [AccNvgButtonTheme.light],
+    extensions: [ShadowButtonTheme.light],
     scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+    appBarTheme: lightAppBarTheme,
     dividerTheme: lightDividerTheme,
     dialogTheme: lightDialogTheme,
-    buttonTheme: lightButtonTheme,
   );
+  static final AppBarTheme lightAppBarTheme =
+      ThemeData.light().appBarTheme.copyWith(
+            color: const Color.fromRGBO(247, 247, 247, 1),
+          );
   static final DividerThemeData lightDividerTheme =
       ThemeData.light().dividerTheme.copyWith(
             color: const Color.fromRGBO(197, 197, 197, 1),
@@ -24,9 +28,6 @@ class MyThemes {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
           );
-  static final ButtonThemeData lightButtonTheme =
-      ThemeData.light().buttonTheme.copyWith();
-
   //
   //  深色主题
   //
@@ -36,19 +37,14 @@ class MyThemes {
     colorScheme: ColorScheme.fromSwatch(
         primarySwatch: Colors.blue, brightness: Brightness.dark),
     useMaterial3: true,
-    extensions: [AccNvgButtonTheme.dark],
-    appBarTheme: darkAppBarTheme,
-    navigationBarTheme: darkNavigationBarTheme,
+    extensions: [ShadowButtonTheme.dark],
     scaffoldBackgroundColor: const Color.fromRGBO(58, 58, 58, 1),
+    appBarTheme: darkAppBarTheme,
     dividerTheme: darkDividerTheme,
     dialogTheme: darkDialogTheme,
   );
   static final AppBarTheme darkAppBarTheme =
       ThemeData.dark().appBarTheme.copyWith(
-            backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
-          );
-  static final NavigationBarThemeData darkNavigationBarTheme =
-      ThemeData.dark().navigationBarTheme.copyWith(
             backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
           );
   static final DividerThemeData darkDividerTheme =
@@ -60,43 +56,47 @@ class MyThemes {
             shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15))),
           );
+
+  // 自定义字体
+  static final title = TextStyle(fontSize: 32);
+  static final secondTitle = TextStyle(fontSize: 24);
 }
 
-class AccNvgButtonTheme extends ThemeExtension<AccNvgButtonTheme> {
-  const AccNvgButtonTheme({
+class ShadowButtonTheme extends ThemeExtension<ShadowButtonTheme> {
+  const ShadowButtonTheme({
     required this.background,
   });
   final Color? background;
 
   @override
-  ThemeExtension<AccNvgButtonTheme> copyWith({
+  ThemeExtension<ShadowButtonTheme> copyWith({
     Color? success,
     Color? info,
     Color? warning,
     Color? danger,
   }) {
-    return AccNvgButtonTheme(
+    return ShadowButtonTheme(
       background: success ?? this.background,
     );
   }
 
   @override
-  ThemeExtension<AccNvgButtonTheme> lerp(
-    covariant ThemeExtension<AccNvgButtonTheme>? other,
+  ThemeExtension<ShadowButtonTheme> lerp(
+    covariant ThemeExtension<ShadowButtonTheme>? other,
     double t,
   ) {
-    if (other is! AccNvgButtonTheme) {
+    if (other is! ShadowButtonTheme) {
       return this;
     }
-    return AccNvgButtonTheme(
+    return ShadowButtonTheme(
       background: Color.lerp(background, other.background, t),
     );
   }
 
   // the light theme
   static const light =
-      AccNvgButtonTheme(background: Color.fromRGBO(247, 247, 247, .9));
+      ShadowButtonTheme(background: Color.fromRGBO(247, 247, 247, 1));
   // the dark theme
   static const dark =
-      AccNvgButtonTheme(background: Color.fromRGBO(66, 66, 66, .9));
+      ShadowButtonTheme(background: Color.fromRGBO(77, 77, 77, 1));
 }

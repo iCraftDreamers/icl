@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../controllers/accounts.dart';
-import '../utils/accounts.dart';
-import '../widgets/dialog.dart';
-import '../widgets/typefield.dart';
+import '/controllers/accounts.dart';
+import '/utils/accounts.dart';
+import '/widgets/dialog.dart';
+import '/widgets/theme.dart';
+import '/widgets/typefield.dart';
 
 class AccountsPage extends StatelessWidget {
   const AccountsPage({super.key});
@@ -26,13 +27,13 @@ class AccountsPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(7.5)),
-        color: Get.theme.scaffoldBackgroundColor,
+        color: Get.theme.extension<ShadowButtonTheme>()!.background,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.15), // 阴影的颜色
+            color: Colors.black.withOpacity(.2), // 阴影的颜色
             offset: Offset(0, 5), // 阴影与容器的距离
-            blurRadius: 20.0, // 高斯的标准偏差与盒子的形状卷积。
-            spreadRadius: 5.0, // 在应用模糊之前，框应该膨胀的量。
+            blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+            spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
           ),
         ],
       ),

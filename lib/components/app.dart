@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,9 +13,9 @@ class MyApp extends StatelessWidget {
     Widget home() {
       return Scaffold(
         body: Column(
-          children: const [
-            WindowBar(),
-            Divider(height: 1),
+          children: [
+            const WindowBar(),
+            const Divider(height: 1),
             Expanded(child: WindowSurface()),
           ],
         ),

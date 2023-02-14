@@ -17,7 +17,7 @@ class SettingPage extends BasePage with BasicPage {
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        head(),
+        head(context),
         ValueBuilder<double?>(
           initialValue: 1024,
           builder: (value, updater) => Slider(
