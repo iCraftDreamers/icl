@@ -11,17 +11,6 @@ class AccountsPage extends StatelessWidget {
   const AccountsPage({super.key});
 
   Widget accountsItem(user) {
-    String loginModeString(loginmode) {
-      switch (loginmode) {
-        case 1:
-          return "正版登录";
-        case 2:
-          return "外置登录";
-        default:
-          return "离线登录";
-      }
-    }
-
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -52,7 +41,7 @@ class AccountsPage extends StatelessWidget {
                     user['username'],
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(loginModeString(user['loginmode']))
+                  Text(AccountManaging.loginModes[user["loginmode"]].toString())
                 ],
               ),
             ],
@@ -132,12 +121,6 @@ class AddAccountDialog extends StatelessWidget {
     final TextEditingController username = TextEditingController();
     final TextEditingController password = TextEditingController();
     final formKey = GlobalKey<FormState>();
-    const data = {
-      0: '离线登录',
-      1: '正版登录',
-      2: '外置登录',
-    };
-
     List<Widget> children(int loginMode) {
       switch (loginMode) {
         case 1:
@@ -176,8 +159,10 @@ class AddAccountDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text("登录方式:"),
-                const SizedBox(width: 15),
+                const SizedBox(
+                  width: 80,
+                  child: Text("登录方式:"),
+                ),
                 SizedBox(
                   width: 100,
                   child: Obx(
@@ -185,14 +170,14 @@ class AddAccountDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(7.5),
                       isExpanded: true,
                       value: c.loginMode.value,
-                      items: data.keys
+                      items: AccountManaging.loginModes.keys
                           .map(
                             (value) => DropdownMenuItem(
                               value: value,
                               child: Container(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  data[value]!,
+                                  AccountManaging.loginModes[value]!,
                                   style: Get.textTheme.titleSmall,
                                 ),
                               ),
