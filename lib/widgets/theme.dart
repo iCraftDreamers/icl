@@ -15,19 +15,18 @@ class MyThemes {
     dividerTheme: lightDividerTheme,
     dialogTheme: lightDialogTheme,
   );
-  static final AppBarTheme lightAppBarTheme =
-      ThemeData.light().appBarTheme.copyWith(
-            color: const Color.fromRGBO(247, 247, 247, 1),
-          );
-  static final DividerThemeData lightDividerTheme =
-      ThemeData.light().dividerTheme.copyWith(
-            color: const Color.fromRGBO(197, 197, 197, 1),
-          );
-  static final DialogTheme lightDialogTheme =
-      ThemeData.light().dialogTheme.copyWith(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-          );
+  static final lightAppBarTheme = ThemeData.light().appBarTheme.copyWith(
+        color: const Color.fromRGBO(247, 247, 247, 1),
+      );
+  static final lightDividerTheme = ThemeData.light().dividerTheme.copyWith(
+        color: const Color.fromRGBO(197, 197, 197, 1),
+      );
+  static final lightDialogTheme = ThemeData.light().dialogTheme.copyWith(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+      );
   //
   //  深色主题
   //
@@ -35,7 +34,9 @@ class MyThemes {
     fontFamily: 'MiSans',
     brightness: Brightness.dark,
     colorScheme: ColorScheme.fromSwatch(
-        primarySwatch: Colors.blue, brightness: Brightness.dark),
+      primarySwatch: Colors.blue,
+      brightness: Brightness.dark,
+    ),
     useMaterial3: true,
     extensions: [ShadowButtonTheme.dark],
     scaffoldBackgroundColor: const Color.fromRGBO(58, 58, 58, 1),
@@ -43,19 +44,16 @@ class MyThemes {
     dividerTheme: darkDividerTheme,
     dialogTheme: darkDialogTheme,
   );
-  static final AppBarTheme darkAppBarTheme =
-      ThemeData.dark().appBarTheme.copyWith(
-            backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
-          );
-  static final DividerThemeData darkDividerTheme =
-      ThemeData.dark().dividerTheme.copyWith(
-            color: const Color.fromRGBO(104, 104, 104, 1),
-          );
-  static final DialogTheme darkDialogTheme =
-      ThemeData.light().dialogTheme.copyWith(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(15))),
-          );
+  static final darkAppBarTheme = ThemeData.dark().appBarTheme.copyWith(
+        backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
+      );
+  static final darkDividerTheme = ThemeData.dark().dividerTheme.copyWith(
+        color: const Color.fromRGBO(104, 104, 104, 1),
+      );
+  static final darkDialogTheme = ThemeData.light().dialogTheme.copyWith(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
+      );
 
   // 自定义字体
   static final title = TextStyle(fontSize: 32);
