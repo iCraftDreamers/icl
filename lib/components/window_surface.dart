@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
+<<<<<<< HEAD
+import '/controllers/pages.dart';
+import '../routes/accounts.dart';
+=======
 import '/routes/account.dart';
+>>>>>>> dbe0f21edf4ea29c0e6a08be26173b5d81f9c743
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
@@ -117,7 +122,7 @@ class WindowSurface extends StatelessWidget {
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/account':
-                return createRoute(const AccountPage());
+                return createRoute(const AccountsPage());
               case '/home':
                 return createRoute(const HomePage());
               case '/appearance':

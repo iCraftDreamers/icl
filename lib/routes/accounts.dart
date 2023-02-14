@@ -7,10 +7,21 @@ import '/widgets/dialog.dart';
 import '/widgets/theme.dart';
 import '/widgets/typefield.dart';
 
-class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+class AccountsPage extends StatelessWidget {
+  const AccountsPage({super.key});
 
-  Widget accountItem(user) {
+  Widget accountsItem(user) {
+    String loginModeString(loginmode) {
+      switch (loginmode) {
+        case 1:
+          return "正版登录";
+        case 2:
+          return "外置登录";
+        default:
+          return "离线登录";
+      }
+    }
+
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -36,8 +47,11 @@ class AccountPage extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user['username']),
-                  Text(user['loginmode'].toString())
+                  Text(
+                    user['username'],
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  Text(loginModeString(user['loginmode']))
                 ],
               ),
             ],
@@ -88,7 +102,7 @@ class AccountPage extends StatelessWidget {
         Obx(
           () => Column(
             children: AccountManaging.gameAccounts
-                .map((element) => accountItem(element))
+                .map((element) => accountsItem(element))
                 .toList(),
           ),
         ),
