@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
 import '/controllers/pages.dart';
-import '/routes/account.dart';
+import '../routes/accounts.dart';
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
@@ -112,7 +112,7 @@ class WindowSurface extends StatelessWidget {
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/account':
-                return createRoute(const AccountPage());
+                return createRoute(const AccountsPage());
               case '/home':
                 return createRoute(const HomePage());
               case '/appearance':
