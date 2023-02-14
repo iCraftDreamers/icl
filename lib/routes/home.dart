@@ -4,9 +4,47 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/utils/file_picker.dart';
 import 'package:icl/utils/get_game.dart';
+import 'package:icl/widgets/theme.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(15),
+            children: [
+              Row(
+                children: [
+                  Text("游戏列表", style: MyThemes.title),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_horiz),
+                    onPressed: () => GamesManaging.searchGames(),
+                  )
+                ],
+              ),
+              const SizedBox(height: 10),
+              gridView(),
+            ],
+          ),
+        ),
+        const Divider(height: 1),
+        toolBar(),
+      ],
+    );
+  }
 
   Widget toolBar() {
     return Container(
@@ -100,43 +138,6 @@ class HomePage extends StatelessWidget {
             )
             .toList(),
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              Row(
-                children: [
-                  const Text("游戏列表", style: TextStyle(fontSize: 32)),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () => GamesManaging.searchGames(),
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              gridView(),
-            ],
-          ),
-        ),
-        const Divider(height: 1),
-        toolBar(),
-      ],
     );
   }
 }

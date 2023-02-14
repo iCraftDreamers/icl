@@ -2,96 +2,101 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
-import '/controllers/pages.dart';
 import '/routes/account.dart';
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
-import '/widgets/button.dart';
 import '/widgets/route_builder.dart';
 
 class WindowSurface extends StatelessWidget {
-  const WindowSurface({super.key});
+  WindowSurface({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        navigationBar(context),
+        navigator(context),
         const VerticalDivider(width: 1),
         navigationView(context),
       ],
     );
   }
 
-  Widget navigationBar(context) {
-    Widget accNvgButton() {
-      final c = Get.put(PagesController());
-      const index = -1;
-      const routeName = "/account";
+  static var currentIndex = 1.obs;
 
-      return GestureDetector(
-        onTap: () {
-          if (c.current.value != index) {
-            c.current(index);
-            Get.offAndToNamed(routeName, id: 1);
-          }
-        },
-        child: Obx(
-          () => Container(
-            height: 54,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7.5),
-              color: c.current.value == index
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context)
-                      .extension<AccNvgButtonTheme>()!
-                      .background,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(.15), // 阴影的颜色
-                  offset: Offset(0, 5), // 阴影与容器的距离
-                  blurRadius: 15.0, // 高斯的标准偏差与盒子的形状卷积。
-                  spreadRadius: 5.0, // 在应用模糊之前，框应该膨胀的量。
-                ),
-              ],
-            ),
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                const Icon(Icons.people),
-                const SizedBox(width: 5),
-                Text(
-                  "账号",
-                  style: TextStyle(
-                    color: c.current.value == index ? Colors.white : null,
-                  ),
-                ),
-              ],
-            ),
+  Widget navigationButton(int index, String text, IconData icon,
+      IconData unselectIcon, BuildContext context) {
+    const List<String> routeName = [
+      "/account",
+      "/home",
+      "/appearance",
+      "/setting",
+    ];
+    return GestureDetector(
+      onTap: () {
+        if (currentIndex.value != index) {
+          currentIndex(index);
+          Get.offAndToNamed(routeName[index], id: 1);
+        }
+      },
+      child: Obx(
+        () => Container(
+          height: 54,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7.5),
+            color: currentIndex.value == index
+                ? Theme.of(context).colorScheme.primary
+                : index == 0
+                    ? Theme.of(context)
+                        .extension<ShadowButtonTheme>()!
+                        .background
+                    : Colors.transparent,
+            boxShadow: index == 0
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(.2), // 阴影的颜色
+                      offset: Offset(0, 5), // 阴影与容器的距离
+                      blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                      spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+                    )
+                  ]
+                : [],
           ),
-        ),
-      );
-    }
-
-    List<Widget> children = [accNvgButton(), SizedBox(height: 10)];
-    int index = 0;
-    const items = {
-      "开始": [Icons.home, Icons.home_outlined],
-      "外观": [Icons.palette, Icons.palette_outlined],
-      "设置": [Icons.settings, Icons.settings_outlined],
-    };
-
-    items.forEach(
-      (key, value) => children.add(
-        NavigationButton(
-          lable: key,
-          icon: value[0],
-          unselectedIcon: value[1],
-          index: index++,
+          child: Row(
+            children: [
+              const SizedBox(width: 10),
+              currentIndex == index
+                  ? Icon(icon, color: Colors.white)
+                  : Icon(unselectIcon),
+              const SizedBox(width: 5),
+              Text(
+                text,
+                style: TextStyle(
+                  color: currentIndex.value == index ? Colors.white : null,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget navigator(context) {
+    const items = {
+      "账号管理": [Icons.people, Icons.people_outline],
+      "库": [Icons.grid_view_rounded, Icons.grid_view],
+      "外观": [Icons.palette, Icons.palette_outlined],
+      "设置": [Icons.settings, Icons.settings_outlined],
+    };
+    var index = 0;
+    List<Widget> children = [];
+    items.forEach(
+      (key, value) => children.add(
+        navigationButton(index++, key, value[0], value[1], context),
+      ),
+    );
+    children.insert(1, const SizedBox(height: 10));
     children.insert(children.length - 1, const Spacer());
 
     return Container(

@@ -1,4 +1,5 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:icl/widgets/theme.dart';
 
 abstract class BasePage extends StatelessWidget {
   const BasePage({super.key});
@@ -7,12 +8,12 @@ abstract class BasePage extends StatelessWidget {
 }
 
 mixin BasicPage on BasePage {
-  Widget head() {
-    return Text(pageName(), style: const TextStyle(fontSize: 32));
+  Widget head(BuildContext context) {
+    return Text(pageName(), style: MyThemes.title);
   }
 
   @override
   Widget build(BuildContext context) {
-    return head();
+    return head(context);
   }
 }
