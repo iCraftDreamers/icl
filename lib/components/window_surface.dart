@@ -9,7 +9,7 @@ import '/routes/setting.dart';
 import '/widgets/route_builder.dart';
 
 class WindowSurface extends StatelessWidget {
-  WindowSurface({super.key});
+  const WindowSurface({super.key});
 
   @override
   Widget build(BuildContext context) {

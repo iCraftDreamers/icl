@@ -25,6 +25,7 @@ class AccountsPage extends StatelessWidget {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(7.5)),
         color: Get.theme.extension<ShadowButtonTheme>()!.background,
@@ -62,7 +63,18 @@ class AccountsPage extends StatelessWidget {
             children: [
               IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
               IconButton(
-                  onPressed: () => AccountManaging.removeAccount(user),
+                  onPressed: () => showDialog(
+                        context: Get.context!,
+                        builder: (context) => WarningDialog(
+                          title: "删除账号",
+                          content: "你确定要删除这个账号吗？此操作将无法撤销！",
+                          onConfirmed: () {
+                            AccountManaging.removeAccount(user);
+                            Get.back();
+                          },
+                          onCanceled: () => Get.back(),
+                        ),
+                      ),
                   icon: Icon(Icons.delete)),
             ],
           ),
@@ -78,7 +90,7 @@ class AccountsPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text("用户列表", style: TextStyle(fontSize: 32)),
+            const Text("账号管理", style: TextStyle(fontSize: 32)),
             const Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(
