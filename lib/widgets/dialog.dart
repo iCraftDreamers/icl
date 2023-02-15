@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DialogConfirmButton extends StatelessWidget {
   const DialogConfirmButton({super.key, required this.onPressed});
@@ -7,7 +8,11 @@ class DialogConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
+    return OutlinedButton(
+      style: ButtonStyle(
+        side: MaterialStateProperty.all(
+            BorderSide(color: Get.theme.primaryColor, width: 1.0)),
+      ),
       onPressed: onPressed,
       child: const Text("确定", style: TextStyle(fontSize: 16)),
     );
@@ -29,11 +34,35 @@ class DialogCancelButton extends StatelessWidget {
 }
 
 class WarningDialog extends StatelessWidget {
-  const WarningDialog({super.key});
+  const WarningDialog({
+    super.key,
+    this.title,
+    this.content,
+    this.onConfirmed,
+    this.onCanceled,
+  });
+
+  final String? title;
+  final String? content;
+  final void Function()? onConfirmed;
+  final void Function()? onCanceled;
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return AlertDialog(
+      title: Text(title ?? "", style: TextStyle(color: Colors.orange[800])),
+      content: Row(
+        children: [
+          Icon(Icons.warning_rounded, size: 36, color: Colors.orange[800]),
+          SizedBox(width: 10),
+          Text(content ?? ""),
+        ],
+      ),
+      actions: [
+        DialogConfirmButton(onPressed: onConfirmed),
+        DialogCancelButton(onPressed: onCanceled),
+      ],
+    );
   }
 }
 
@@ -56,28 +85,20 @@ class ErrorDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(
         title ?? "",
-        style: TextStyle(
-          color: Color.fromARGB(238, 248, 97, 95),
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: Colors.red[400]),
       ),
-      content: Text(content ?? ""),
+      content: Row(children: [
+        Icon(
+          Icons.error_outline,
+          size: 36,
+          color: Colors.red[400],
+        ),
+        SizedBox(width: 10),
+        Text(content ?? "")
+      ]),
       actions: [
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Color.fromARGB(255, 255, 255, 255),
-            backgroundColor: Color.fromARGB(255, 255, 117, 117),
-          ),
-          onPressed: onConfirmed,
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Color.fromARGB(255, 39, 35, 35),
-          ),
-          onPressed: onCanceled,
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
+        DialogConfirmButton(onPressed: onConfirmed),
+        DialogCancelButton(onPressed: onCanceled),
       ],
     );
   }

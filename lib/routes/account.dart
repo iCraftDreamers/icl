@@ -1,30 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/controllers/accounts.dart';
+import '../utils/skintoavatar.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/theme.dart';
 import '/widgets/typefield.dart';
 
-class AccountsPage extends StatelessWidget {
-  const AccountsPage({super.key});
+class AccountPage extends StatelessWidget {
+  const AccountPage({super.key});
 
   Widget accountsItem(user) {
-    String loginModeString(loginmode) {
-      switch (loginmode) {
-        case 1:
-          return "正版登录";
-        case 2:
-          return "外置登录";
-        default:
-          return "离线登录";
-      }
-    }
-
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(7.5)),
         color: Get.theme.extension<ShadowButtonTheme>()!.background,
@@ -43,7 +33,11 @@ class AccountsPage extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Image.asset('steve.png', height: 35, width: 35),
+              Image.memory(
+                Skin.toAvatar("E:\\14197123560897983338.png"),
+                width: 40,
+                height: 40,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -51,19 +45,31 @@ class AccountsPage extends StatelessWidget {
                     user['username'],
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(loginModeString(user['loginmode']))
+                  Text(AccountManaging.loginModes[user["loginmode"]].toString())
                 ],
               ),
             ],
           ),
           Spacer(),
           Wrap(
-            spacing: 10,
+            spacing: 5,
             children: [
               IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
               IconButton(
-                  onPressed: () => AccountManaging.removeAccount(user),
-                  icon: Icon(Icons.delete)),
+                icon: Icon(Icons.delete),
+                onPressed: () => showDialog(
+                  context: Get.context!,
+                  builder: (context) => WarningDialog(
+                    title: "删除账号",
+                    content: "你确定要删除这个账号吗？此操作将无法撤销！",
+                    onConfirmed: () {
+                      AccountManaging.removeAccount(user);
+                      Get.back();
+                    },
+                    onCanceled: () => Get.back(),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -78,7 +84,7 @@ class AccountsPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text("用户列表", style: TextStyle(fontSize: 32)),
+            const Text("账号管理", style: TextStyle(fontSize: 32)),
             const Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(
@@ -116,15 +122,10 @@ class AddAccountDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(AccountsController());
     final TextEditingController username = TextEditingController();
     final TextEditingController password = TextEditingController();
     final formKey = GlobalKey<FormState>();
-    const data = {
-      0: '离线登录',
-      1: '正版登录',
-      2: '外置登录',
-    };
+    var loginMode = 0.obs;
 
     List<Widget> children(int loginMode) {
       switch (loginMode) {
@@ -164,30 +165,32 @@ class AddAccountDialog extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text("登录方式:"),
-                const SizedBox(width: 15),
+                const SizedBox(
+                  width: 80,
+                  child: Text("登录方式:"),
+                ),
                 SizedBox(
                   width: 100,
                   child: Obx(
                     () => DropdownButton(
                       borderRadius: BorderRadius.circular(7.5),
                       isExpanded: true,
-                      value: c.loginMode.value,
-                      items: data.keys
+                      value: loginMode.value,
+                      items: AccountManaging.loginModes.keys
                           .map(
                             (value) => DropdownMenuItem(
                               value: value,
                               child: Container(
                                 alignment: Alignment.center,
                                 child: Text(
-                                  data[value]!,
+                                  AccountManaging.loginModes[value]!,
                                   style: Get.textTheme.titleSmall,
                                 ),
                               ),
                             ),
                           )
                           .toList(),
-                      onChanged: (value) => c.loginMode(value),
+                      onChanged: (value) => loginMode(value),
                     ),
                   ),
                 ),
@@ -198,7 +201,7 @@ class AddAccountDialog extends StatelessWidget {
               () => Form(
                 key: formKey,
                 child: Column(
-                  children: children(c.loginMode.value),
+                  children: children(loginMode.value),
                 ),
               ),
             ),
@@ -208,7 +211,11 @@ class AddAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
-            AccountManaging.addAccount(username.text, password.text);
+            AccountManaging.add(
+              username.text,
+              password.text,
+              loginMode.value,
+            );
             Get.back();
           }
         }),

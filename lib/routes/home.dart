@@ -6,42 +6,36 @@ import 'package:icl/utils/file_picker.dart';
 import 'package:icl/utils/get_game.dart';
 import 'package:icl/widgets/theme.dart';
 
+import '../widgets/dialog.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(15),
       children: [
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              Row(
-                children: [
-                  Text("游戏列表", style: MyThemes.title),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () => GamesManaging.searchGames(),
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              gridView(),
-            ],
-          ),
+        Row(
+          children: [
+            Text("游戏列表", style: MyThemes.title),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.more_horiz),
+              onPressed: () => GameManaging.init(),
+            )
+          ],
         ),
-        const Divider(height: 1),
-        toolBar(),
+        const SizedBox(height: 10),
+        gridView(),
       ],
     );
   }
@@ -49,6 +43,7 @@ class HomePage extends StatelessWidget {
   Widget toolBar() {
     return Container(
       height: 65,
+      color: Color.fromARGB(0, 0, 0, 0),
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Row(
         children: [
@@ -110,18 +105,13 @@ class HomePage extends StatelessWidget {
         ),
       ),
       actions: [
-        FilledButton(
-            onPressed: () {},
-            child: const Text("确定", style: TextStyle(fontSize: 16))),
-        TextButton(
-            onPressed: () => Get.back(),
-            child: const Text("取消", style: TextStyle(fontSize: 16))),
+        DialogConfirmButton(onPressed: () {}),
+        DialogCancelButton(onPressed: () {}),
       ],
     );
   }
 
   Widget gridView() {
-    final data = List.generate(20, (index) => Color(0xFFBAABBA - 2 * index));
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 0),
       child: GridView.extent(
@@ -130,13 +120,8 @@ class HomePage extends StatelessWidget {
         crossAxisSpacing: 5,
         childAspectRatio: 1 / 1.333,
         shrinkWrap: true,
-        children: data
-            .map(
-              (e) => Card(
-                color: e,
-              ),
-            )
-            .toList(),
+        children: List.generate(
+            20, (index) => Card(color: Color(0xFFBAABBA - 2 * index))),
       ),
     );
   }

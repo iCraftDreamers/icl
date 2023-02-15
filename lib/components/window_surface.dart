@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
-import '/routes/accounts.dart';
+import '/routes/account.dart';
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
 import '/widgets/route_builder.dart';
 
 class WindowSurface extends StatelessWidget {
-  WindowSurface({super.key});
+  const WindowSurface({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,15 +32,16 @@ class WindowSurface extends StatelessWidget {
       "/appearance",
       "/setting",
     ];
-    return GestureDetector(
-      onTap: () {
-        if (currentIndex.value != index) {
-          currentIndex(index);
-          Get.offAndToNamed(routeName[index], id: 1);
-        }
-      },
-      child: Obx(
-        () => Container(
+    return Obx(
+      () => InkWell(
+        mouseCursor: MaterialStateMouseCursor.clickable,
+        onTap: () {
+          if (currentIndex.value != index) {
+            currentIndex(index);
+            Get.offAndToNamed(routeName[index], id: 1);
+          }
+        },
+        child: Container(
           height: 54,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(7.5),
@@ -117,7 +118,7 @@ class WindowSurface extends StatelessWidget {
           onGenerateRoute: (settings) {
             switch (settings.name) {
               case '/account':
-                return createRoute(const AccountsPage());
+                return createRoute(const AccountPage());
               case '/home':
                 return createRoute(const HomePage());
               case '/appearance':

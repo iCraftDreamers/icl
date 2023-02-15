@@ -5,7 +5,7 @@ class GetJava {
   static late var versions;
   static late var javas;
 
-  static void init() async {
+  static Future<void> init() async {
     // 在环境变量获取Java路径
     final command = Platform.isWindows ? "where java" : "which -a java";
     final processResult = await Process.run(command, [], runInShell: true);
