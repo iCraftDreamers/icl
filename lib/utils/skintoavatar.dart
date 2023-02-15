@@ -3,10 +3,6 @@ import 'dart:typed_data';
 // import 'package:flutter/material.dart';
 import 'package:image/image.dart';
 
-void main() {
-  Skin.toAvatar("E:\\14197123560897983338.png");
-}
-
 class Skin {
   static Uint8List toAvatar(file) {
     final source = decodePng(File(file).readAsBytesSync());
@@ -16,10 +12,8 @@ class Skin {
         width: 72, height: 72);
     final head = Image(width: 72, height: 72, numChannels: 4);
     head.clear(ColorInt8.rgba(0, 0, 0, 0));
-    encodeImageFile('1.png', head);
     compositeImage(head, face, center: true);
     compositeImage(head, hair, center: true);
-    // encodeImageFile('test.png', head);
     final result = encodePng(head);
     return result;
   }
