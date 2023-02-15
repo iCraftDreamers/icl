@@ -8,7 +8,11 @@ class DialogConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton(
+    return OutlinedButton(
+      style: ButtonStyle(
+        side: MaterialStateProperty.all(
+            BorderSide(color: Get.theme.primaryColor, width: 1.0)),
+      ),
       onPressed: onPressed,
       child: const Text("确定", style: TextStyle(fontSize: 16)),
     );
@@ -55,21 +59,8 @@ class WarningDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        OutlinedButton(
-          style: ButtonStyle(
-            side: MaterialStateProperty.all(
-                BorderSide(color: Get.theme.primaryColor, width: 1.0)),
-          ),
-          onPressed: onConfirmed,
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Color.fromARGB(255, 39, 35, 35),
-          ),
-          onPressed: onCanceled,
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
+        DialogConfirmButton(onPressed: onConfirmed),
+        DialogCancelButton(onPressed: onCanceled),
       ],
     );
   }
@@ -106,21 +97,8 @@ class ErrorDialog extends StatelessWidget {
         Text(content ?? "")
       ]),
       actions: [
-        OutlinedButton(
-          style: ButtonStyle(
-            side: MaterialStateProperty.all(
-                BorderSide(color: Get.theme.primaryColor, width: 1.0)),
-          ),
-          onPressed: onConfirmed,
-          child: const Text("确定", style: TextStyle(fontSize: 16)),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            foregroundColor: Color.fromARGB(255, 39, 35, 35),
-          ),
-          onPressed: onCanceled,
-          child: const Text("取消", style: TextStyle(fontSize: 16)),
-        ),
+        DialogConfirmButton(onPressed: onConfirmed),
+        DialogCancelButton(onPressed: onCanceled),
       ],
     );
   }

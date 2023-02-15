@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'dart:convert';
 
-class GamesManaging {
+class GameManaging {
   static List<Map> installedGames = [];
   static List<Directory> gameDirs = [
     Directory('.minecraft'),
     Directory('%appdata%/Roadming/.minecraft')
   ];
 
-  static void addGameDirs(String dir) {
+  static void addDir(String dir) {
     gameDirs.add(Directory(dir));
   }
 
@@ -17,16 +17,18 @@ class GamesManaging {
         '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
   }
 
-  static Future<void> searchGames() async {
+  static Future<void> init() async {
     installedGames.clear();
     List<FileSystemEntity> versionDirs = [];
     for (var dir in gameDirs) {
       var versionDir = Directory('${dir.path}/${'versions'}');
       if (await versionDir.exists()) {
-        versionDirs.addAll(versionDir
-            .listSync()
-            .where((element) => element is Directory)
-            .toList());
+        versionDirs.addAll(
+          versionDir
+              .listSync()
+              .where((element) => element is Directory)
+              .toList(),
+        );
       }
     }
     for (var dir in versionDirs) {

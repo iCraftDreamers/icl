@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/controllers/accounts.dart';
+import '../utils/skintoavatar.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/theme.dart';
 import '/widgets/typefield.dart';
 
-class AccountsPage extends StatelessWidget {
-  const AccountsPage({super.key});
+class AccountPage extends StatelessWidget {
+  const AccountPage({super.key});
 
   Widget accountsItem(user) {
     return Container(
@@ -33,7 +33,11 @@ class AccountsPage extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Image.asset('steve.png', height: 35, width: 35),
+              Image.memory(
+                Skin.toAvatar("E:\\14197123560897983338.png"),
+                width: 40,
+                height: 40,
+              ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -48,23 +52,24 @@ class AccountsPage extends StatelessWidget {
           ),
           Spacer(),
           Wrap(
-            spacing: 10,
+            spacing: 5,
             children: [
               IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
               IconButton(
-                  onPressed: () => showDialog(
-                        context: Get.context!,
-                        builder: (context) => WarningDialog(
-                          title: "删除账号",
-                          content: "你确定要删除这个账号吗？此操作将无法撤销！",
-                          onConfirmed: () {
-                            AccountManaging.removeAccount(user);
-                            Get.back();
-                          },
-                          onCanceled: () => Get.back(),
-                        ),
-                      ),
-                  icon: Icon(Icons.delete)),
+                icon: Icon(Icons.delete),
+                onPressed: () => showDialog(
+                  context: Get.context!,
+                  builder: (context) => WarningDialog(
+                    title: "删除账号",
+                    content: "你确定要删除这个账号吗？此操作将无法撤销！",
+                    onConfirmed: () {
+                      AccountManaging.removeAccount(user);
+                      Get.back();
+                    },
+                    onCanceled: () => Get.back(),
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -117,10 +122,11 @@ class AddAccountDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.put(AccountsController());
     final TextEditingController username = TextEditingController();
     final TextEditingController password = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    var loginMode = 0.obs;
+
     List<Widget> children(int loginMode) {
       switch (loginMode) {
         case 1:
@@ -169,7 +175,7 @@ class AddAccountDialog extends StatelessWidget {
                     () => DropdownButton(
                       borderRadius: BorderRadius.circular(7.5),
                       isExpanded: true,
-                      value: c.loginMode.value,
+                      value: loginMode.value,
                       items: AccountManaging.loginModes.keys
                           .map(
                             (value) => DropdownMenuItem(
@@ -184,7 +190,7 @@ class AddAccountDialog extends StatelessWidget {
                             ),
                           )
                           .toList(),
-                      onChanged: (value) => c.loginMode(value),
+                      onChanged: (value) => loginMode(value),
                     ),
                   ),
                 ),
@@ -195,7 +201,7 @@ class AddAccountDialog extends StatelessWidget {
               () => Form(
                 key: formKey,
                 child: Column(
-                  children: children(c.loginMode.value),
+                  children: children(loginMode.value),
                 ),
               ),
             ),
@@ -205,7 +211,11 @@ class AddAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
-            AccountManaging.addAccount(username.text, password.text);
+            AccountManaging.add(
+              username.text,
+              password.text,
+              loginMode.value,
+            );
             Get.back();
           }
         }),

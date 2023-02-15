@@ -1,7 +1,5 @@
 import 'package:get/get.dart';
 
-import '../controllers/accounts.dart';
-
 class AccountManaging {
   static RxList gameAccounts = [].obs;
   static Map<int, String> loginModes = {
@@ -10,12 +8,11 @@ class AccountManaging {
     2: '外置登录',
   };
 
-  static void addAccount(String? username, String? password) {
-    final c = Get.put(AccountsController());
-    switch (c.loginMode.value) {
+  static void add(String? username, String? password, loginMode) {
+    switch (0) {
       case 0:
         gameAccounts.add(
-          {"loginmode": c.loginMode.value, "username": username},
+          {"loginmode": loginMode, "username": username},
         );
         break;
       case 1:
@@ -26,11 +23,7 @@ class AccountManaging {
         break;
       default:
         gameAccounts.add(
-          {
-            "loginmode": c.loginMode.value,
-            "username": username,
-            "password": password
-          },
+          {"loginmode": loginMode, "username": username},
         );
         break;
     }

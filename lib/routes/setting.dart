@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/utils/accounts.dart';
 import 'package:icl/utils/get_game.dart';
-import 'package:icl/utils/get_environment_variable.dart';
+import 'package:icl/utils/get_java.dart';
 
 import '/widgets/page.dart';
 
@@ -37,7 +37,7 @@ class SettingPage extends BasePage with BasicPage {
             ),
             FilledButton(
               onPressed: () {
-                GamesManaging.searchGames();
+                GameManaging.init();
                 GetJava.init();
               },
               child: const Text("搜索游戏"),
@@ -48,7 +48,7 @@ class SettingPage extends BasePage with BasicPage {
                   context: Get.context!,
                   builder: (context) => SimpleDialog(
                     title: Text("测试"),
-                    children: [Text(GamesManaging.installedGames.toString())],
+                    children: [Text(GameManaging.installedGames.toString())],
                   ),
                 );
               },
