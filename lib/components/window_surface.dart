@@ -15,9 +15,9 @@ class WindowSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        navigator(context),
+        navigation(context),
         const VerticalDivider(width: 1),
-        navigationView(context),
+        navigator(context),
       ],
     );
   }
@@ -39,7 +39,7 @@ class WindowSurface extends StatelessWidget {
         onTap: () {
           if (currentIndex.value != index) {
             currentIndex(index);
-            Get.offAndToNamed(routeName[index], id: 1);
+            Get.toNamed(routeName[index], id: 1);
           }
         },
         child: AnimatedContainer(
@@ -85,7 +85,7 @@ class WindowSurface extends StatelessWidget {
     );
   }
 
-  Widget navigator(context) {
+  Widget navigation(context) {
     const items = {
       "账号管理": [Icons.people, Icons.people_outline],
       "库": [Icons.grid_view_rounded, Icons.grid_view],
@@ -110,12 +110,12 @@ class WindowSurface extends StatelessWidget {
     );
   }
 
-  Widget navigationView(context) {
+  Widget navigator(context) {
     return Expanded(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Navigator(
-          key: Get.nestedKey(1), // create a key by index
+          key: Get.nestedKey(1),
           initialRoute: '/home',
           onGenerateRoute: (settings) {
             switch (settings.name) {
