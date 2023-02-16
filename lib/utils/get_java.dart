@@ -9,17 +9,16 @@ class GetJava {
     // 在环境变量获取Java路径
     final command = Platform.isWindows ? "where java" : "which -a java";
     final processResult = await Process.run(command, [], runInShell: true);
-
-    paths = processResult.stdout.trim().split("\r\n");
-
     final java_home = Platform.environment['JAVA_HOME'];
     final jre_home = Platform.environment['JRE_HOME'];
-    if (paths.contains(java_home)) {
-      paths.add(java_home! +
+    paths = processResult.stdout.trim().split("\r\n");
+
+    if (!paths.contains(java_home)) {
+      paths.add(await java_home! +
           (Platform.isWindows ? "\\bin\\java.exe" : "/bin/java.exe"));
     }
-    if (paths.contains(jre_home)) {
-      paths.add(jre_home! +
+    if (!paths.contains(jre_home)) {
+      paths.add(await jre_home! +
           (Platform.isWindows ? "\\bin\\java.exe" : "/bin/java.exe"));
     }
 
@@ -32,6 +31,7 @@ class GetJava {
         final releaseFile = File('$javaPath/release');
 
         if (!releaseFile.existsSync()) {
+          versions.add("Unknown");
           throw 'Java release 文件未找到，路径 $javaPath';
         }
 
@@ -42,6 +42,7 @@ class GetJava {
         versions.add(versionString);
       },
     );
+
     // 生成Map
     javas = Map.fromIterables(paths, versions);
   }

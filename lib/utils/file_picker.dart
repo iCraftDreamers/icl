@@ -9,15 +9,18 @@ Future<File?> filePicker([List<String>? allowedExtensions]) async {
     lockParentWindow: true,
   );
 
-  File file =
-      result == null ? File("") : File(result.files.single.path.toString());
-  return file;
+  if (result == null) {
+    return null;
+  }
+  return File(result.files.single.path.toString());
 }
 
 Future<File?> folderPicker() async {
   String? selectedDirectory =
       await FilePicker.platform.getDirectoryPath(lockParentWindow: true);
 
-  File file = File(selectedDirectory ?? "");
-  return file;
+  if (selectedDirectory == null) {
+    return null;
+  }
+  return File(selectedDirectory);
 }
