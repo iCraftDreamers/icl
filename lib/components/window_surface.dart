@@ -39,7 +39,7 @@ class WindowSurface extends StatelessWidget {
         onTap: () {
           if (currentIndex.value != index) {
             currentIndex(index);
-            Get.toNamed(routeName[index], id: 1);
+            Get.offNamed(routeName[index], id: 1);
           }
         },
         child: AnimatedContainer(
