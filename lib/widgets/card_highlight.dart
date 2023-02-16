@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:icl/widgets/theme.dart';
 
 class CardHighlight extends StatelessWidget {
   const CardHighlight({super.key, required this.child});
@@ -10,7 +11,7 @@ class CardHighlight extends StatelessWidget {
       height: 45,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(7.5),
+        borderRadius: MyTheme.borderRadius,
         color: Theme.of(context).highlightColor,
       ),
       child: child,

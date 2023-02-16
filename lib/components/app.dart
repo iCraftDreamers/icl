@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../widgets/theme.dart';
+import '/widgets/theme.dart';
 import 'window_bar.dart';
 import 'window_surface.dart';
 
@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
     }
 
     return GetMaterialApp(
-      theme: MyThemes.lightTheme,
-      darkTheme: MyThemes.darkTheme,
+      theme: MyTheme.lightTheme,
+      darkTheme: MyTheme.darkTheme,
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: home(),

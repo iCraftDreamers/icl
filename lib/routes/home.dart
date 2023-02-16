@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("游戏列表", style: MyThemes.title),
+            Text("游戏列表", style: MyTheme.title),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.add),

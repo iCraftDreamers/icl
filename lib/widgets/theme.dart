@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MyThemes {
+class MyTheme {
   //
   //  浅色主题
   //
@@ -58,6 +58,9 @@ class MyThemes {
   // 自定义字体
   static final title = TextStyle(fontSize: 32);
   static final secondTitle = TextStyle(fontSize: 24);
+
+  // 自定义规格
+  static final borderRadius = BorderRadius.circular(7.5);
 }
 
 class ShadowButtonTheme extends ThemeExtension<ShadowButtonTheme> {

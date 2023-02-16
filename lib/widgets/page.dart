@@ -9,7 +9,7 @@ abstract class BasePage extends StatelessWidget {
 
 mixin BasicPage on BasePage {
   Widget head(BuildContext context) {
-    return Text(pageName(), style: MyThemes.title);
+    return Text(pageName(), style: MyTheme.title);
   }
 
   @override

@@ -33,36 +33,35 @@ class WindowSurface extends StatelessWidget {
       "/setting",
     ];
     return Obx(
-      () => InkWell(
-        mouseCursor: MaterialStateMouseCursor.clickable,
-        onTap: () {
-          if (currentIndex.value != index) {
-            currentIndex(index);
-            Get.offAndToNamed(routeName[index], id: 1);
-          }
-        },
-        child: Container(
-          height: 54,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7.5),
-            color: currentIndex.value == index
-                ? Theme.of(context).colorScheme.primary
-                : index == 0
-                    ? Theme.of(context)
-                        .extension<ShadowButtonTheme>()!
-                        .background
-                    : Colors.transparent,
-            boxShadow: index == 0
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(.2), // 阴影的颜色
-                      offset: Offset(0, 5), // 阴影与容器的距离
-                      blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
-                      spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
-                    )
-                  ]
-                : [],
-          ),
+      () => Ink(
+        height: 54,
+        decoration: BoxDecoration(
+          borderRadius: MyTheme.borderRadius,
+          color: currentIndex.value == index
+              ? Theme.of(context).colorScheme.primary
+              : index == 0
+                  ? Theme.of(context).extension<ShadowButtonTheme>()!.background
+                  : Colors.transparent,
+          boxShadow: index == 0
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.2), // 阴影的颜色
+                    offset: Offset(0, 5), // 阴影与容器的距离
+                    blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                    spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+                  )
+                ]
+              : [],
+        ),
+        child: InkWell(
+          splashColor: Theme.of(context).colorScheme.primary,
+          borderRadius: MyTheme.borderRadius,
+          onTap: () {
+            if (currentIndex.value != index) {
+              currentIndex(index);
+              Get.offAndToNamed(routeName[index], id: 1);
+            }
+          },
           child: Row(
             children: [
               const SizedBox(width: 10),

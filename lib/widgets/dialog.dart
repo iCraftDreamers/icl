@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class DialogConfirmButton extends StatelessWidget {
   const DialogConfirmButton({super.key, required this.onPressed});
@@ -10,8 +9,8 @@ class DialogConfirmButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return OutlinedButton(
       style: ButtonStyle(
-        side: MaterialStateProperty.all(
-            BorderSide(color: Get.theme.primaryColor, width: 1.0)),
+        side: MaterialStateProperty.all(BorderSide(
+            color: Theme.of(context).colorScheme.primary, width: 1.0)),
       ),
       onPressed: onPressed,
       child: const Text("确定", style: TextStyle(fontSize: 16)),

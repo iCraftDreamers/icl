@@ -58,7 +58,7 @@ class AppearancePage extends BasePage with BasicPage {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("主题", style: MyThemes.secondTitle),
+        Text("主题", style: MyTheme.secondTitle),
         const SizedBox(height: 5),
         Obx(
           () => Column(

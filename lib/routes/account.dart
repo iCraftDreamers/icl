@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../utils/skintoavatar.dart';
+import '/utils/skintoavatar.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/theme.dart';
@@ -16,7 +16,7 @@ class AccountPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(7.5)),
+        borderRadius: MyTheme.borderRadius,
         color: Get.theme.extension<ShadowButtonTheme>()!.background,
         boxShadow: [
           BoxShadow(
