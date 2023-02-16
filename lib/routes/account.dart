@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/utils/skintoavatar.dart';
+import '/utils/skin.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/theme.dart';
@@ -34,7 +34,7 @@ class AccountPage extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Image.memory(
-                Skin.toAvatar("E:\\14197123560897983338.png"),
+                Skin.toAvatar(AccountManaging.defaultSkin),
                 width: 40,
                 height: 40,
               ),
