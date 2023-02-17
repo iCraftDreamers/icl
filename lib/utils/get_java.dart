@@ -1,49 +1,73 @@
 import 'dart:io';
 
+void main() async {
+  GetJava.init();
+}
+
 class GetJava {
-  static late var paths;
-  static late var versions;
-  static late var javas;
+  static List paths = [];
+  static List versions = [];
+  static Map javas = {};
 
-  static Future<void> init() async {
-    // 在环境变量获取Java路径
-    final command = Platform.isWindows ? "where java" : "which -a java";
-    final processResult = await Process.run(command, [], runInShell: true);
-    final java_home = Platform.environment['JAVA_HOME'];
-    final jre_home = Platform.environment['JRE_HOME'];
-    paths = processResult.stdout.trim().split("\r\n");
+  static init() async {
+    paths = await onEnvironment();
+    versions = version();
+    javas = toMap();
+  }
 
-    if (!paths.contains(java_home)) {
-      paths.add(await java_home! +
-          (Platform.isWindows ? "\\bin\\java.exe" : "/bin/java.exe"));
-    }
-    if (!paths.contains(jre_home)) {
-      paths.add(await jre_home! +
-          (Platform.isWindows ? "\\bin\\java.exe" : "/bin/java.exe"));
-    }
+  static Future<List> onEnvironment() async {
+    var result = <String>[];
+    final command = Platform.isWindows ? "where" : "which";
+    var args = Platform.isWindows ? ["\$PATH:java"] : ["-a", "\$PATH", "java"];
+    final variables = ["JAVA_HOME", "JRE_HOME"];
+    final processResult = await Process.run(command, args, runInShell: true);
+    result = processResult.stdout.trim().split("\r\n");
 
-    // 获取Java版本
-    versions = [];
-    paths.forEach(
-      (e) {
-        final regExp = RegExp(r'\\bin\\java\.exe$');
-        final javaPath = e.replaceAll(regExp, '');
-        final releaseFile = File('$javaPath/release');
+    await Future.forEach(variables, (element) async {
+      final variable = Platform.environment[element];
+      if (variable == null) return;
+      final path = variable + (Platform.isWindows ? "\\bin" : "/bin");
+      if (result.contains(
+          path.trim() + (Platform.isWindows ? "\\java.exe" : "java"))) {
+        return;
+      }
 
-        if (!releaseFile.existsSync()) {
-          versions.add("Unknown");
-          throw 'Java release 文件未找到，路径 $javaPath';
-        }
+      args = Platform.isWindows ? ['/R', path, "java"] : [element, "java"];
+      final processResult = await Process.run(command, args, runInShell: true);
+      if (processResult.stdout == "") return;
+      result.add(processResult.stdout.trim());
+    });
+    return result;
+  }
 
-        final versionLine = releaseFile
-            .readAsLinesSync()
-            .firstWhere((line) => line.startsWith('JAVA_VERSION='));
-        final versionString = versionLine.substring('JAVA_VERSION='.length);
-        versions.add(versionString);
-      },
-    );
+  static List version() {
+    return paths.map((e) {
+      final regExp = RegExp(r'\\bin\\java\.exe$');
+      final javaPath = e.replaceAll(regExp, '');
+      final releaseFile = File('$javaPath/release');
 
-    // 生成Map
-    javas = Map.fromIterables(paths, versions);
+      if (!releaseFile.existsSync()) {
+        return "Unknown";
+      }
+
+      final versionLine = releaseFile
+          .readAsLinesSync()
+          .firstWhere((line) => line.startsWith('JAVA_VERSION='));
+      return versionLine.substring('JAVA_VERSION='.length);
+    }).toList();
+  }
+
+  static Map toMap() {
+    return Map.fromIterables(paths, versions);
+  }
+}
+
+class Java {
+  final String path;
+  final String version;
+
+  const Java(this.path, this.version);
+  get() {
+    return Map.fromIterables(["Path", "Version"], [path, version]);
   }
 }
