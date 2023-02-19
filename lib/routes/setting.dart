@@ -32,7 +32,7 @@ class SettingPage extends BasePage with BasicPage {
         Row(
           children: [
             FilledButton(
-              onPressed: () => print(GetJava.javas),
+              onPressed: () => print(GetJava.list),
               child: const Text("测试"),
             ),
             FilledButton(

@@ -1,21 +1,47 @@
 import 'dart:io';
 
-void main() async {
-  GetJava.init();
+class Java {
+  late final String? path;
+  late final String? version;
+
+  Java([this.path, version]) {
+    this.version = version ?? getVersion();
+  }
+
+  String getVersion() {
+    final regExp = RegExp(r'\\bin\\java\.exe$');
+    final javaPath = path?.replaceAll(regExp, '');
+    final releaseFile = File('$javaPath/release');
+
+    if (!releaseFile.existsSync()) {
+      return "Unknown";
+    }
+
+    final versionLine = releaseFile
+        .readAsLinesSync()
+        .firstWhere((line) => line.startsWith('JAVA_VERSION='));
+    return versionLine.substring('JAVA_VERSION='.length);
+  }
+
+  Map show() {
+    return Map.fromIterables(["Path", "Version"], [path, version]);
+  }
 }
 
 class GetJava {
-  static List paths = [];
-  static List versions = [];
-  static Map javas = {};
+  static List<Java> list = [];
 
   static init() async {
-    paths = await onEnvironment();
-    versions = version();
-    javas = toMap();
+    await pathOnEnvironment().then(
+      (paths) => paths.forEach(
+        (path) {
+          list.add(Java(path));
+        },
+      ),
+    );
   }
 
-  static Future<List> onEnvironment() async {
+  static Future<List> pathOnEnvironment() async {
     var result = <String>[];
     final command = Platform.isWindows ? "where" : "which";
     var args = Platform.isWindows ? ["\$PATH:java"] : ["-a", "\$PATH", "java"];
@@ -38,36 +64,5 @@ class GetJava {
       result.add(processResult.stdout.trim());
     });
     return result;
-  }
-
-  static List version() {
-    return paths.map((e) {
-      final regExp = RegExp(r'\\bin\\java\.exe$');
-      final javaPath = e.replaceAll(regExp, '');
-      final releaseFile = File('$javaPath/release');
-
-      if (!releaseFile.existsSync()) {
-        return "Unknown";
-      }
-
-      final versionLine = releaseFile
-          .readAsLinesSync()
-          .firstWhere((line) => line.startsWith('JAVA_VERSION='));
-      return versionLine.substring('JAVA_VERSION='.length);
-    }).toList();
-  }
-
-  static Map toMap() {
-    return Map.fromIterables(paths, versions);
-  }
-}
-
-class Java {
-  final String path;
-  final String version;
-
-  const Java(this.path, this.version);
-  get() {
-    return Map.fromIterables(["Path", "Version"], [path, version]);
   }
 }
