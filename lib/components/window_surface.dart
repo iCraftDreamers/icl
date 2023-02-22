@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
@@ -6,7 +7,6 @@ import '/routes/account.dart';
 import '/routes/home.dart';
 import '/routes/appearance.dart';
 import '/routes/setting.dart';
-import '/widgets/route_builder.dart';
 
 class WindowSurface extends StatelessWidget {
   const WindowSurface({super.key});
@@ -33,52 +33,54 @@ class WindowSurface extends StatelessWidget {
       "/setting",
     ];
     return Obx(
-      () => InkWell(
-        splashColor: Theme.of(context).colorScheme.primary,
-        borderRadius: MyTheme.borderRadius,
-        onTap: () {
-          if (currentIndex.value != index) {
-            currentIndex(index);
-            Get.offNamed(routeName[index], id: 1);
-          }
-        },
-        child: AnimatedContainer(
-          height: 54,
-          duration: Duration(milliseconds: currentIndex == index ? 200 : 0),
-          decoration: BoxDecoration(
+      () => AnimatedContainer(
+        height: 54,
+        duration: Duration(milliseconds: currentIndex == index ? 200 : 0),
+        decoration: BoxDecoration(
+          borderRadius: MyTheme.borderRadius,
+          color: currentIndex.value == index
+              ? Theme.of(context).colorScheme.primary
+              : index == 0
+                  ? Theme.of(context).extension<ShadowButtonTheme>()!.background
+                  : Theme.of(context).colorScheme.primary.withOpacity(0),
+          boxShadow: index == 0
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.2), // 阴影的颜色
+                    offset: Offset(0, 5), // 阴影与容器的距离
+                    blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                    spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+                  )
+                ]
+              : [],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: MyTheme.borderRadius,
+          child: InkWell(
+            splashColor: Theme.of(context).colorScheme.primary,
             borderRadius: MyTheme.borderRadius,
-            color: currentIndex.value == index
-                ? Theme.of(context).colorScheme.primary
-                : index == 0
-                    ? Theme.of(context)
-                        .extension<ShadowButtonTheme>()!
-                        .background
-                    : Theme.of(context).colorScheme.primary.withOpacity(0),
-            boxShadow: index == 0
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(.2), // 阴影的颜色
-                      offset: Offset(0, 5), // 阴影与容器的距离
-                      blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
-                      spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
-                    )
-                  ]
-                : [],
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 10),
-              currentIndex == index
-                  ? Icon(icon, color: Colors.white)
-                  : Icon(unselectIcon),
-              const SizedBox(width: 5),
-              Text(
-                text,
-                style: TextStyle(
-                  color: currentIndex.value == index ? Colors.white : null,
+            onTap: () {
+              if (currentIndex.value != index) {
+                currentIndex(index);
+                Get.offNamed(routeName[index], id: 1);
+              }
+            },
+            child: Row(
+              children: [
+                const SizedBox(width: 10),
+                currentIndex == index
+                    ? Icon(icon, color: Colors.white)
+                    : Icon(unselectIcon),
+                const SizedBox(width: 5),
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: currentIndex.value == index ? Colors.white : null,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -111,6 +113,32 @@ class WindowSurface extends StatelessWidget {
   }
 
   Widget navigator(context) {
+    Route createRoute(final Widget widget) {
+      return PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            SharedAxisTransition(
+          transitionType: SharedAxisTransitionType.vertical,
+          fillColor: Color.fromRGBO(0, 0, 0, 0),
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          child: widget,
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 0.1);
+          const end = Offset.zero;
+          const curve = Curves.ease;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+      );
+    }
+
     return Expanded(
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
