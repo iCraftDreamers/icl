@@ -34,8 +34,6 @@ dependencies:
 
   get:
 
-  google_fonts:
-
   file_picker:
   
   image:

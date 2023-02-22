@@ -101,7 +101,7 @@ class WindowSurface extends StatelessWidget {
         navigationButton(index++, key, value[0], value[1], context),
       ),
     );
-    children.insert(1, const SizedBox(height: 10));
+    children.insert(1, const SizedBox(height: 15));
     children.insert(children.length - 1, const Spacer());
 
     return Container(
