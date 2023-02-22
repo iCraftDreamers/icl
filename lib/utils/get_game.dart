@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:archive/archive.dart';
 
 class Game {
   late final jsonData;
@@ -20,7 +21,16 @@ class Game {
   }
 
   String decodeVersion() {
-    return jsonData['clientVersion'] ?? jsonData['jar'];
+    String fromJar() {
+      final by = jsonDecode(utf8.decode(ZipDecoder()
+          .decodeBytes(File(jar).readAsBytesSync())
+          .findFile("version.json")!
+          .content as List<int>));
+
+      return by["id"];
+    }
+
+    return jsonData['clientVersion'] ?? jsonData['jar'] ?? fromJar();
   }
 }
 
