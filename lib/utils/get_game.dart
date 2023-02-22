@@ -1,8 +1,31 @@
 import 'dart:io';
 import 'dart:convert';
 
+class Game {
+  late final jsonData;
+  late final String path;
+  late final String jar;
+  late final String id;
+  late final String version;
+  late final String? Forge;
+  late final String? OptiFine;
+
+  Game(this.jsonData, this.path, this.jar) {
+    id = decodeID();
+    version = decodeVersion();
+  }
+
+  String decodeID() {
+    return jsonData['id'];
+  }
+
+  String decodeVersion() {
+    return jsonData['clientVersion'] ?? jsonData['jar'];
+  }
+}
+
 class GameManaging {
-  static List<Map> installedGames = [];
+  static List<Game> installedGames = [];
   static List<Directory> gameDirs = [
     Directory('.minecraft'),
     Directory('%appdata%/Roadming/.minecraft')
@@ -32,16 +55,14 @@ class GameManaging {
       }
     }
     for (var dir in versionDirs) {
-      final jarFile = convertToFile(dir, "jar");
-      final jsonFile = convertToFile(dir, "json");
-      final jsonContent = jsonDecode(await jsonFile.readAsString());
-      Map<String, dynamic> jsonData = jsonContent;
-      installedGames.add({
-        "id": jsonData['id'],
-        "version": jsonData['clientVersion'],
-        "Path": dir.path,
-        "jarFile": jarFile.path
-      });
+      // final jarFile = convertToFile(dir, "jar");
+      // final jsonFile = convertToFile(dir, "json");
+      // final jsonContent = jsonDecode(await jsonFile.readAsString());
+      // Map<String, dynamic> jsonData = jsonContent;
+      installedGames.add(Game(
+          jsonDecode(await convertToFile(dir, "json").readAsString()),
+          dir.path,
+          convertToFile(dir, "jar").path));
     }
   }
 }
