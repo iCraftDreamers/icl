@@ -2,6 +2,14 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
 
+/// Game对象 存储一个游戏的信息
+///
+/// [jsonData]传入解析好的json数据
+///
+/// [path]传入路径
+///
+/// [jar]传入jar文件路径
+
 class Game {
   late final jsonData;
   late final String path; //版本文件夹路径
@@ -38,8 +46,28 @@ class Game {
 }
 
 class GameManaging {
+  /// GameManaging.installedGames[下标].[变量]
+  /// 以获取相应下标的对象的变量值
+  /// [path] 版本文件夹路径
+  ///
+  /// [jar] jar文件路径
+  ///
+  /// [id] 游戏名
+  ///
+  /// [version] 游戏版本
+  ///
+  /// [Forge] Forge版本
+  ///
+  /// [OptiFine] OptiFine版本
+  ///
+  /// Examples:
+  /// ```dart
+  /// GameManaging.installedGames.forEach( //遍历此数组当中的对象
+  ///   (element) => print(element.path), //打印遍历到的对象的path
+  ///     );
+  ///
+  /// ```
   static List<Game> installedGames = []; //以对象存储已安装的游戏
-  // e.g. GameManaging.installedGames[下标].version 获取版本
   static List<Directory> gameDirs = [
     //初始化游戏安装目录
     Directory('.minecraft'),
