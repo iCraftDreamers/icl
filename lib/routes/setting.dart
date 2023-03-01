@@ -44,6 +44,9 @@ class SettingPage extends BasePage with BasicPage {
             ),
             FilledButton(
               onPressed: () {
+                GameManaging.installedGames.forEach(
+                  (element) => print(element.path),
+                );
                 showDialog(
                   context: Get.context!,
                   builder: (context) => SimpleDialog(
