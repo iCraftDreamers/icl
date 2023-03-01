@@ -18,6 +18,8 @@ class AppearancePage extends BasePage with BasicPage {
     );
   }
 
+  static var themeMode = 0.obs;
+
   Widget radio(e, themeMode) {
     const labes = ["跟随系统", "浅色", "深色"];
 
@@ -35,13 +37,15 @@ class AppearancePage extends BasePage with BasicPage {
 
     return Row(
       children: [
-        Radio(
-          value: e,
-          groupValue: themeMode.value,
-          onChanged: (value) => {
-            themeMode(value),
-            Get.changeThemeMode(themeModeChange(value)!),
-          },
+        Obx(
+          () => Radio(
+            value: e,
+            groupValue: themeMode.value,
+            onChanged: (value) => {
+              themeMode(value),
+              Get.changeThemeMode(themeModeChange(value)!),
+            },
+          ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 5),
@@ -53,17 +57,14 @@ class AppearancePage extends BasePage with BasicPage {
 
   Widget body() {
     const radioValues = [0, 1, 2];
-    var themeMode = 0.obs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("主题", style: MyTheme.secondTitle),
         const SizedBox(height: 5),
-        Obx(
-          () => Column(
-            children: radioValues.map((e) => radio(e, themeMode)).toList(),
-          ),
+        Column(
+          children: radioValues.map((e) => radio(e, themeMode)).toList(),
         ),
       ],
     );
