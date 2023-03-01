@@ -35,6 +35,7 @@ class WindowSurface extends StatelessWidget {
     return Obx(
       () => AnimatedContainer(
         height: 54,
+        clipBehavior: Clip.antiAlias,
         duration: Duration(milliseconds: currentIndex == index ? 200 : 0),
         decoration: BoxDecoration(
           borderRadius: MyTheme.borderRadius,
@@ -56,10 +57,8 @@ class WindowSurface extends StatelessWidget {
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: MyTheme.borderRadius,
           child: InkWell(
             splashColor: Theme.of(context).colorScheme.primary,
-            borderRadius: MyTheme.borderRadius,
             onTap: () {
               if (currentIndex.value != index) {
                 currentIndex(index);
