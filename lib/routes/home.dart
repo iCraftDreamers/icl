@@ -112,28 +112,64 @@ class HomePage extends StatelessWidget {
   }
 
   Widget gridView() {
-    Widget card() {
+    Widget card(version, [image]) {
       return Card(
-        child: Column(
+        color: Colors.lightBlueAccent,
+        clipBehavior: Clip.hardEdge,
+        child: Stack(
           children: [
-            Row(
+            Column(
               children: [
-                Spacer(),
-                Padding(
-                  padding: EdgeInsets.all(5),
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.more_horiz),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      color: Colors.lightBlue,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          version,
+                          style: Get.textTheme.titleLarge!
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
-            )
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(5),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.more_horiz, color: Colors.white),
+                ),
+              ),
+            ),
           ],
         ),
       );
     }
 
-    final children = List.generate(20, (index) => card());
+    const versions = ["1.8", "1.19.2", "1.12.2"];
+    final children = versions.map((e) => card(e)).toList();
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0),
       child: GridView.extent(
@@ -190,31 +226,3 @@ class IconTextField extends StatelessWidget {
     );
   }
 }
-
-// class GameCard extends StatelessWidget {
-//   GameCard({super.key, required this.game});
-
-//   late final Game game;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       child: Column(
-//         children: [
-//           Row(
-//             children: [
-//               Spacer(),
-//               Padding(
-//                 padding: EdgeInsets.all(5),
-//                 child: IconButton(
-//                   onPressed: () {},
-//                   icon: Icon(Icons.more_horiz),
-//                 ),
-//               ),
-//             ],
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
