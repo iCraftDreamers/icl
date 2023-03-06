@@ -8,9 +8,9 @@ class AccountManaging {
     2: '外置登录',
   };
 
-  static String Steve = "assets/images/skins/steve.png";
-  static String Alex = "assets/images/skins/alex.png";
-  static String defaultSkin = Steve;
+  static const String Steve = "assets/images/skins/steve.png";
+  static const String Alex = "assets/images/skins/alex.png";
+  static String Default = Steve;
 
   static void add(String? username, String? password, loginMode) {
     switch (0) {
@@ -41,5 +41,22 @@ class AccountManaging {
 
   static void removeAccount(user) {
     gameAccounts.remove(user);
+  }
+
+  static void setCustomSkin(Map user, String skin) {
+    if (!user.containsKey("skin")) {
+      print("object");
+      Map<String, dynamic> theSkin = {"skin": skin};
+      user.addAll(theSkin);
+    }
+    if (user.containsKey("user")) {
+      user.update(user, (value) => skin);
+    }
+  }
+
+  static void setDefaultSkin(Map user) {
+    if (user.containsKey("skin")) {
+      user.remove("skin");
+    }
   }
 }

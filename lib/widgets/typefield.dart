@@ -7,6 +7,7 @@ class MyTextFormField extends StatelessWidget {
     this.validator,
     this.labelText,
     this.hintText,
+    required this.readOnly,
     required this.obscureText,
   });
 
@@ -14,6 +15,7 @@ class MyTextFormField extends StatelessWidget {
   final String? Function(String?)? validator;
   final String? labelText;
   final String? hintText;
+  final bool readOnly;
   final bool obscureText;
 
   static String? checkEmpty(value) {
@@ -26,6 +28,7 @@ class MyTextFormField extends StatelessWidget {
       controller: textEditingController,
       obscureText: obscureText,
       validator: validator,
+      readOnly: readOnly,
       decoration: InputDecoration(
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -34,6 +37,36 @@ class MyTextFormField extends StatelessWidget {
         hintText: hintText,
         labelText: labelText,
       ),
+    );
+  }
+}
+
+class TitleTextFormFiled extends MyTextFormField {
+  @override
+  const TitleTextFormFiled(
+      {super.key,
+      this.titleWidth,
+      required this.titelText,
+      super.textEditingController,
+      super.validator,
+      super.labelText,
+      super.hintText,
+      required super.readOnly,
+      required super.obscureText});
+
+  final double? titleWidth;
+  final String titelText;
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: titleWidth,
+          child: Text(titelText),
+        ),
+        Expanded(
+          child: super.build(context),
+        )
+      ],
     );
   }
 }
