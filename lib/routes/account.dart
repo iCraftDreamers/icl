@@ -144,14 +144,18 @@ class AddAccountDialog extends StatelessWidget {
           return [];
         case 2:
           return [
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "用户名：",
+              titleWidth: 75,
               obscureText: false,
               readOnly: false,
               textEditingController: username,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
             const SizedBox(height: 15),
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "密码：",
+              titleWidth: 75,
               obscureText: true,
               readOnly: false,
               textEditingController: password,
@@ -160,7 +164,8 @@ class AddAccountDialog extends StatelessWidget {
           ];
         default:
           return [
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "用户名：",
               obscureText: false,
               readOnly: false,
               textEditingController: username,
@@ -349,7 +354,6 @@ class EditAccountDialog extends StatelessWidget {
                     onSelectionChanged: (p0) async {
                       switch (p0.toString()) {
                         case "{custom}":
-                          print("howdareyou");
                           final File? file = await filePicker(['png']);
                           if (file != null) {
                             skinTemp(file.path);
