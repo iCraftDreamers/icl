@@ -121,7 +121,7 @@ class HomePage extends StatelessWidget {
             Column(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 1,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -130,7 +130,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 1,
+                  flex: 0,
                   child: SizedBox(
                     child: Padding(
                       padding: EdgeInsets.all(10),
