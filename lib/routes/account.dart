@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/routes/home.dart';
 
+import '../utils/file_picker.dart';
 import '/utils/skin.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
@@ -34,7 +38,7 @@ class AccountPage extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Image.memory(
-                Skin.toAvatar(AccountManaging.defaultSkin),
+                Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
                 width: 40,
                 height: 40,
               ),
@@ -54,7 +58,14 @@ class AccountPage extends StatelessWidget {
           Wrap(
             spacing: 5,
             children: [
-              IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+              IconButton(
+                  onPressed: () => showDialog(
+                        context: Get.context!,
+                        builder: (context) => EditAccountDialog(
+                          user: user,
+                        ),
+                      ),
+                  icon: Icon(Icons.edit)),
               IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () => showDialog(
@@ -133,22 +144,30 @@ class AddAccountDialog extends StatelessWidget {
           return [];
         case 2:
           return [
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "用户名：",
+              titleWidth: 75,
               obscureText: false,
+              readOnly: false,
               textEditingController: username,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
             const SizedBox(height: 15),
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "密码：",
+              titleWidth: 75,
               obscureText: true,
+              readOnly: false,
               textEditingController: password,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
           ];
         default:
           return [
-            MyTextFormField(
+            TitleTextFormFiled(
+              titelText: "用户名：",
               obscureText: false,
+              readOnly: false,
               textEditingController: username,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
@@ -216,6 +235,189 @@ class AddAccountDialog extends StatelessWidget {
               password.text,
               loginMode.value,
             );
+            Get.back();
+          }
+        }),
+        DialogCancelButton(onPressed: () => Get.back())
+      ],
+    );
+  }
+}
+
+class EditAccountDialog extends StatelessWidget {
+  final Map user;
+  const EditAccountDialog({super.key, required this.user});
+  @override
+  Widget build(BuildContext context) {
+    RxSet<String> switchSelected() {
+      if (user['skin'] != null) {
+        switch (user['skin']) {
+          case AccountManaging.Steve:
+            return {"steve"}.obs;
+          case AccountManaging.Alex:
+            return {"alex"}.obs;
+          default:
+            return {"custom"}.obs;
+        }
+      }
+      return {"default"}.obs;
+    }
+
+    RxSet<String> skinSelected = switchSelected();
+    final TextEditingController username =
+        TextEditingController(text: user['username']);
+    final TextEditingController loginmode = TextEditingController(
+        text: AccountManaging.loginModes[user['loginmode']]);
+    // final TextEditingController skin = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    RxString skinTemp = "${(user['skin'] ?? AccountManaging.Default)}".obs;
+    List<Widget> children(int loginMode) {
+      switch (user['loginmode']) {
+        case 1:
+          return [];
+        case 2:
+          return [];
+        default:
+          return [
+            TitleTextFormFiled(
+              titelText: "登录模式:",
+              titleWidth: 75,
+              obscureText: false,
+              readOnly: true,
+              textEditingController: loginmode,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TitleTextFormFiled(
+              titelText: "用户名:",
+              titleWidth: 75,
+              obscureText: false,
+              readOnly: false,
+              textEditingController: username,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
+          ];
+      }
+    }
+
+    return AlertDialog(
+      title: Text("编辑${user['username']}",
+          style: TextStyle(fontWeight: FontWeight.bold)),
+      content: SizedBox(
+        width: 400,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 15),
+            Row(
+              children: [
+                Obx(
+                  () => SizedBox(
+                    width: 125,
+                    height: 125,
+                    child: Image.memory(
+                      Skin.toAvatar(skinTemp.value),
+                      width: 75,
+                      height: 75,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Form(
+                    key: formKey,
+                    child: Column(
+                      children: children(user['loginmode']),
+                    ),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 15),
+            Obx(
+              () => Row(
+                children: [
+                  Text("展示皮肤:"),
+                  SizedBox(
+                    width: 80,
+                  ),
+                  SegmentedButton(
+                    segments: [
+                      ButtonSegment(value: "default", label: Text("默认")),
+                      ButtonSegment(value: "steve", label: Text("Steve")),
+                      ButtonSegment(value: "alex", label: Text("Alex")),
+                      ButtonSegment(value: "custom", label: Text("自定义"))
+                    ],
+                    selected: skinSelected,
+                    // onSelectionChanged: (p0) => selected(p0),
+                    onSelectionChanged: (p0) async {
+                      switch (p0.toString()) {
+                        case "{custom}":
+                          final File? file = await filePicker(['png']);
+                          if (file != null) {
+                            skinTemp(file.path);
+                            skinSelected(p0);
+                          }
+                          break;
+                        case "{steve}":
+                          skinTemp(AccountManaging.Steve);
+                          skinSelected(p0);
+                          break;
+                        case "{alex}":
+                          skinTemp(AccountManaging.Alex);
+                          skinSelected(p0);
+                          break;
+                        default:
+                          skinTemp(AccountManaging.Default);
+                          skinSelected(p0);
+                      }
+                    },
+                    showSelectedIcon: false,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 15),
+            // Obx(() {
+            //   switch (selected.toString()) {
+            //     case "{custom}":
+            //       return Row(
+            //         children: [
+            //           Text("皮肤路径:"),
+            //           SizedBox(
+            //             width: 20,
+            //           ),
+            //           Expanded(
+            //               child: MyTextFormField(
+            //             obscureText: false,
+            //             textEditingController: skin,
+            //           )),
+            //           IconButton(
+            //               onPressed: () async {
+            //                 final File? file = await filePicker(['png']);
+            //                 skin.text = file!.path;
+            //               },
+            //               icon: Icon(Icons.file_open))
+            //         ],
+            //       );
+            //     default:
+            //       return Row();
+            //   }
+            // }),
+          ],
+        ),
+      ),
+      actions: [
+        DialogConfirmButton(onPressed: () {
+          if (formKey.currentState!.validate()) {
+            switch (skinSelected.toString()) {
+              case "{default}":
+                AccountManaging.setDefaultSkin(user);
+                break;
+              default:
+                AccountManaging.setCustomSkin(user, skinTemp.value);
+            }
             Get.back();
           }
         }),
