@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("游戏列表", style: MyTheme.title),
+            Text("库", style: MyTheme.title),
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.add),
@@ -150,7 +150,13 @@ class HomePage extends StatelessWidget {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {},
+                onTap: () => Navigator.of(Get.context!).push(
+                  MaterialPageRoute(
+                    builder: (context) => Scaffold(
+                      appBar: AppBar(title: Text("测试")),
+                    ),
+                  ),
+                ),
               ),
             ),
             Padding(

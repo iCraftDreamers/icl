@@ -2,13 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/routes/home.dart';
 
-import '../utils/file_picker.dart';
+import '/widgets/shadow_box_decoration.dart';
+import '/utils/file_picker.dart';
 import '/utils/skin.dart';
 import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
-import '/widgets/theme.dart';
 import '/widgets/typefield.dart';
 
 class AccountPage extends StatelessWidget {
@@ -19,18 +18,7 @@ class AccountPage extends StatelessWidget {
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        borderRadius: MyTheme.borderRadius,
-        color: Get.theme.extension<ShadowButtonTheme>()!.background,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.2), // 阴影的颜色
-            offset: Offset(0, 5), // 阴影与容器的距离
-            blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
-            spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
-          ),
-        ],
-      ),
+      decoration: ShadowBoxDecoration(Get.context!),
       child: Row(
         children: [
           Wrap(
@@ -59,13 +47,14 @@ class AccountPage extends StatelessWidget {
             spacing: 5,
             children: [
               IconButton(
-                  onPressed: () => showDialog(
-                        context: Get.context!,
-                        builder: (context) => EditAccountDialog(
-                          user: user,
-                        ),
-                      ),
-                  icon: Icon(Icons.edit)),
+                onPressed: () => showDialog(
+                  context: Get.context!,
+                  builder: (context) => EditAccountDialog(
+                    user: user,
+                  ),
+                ),
+                icon: Icon(Icons.edit),
+              ),
               IconButton(
                 icon: Icon(Icons.delete),
                 onPressed: () => showDialog(
@@ -95,7 +84,7 @@ class AccountPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text("账号管理", style: TextStyle(fontSize: 32)),
+            const Text("账号", style: TextStyle(fontSize: 32)),
             const Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(

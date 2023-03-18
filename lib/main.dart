@@ -4,7 +4,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:icl/utils/get_game.dart';
 import 'package:icl/utils/get_java.dart';
 
-import 'components/app.dart';
+import 'interface/app.dart';
 
 void main() {
   runApp(const MyApp());
