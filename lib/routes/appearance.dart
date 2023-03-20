@@ -4,17 +4,17 @@ import 'package:icl/widgets/theme.dart';
 
 import '/widgets/page.dart';
 
-class AppearancePage extends BasePage with BasicPage {
+class AppearancePage extends RoutePage {
   const AppearancePage({super.key});
 
   @override
-  String pageName() => "外观";
+  String routeName() => "外观";
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
-      children: [head(context), const SizedBox(height: 10), body()],
+      children: [title(), const SizedBox(height: 10), body()],
     );
   }
 

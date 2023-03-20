@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/widgets/page.dart';
 
 import '/widgets/shadow_box_decoration.dart';
 import '/utils/file_picker.dart';
@@ -10,8 +11,11 @@ import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
 
-class AccountPage extends StatelessWidget {
+class AccountPage extends RoutePage {
   const AccountPage({super.key});
+
+  @override
+  String routeName() => "账号";
 
   Widget accountsItem(user) {
     return Container(
@@ -84,8 +88,8 @@ class AccountPage extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Text("账号", style: TextStyle(fontSize: 32)),
-            const Spacer(),
+            title(),
+            Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(
                 context: Get.context!,
@@ -104,13 +108,11 @@ class AccountPage extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        Obx(
-          () => Column(
-            children: AccountManaging.gameAccounts
-                .map((element) => accountsItem(element))
-                .toList(),
-          ),
+        SizedBox(height: 10),
+        Column(
+          children: AccountManaging.gameAccounts
+              .map((element) => accountsItem(element))
+              .toList(),
         ),
       ],
     );

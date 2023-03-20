@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/utils/file_picker.dart';
 import 'package:icl/utils/get_game.dart';
+import 'package:icl/widgets/page.dart';
 import 'package:icl/widgets/theme.dart';
 
 import '../widgets/dialog.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends RoutePage {
   const HomePage({super.key});
+
+  @override
+  String routeName() => "库";
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,8 @@ class HomePage extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text("库", style: MyTheme.title),
-            const Spacer(),
+            title(),
+            Spacer(),
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {},

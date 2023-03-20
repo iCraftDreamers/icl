@@ -6,18 +6,18 @@ import 'package:icl/utils/get_java.dart';
 
 import '/widgets/page.dart';
 
-class SettingPage extends BasePage with BasicPage {
+class SettingPage extends RoutePage {
   const SettingPage({super.key});
 
   @override
-  String pageName() => "设置";
+  String routeName() => "设置";
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        head(context),
+        title(),
         ValueBuilder<double?>(
           initialValue: 1024,
           builder: (value, updater) => Slider(
