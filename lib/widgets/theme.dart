@@ -16,13 +16,13 @@ class MyTheme {
     dialogTheme: lightDialogTheme,
   );
   static final lightAppBarTheme = ThemeData.light().appBarTheme.copyWith(
-        color: const Color.fromRGBO(247, 247, 247, 1),
+        backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
       );
   static final lightDividerTheme = ThemeData.light().dividerTheme.copyWith(
         color: const Color.fromRGBO(197, 197, 197, 1),
       );
   static final lightDialogTheme = ThemeData.light().dialogTheme.copyWith(
-        backgroundColor: Colors.white,
+        backgroundColor: lightAppBarTheme.backgroundColor,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
@@ -50,7 +50,8 @@ class MyTheme {
   static final darkDividerTheme = ThemeData.dark().dividerTheme.copyWith(
         color: const Color.fromRGBO(104, 104, 104, 1),
       );
-  static final darkDialogTheme = ThemeData.light().dialogTheme.copyWith(
+  static final darkDialogTheme = ThemeData.dark().dialogTheme.copyWith(
+        backgroundColor: darkAppBarTheme.backgroundColor,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10))),
       );

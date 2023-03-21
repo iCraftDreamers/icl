@@ -24,16 +24,19 @@ class MyTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const borderRadius = BorderRadius.all(Radius.circular(7.5));
     return TextFormField(
       controller: textEditingController,
       obscureText: obscureText,
       validator: validator,
       readOnly: readOnly,
       decoration: InputDecoration(
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(7.5))),
+        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        border: const OutlineInputBorder(borderRadius: borderRadius),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: Colors.grey),
+        ),
         hintText: hintText,
         labelText: labelText,
       ),
@@ -42,20 +45,22 @@ class MyTextFormField extends StatelessWidget {
 }
 
 class TitleTextFormFiled extends MyTextFormField {
-  @override
-  const TitleTextFormFiled(
-      {super.key,
-      this.titleWidth,
-      required this.titelText,
-      super.textEditingController,
-      super.validator,
-      super.labelText,
-      super.hintText,
-      required super.readOnly,
-      required super.obscureText});
+  const TitleTextFormFiled({
+    super.key,
+    this.titleWidth,
+    required this.titelText,
+    super.textEditingController,
+    super.validator,
+    super.labelText,
+    super.hintText,
+    required super.readOnly,
+    required super.obscureText,
+  });
 
   final double? titleWidth;
   final String titelText;
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       children: [

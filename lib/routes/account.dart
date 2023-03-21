@@ -157,6 +157,7 @@ class AddAccountDialog extends StatelessWidget {
           return [
             TitleTextFormFiled(
               titelText: "用户名：",
+              titleWidth: 75,
               obscureText: false,
               readOnly: false,
               textEditingController: username,
@@ -176,7 +177,7 @@ class AddAccountDialog extends StatelessWidget {
             Row(
               children: [
                 const SizedBox(
-                  width: 80,
+                  width: 75,
                   child: Text("登录方式:"),
                 ),
                 SizedBox(
