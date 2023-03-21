@@ -11,7 +11,7 @@ void main() {
   init();
 }
 
-void init() {
+void init() async {
   GetJava.init();
   GameManaging.init();
   doWhenWindowReady(() {

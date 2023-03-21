@@ -23,16 +23,18 @@ class Java {
     return versionLine.substring('JAVA_VERSION='.length);
   }
 
-  Map show() {
-    return Map.fromIterables(["Path", "Version"], [path, version]);
+  @override
+  String toString() {
+    return Map.fromIterables(["Path", "Version"], [path, version]).toString();
   }
 }
 
 class GetJava {
   static List<Java> list = [];
 
-  static init() async {
-    await pathOnEnvironment().then(
+  static Future<void> init() async {
+    list.clear();
+    pathOnEnvironment().then(
       (paths) => paths.forEach(
         (path) {
           list.add(Java(path));
@@ -49,7 +51,7 @@ class GetJava {
     final processResult = await Process.run(command, args, runInShell: true);
     result = processResult.stdout.trim().split("\r\n");
 
-    await Future.forEach(variables, (element) async {
+    Future.forEach(variables, (element) async {
       final variable = Platform.environment[element];
       if (variable == null) return;
       final path = variable + (Platform.isWindows ? "\\bin" : "/bin");

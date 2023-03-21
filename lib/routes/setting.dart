@@ -32,7 +32,7 @@ class SettingPage extends RoutePage {
         Row(
           children: [
             FilledButton(
-              onPressed: () => print(GetJava.list),
+              onPressed: () => GetJava.list.forEach((java) => print(java)),
               child: const Text("测试"),
             ),
             FilledButton(
