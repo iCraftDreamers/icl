@@ -30,7 +30,6 @@ class WindowBar extends StatelessWidget {
 
     return WindowTitleBarBox(
       child: Container(
-        color: Theme.of(context).appBarTheme.backgroundColor,
         child: Row(
           children: [
             Expanded(

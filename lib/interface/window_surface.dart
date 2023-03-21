@@ -17,21 +17,15 @@ class WindowSurface extends StatelessWidget {
       children: [
         navigation(context),
         const VerticalDivider(width: 1),
-        navigator(context),
+        navigationView(context),
       ],
     );
   }
 
   static var currentIndex = 1.obs;
 
-  Widget navigationButton(int index, String text, IconData icon,
-      IconData unselectIcon, BuildContext context) {
-    const List<String> routeName = [
-      "/account",
-      "/home",
-      "/appearance",
-      "/setting",
-    ];
+  Widget navigationButton(int index, String routeName, String text,
+      IconData icon, IconData unselectIcon, BuildContext context) {
     return Obx(
       () => AnimatedContainer(
         height: 54,
@@ -62,7 +56,7 @@ class WindowSurface extends StatelessWidget {
             onTap: () {
               if (currentIndex.value != index) {
                 currentIndex(index);
-                Get.offNamed(routeName[index], id: 1);
+                Get.offNamed(routeName, id: 1);
               }
             },
             child: Row(
@@ -93,11 +87,18 @@ class WindowSurface extends StatelessWidget {
       "外观": [Icons.palette, Icons.palette_outlined],
       "设置": [Icons.settings, Icons.settings_outlined],
     };
-    var index = 0;
+    const List<String> routeName = [
+      "/account",
+      "/home",
+      "/appearance",
+      "/setting",
+    ];
+    var i = 0;
     List<Widget> children = [];
     items.forEach(
       (key, value) => children.add(
-        navigationButton(index++, key, value[0], value[1], context),
+        navigationButton(
+            i++, routeName[i - 1], key, value[0], value[1], context),
       ),
     );
     children.insert(1, const SizedBox(height: 15));
@@ -105,13 +106,13 @@ class WindowSurface extends StatelessWidget {
 
     return Container(
       width: 200,
-      color: Theme.of(context).navigationBarTheme.backgroundColor,
+      color: Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
       child: Column(children: children),
     );
   }
 
-  Widget navigator(context) {
+  Widget navigationView(context) {
     Route createRoute(final Widget widget) {
       return PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
@@ -140,7 +141,7 @@ class WindowSurface extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Colors.transparent,
         child: Navigator(
           key: Get.nestedKey(1),
           initialRoute: '/home',

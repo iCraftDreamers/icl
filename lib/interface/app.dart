@@ -10,24 +10,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget home() {
-      return Scaffold(
-        body: Column(
+    return GetMaterialApp(
+      theme: MyTheme.lightTheme,
+      darkTheme: MyTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      debugShowCheckedModeBanner: false,
+      home: Home(),
+    );
+  }
+}
+
+class Home extends StatelessWidget {
+  const Home({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
+        child: Column(
           children: const [
             WindowBar(),
             Divider(height: 1),
             Expanded(child: WindowSurface()),
           ],
         ),
-      );
-    }
-
-    return GetMaterialApp(
-      theme: MyTheme.lightTheme,
-      darkTheme: MyTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      debugShowCheckedModeBanner: false,
-      home: home(),
+      ),
     );
   }
 }
