@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/pages/game.dart';
 import 'package:icl/utils/file_picker.dart';
 import 'package:icl/utils/get_game.dart';
 import 'package:icl/widgets/page.dart';
@@ -153,13 +154,7 @@ class HomePage extends RoutePage {
             Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => Navigator.of(Get.context!).push(
-                  MaterialPageRoute(
-                    builder: (context) => Scaffold(
-                      appBar: AppBar(title: Text("测试")),
-                    ),
-                  ),
-                ),
+                onTap: () => Navigator.of(Get.context!).push(GamePage),
               ),
             ),
             Padding(

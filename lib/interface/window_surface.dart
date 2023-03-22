@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/widgets/theme.dart';
 
-import '/routes/account.dart';
-import '/routes/home.dart';
-import '/routes/appearance.dart';
-import '/routes/setting.dart';
+import '/pages/account.dart';
+import '/pages/home.dart';
+import '/pages/appearance.dart';
+import '/pages/setting.dart';
 
 class WindowSurface extends StatelessWidget {
   const WindowSurface({super.key});
