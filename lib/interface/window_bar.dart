@@ -8,6 +8,7 @@ class WindowBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isMaximize = false.obs;
     Widget windowButtons() {
       final iconColor = Theme.of(context).iconTheme.color;
       final buttonColors = WindowButtonColors(
@@ -22,7 +23,25 @@ class WindowBar extends StatelessWidget {
       return Row(
         children: [
           MinimizeWindowButton(colors: buttonColors, animate: true),
-          MaximizeWindowButton(colors: buttonColors, animate: true),
+          Obx(
+            () => isMaximize.value
+                ? RestoreWindowButton(
+                    colors: buttonColors,
+                    animate: true,
+                    onPressed: () => {
+                      appWindow.maximizeOrRestore(),
+                      isMaximize(false),
+                    },
+                  )
+                : MaximizeWindowButton(
+                    colors: buttonColors,
+                    animate: true,
+                    onPressed: () => {
+                      appWindow.maximizeOrRestore(),
+                      isMaximize(true),
+                    },
+                  ),
+          ),
           CloseWindowButton(colors: buttonColors, animate: true),
         ],
       );
@@ -34,6 +53,10 @@ class WindowBar extends StatelessWidget {
           children: [
             Expanded(
               child: MoveWindow(
+                onDoubleTap: () => {
+                  appWindow.maximizeOrRestore(),
+                  isMaximize(!isMaximize.value),
+                },
                 child: const Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
