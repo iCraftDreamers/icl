@@ -116,64 +116,8 @@ class HomePage extends RoutePage {
   }
 
   Widget gridView() {
-    Widget card(version, [image]) {
-      return Card(
-        color: Colors.lightBlueAccent,
-        clipBehavior: Clip.hardEdge,
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                      color: Colors.lightBlue,
-                    ),
-                  ),
-                ),
-                Expanded(
-                  flex: 0,
-                  child: SizedBox(
-                    child: Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          version,
-                          style: Get.textTheme.titleLarge!
-                              .copyWith(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => Navigator.of(Get.context!).push(GamePage),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(5),
-              child: Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.more_horiz, color: Colors.white),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
     const versions = ["1.8", "1.19.2", "1.12.2"];
-    final children = versions.map((e) => card(e)).toList();
+    final children = versions.map((e) => _Card(title: e)).toList();
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0),
       child: GridView.extent(
@@ -229,4 +173,75 @@ class IconTextField extends StatelessWidget {
       ],
     );
   }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: Colors.lightBlueAccent,
+      clipBehavior: Clip.hardEdge,
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    color: Colors.lightBlue,
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 0,
+                child: SizedBox(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => Navigator.of(Get.context!).push(
+                _createRoute(GamePage()),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.all(5),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.more_horiz, color: Colors.white),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+Route _createRoute(Widget page) {
+  return MaterialPageRoute(builder: (context) => page);
 }
