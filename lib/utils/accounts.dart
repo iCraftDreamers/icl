@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 class AccountManaging {
   static RxList gameAccounts = [].obs;
-  static Map<int, String> loginModes = {
+  static const Map<int, String> loginModes = {
     0: '离线登录',
     1: '正版登录',
     2: '外置登录',
@@ -12,7 +12,7 @@ class AccountManaging {
   static const String Alex = "assets/images/skins/alex.png";
   static String Default = Steve;
 
-  static void add(String? username, String? password, loginMode) {
+  static void add(String? username, String? password, int loginMode) {
     switch (0) {
       case 0:
         gameAccounts.add(

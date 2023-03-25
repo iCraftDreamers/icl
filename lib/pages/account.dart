@@ -17,7 +17,53 @@ class AccountPage extends RoutePage {
   @override
   String routeName() => "账号";
 
-  Widget accountsItem(user) {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(15),
+      children: [
+        Row(
+          children: [
+            title(),
+            Spacer(),
+            ElevatedButton(
+              onPressed: () => showDialog(
+                context: Get.context!,
+                builder: (context) => _AddAccountDialog(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: const [
+                    Icon(Icons.add),
+                    Text("添加用户"),
+                    SizedBox(width: 7),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10),
+        Obx(
+          () => Column(
+            children: AccountManaging.gameAccounts
+                .map((acc) => _AccountItem(user: acc))
+                .toList(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AccountItem extends StatelessWidget {
+  const _AccountItem({required this.user});
+
+  final Map user;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -53,7 +99,7 @@ class AccountPage extends RoutePage {
               IconButton(
                 onPressed: () => showDialog(
                   context: Get.context!,
-                  builder: (context) => EditAccountDialog(
+                  builder: (context) => _EditAccountDialog(
                     user: user,
                   ),
                 ),
@@ -80,47 +126,10 @@ class AccountPage extends RoutePage {
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(15),
-      children: [
-        Row(
-          children: [
-            title(),
-            Spacer(),
-            ElevatedButton(
-              onPressed: () => showDialog(
-                context: Get.context!,
-                builder: (context) => AddAccountDialog(),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: const [
-                    Icon(Icons.add),
-                    Text("添加用户"),
-                    SizedBox(width: 7),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 10),
-        Column(
-          children: AccountManaging.gameAccounts
-              .map((element) => accountsItem(element))
-              .toList(),
-        ),
-      ],
-    );
-  }
 }
 
-class AddAccountDialog extends StatelessWidget {
-  const AddAccountDialog({super.key});
+class _AddAccountDialog extends StatelessWidget {
+  const _AddAccountDialog();
 
   @override
   Widget build(BuildContext context) {
@@ -236,9 +245,11 @@ class AddAccountDialog extends StatelessWidget {
   }
 }
 
-class EditAccountDialog extends StatelessWidget {
+class _EditAccountDialog extends StatelessWidget {
+  const _EditAccountDialog({required this.user});
+
   final Map user;
-  const EditAccountDialog({super.key, required this.user});
+
   @override
   Widget build(BuildContext context) {
     RxSet<String> switchSelected() {
