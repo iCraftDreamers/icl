@@ -87,6 +87,7 @@ class GameManaging {
   static Future<void> init() async {
     installedGames.clear();
     List<FileSystemEntity> versionDirs = [];
+    print(gameDirs[0].toString());
     for (var dir in gameDirs) {
       //遍历游戏安装目录下的已安装游戏文件夹
       var versionDir = Directory('${dir.path}/${'versions'}');

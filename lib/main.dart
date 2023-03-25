@@ -6,7 +6,7 @@ import 'package:icl/utils/get_java.dart';
 
 import 'interface/app.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
   init();
 }
