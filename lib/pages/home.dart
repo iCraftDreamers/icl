@@ -7,7 +7,7 @@ import 'package:icl/utils/file_picker.dart';
 import 'package:icl/utils/get_game.dart';
 import 'package:icl/widgets/page.dart';
 
-import '../widgets/dialog.dart';
+import '/widgets/dialog.dart';
 
 class HomePage extends RoutePage {
   const HomePage({super.key});
@@ -17,30 +17,37 @@ class HomePage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(15),
-      children: [
-        Row(
-          children: [
-            title(),
-            Spacer(),
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_horiz),
-              onPressed: () => GameManaging.init(),
-            )
-          ],
-        ),
-        const SizedBox(height: 10),
-        gridView(),
-      ],
+    return Navigator(
+      observers: [HeroController()],
+      onGenerateRoute: (settings) {
+        return _createRoute(
+          ListView(
+            padding: const EdgeInsets.all(15),
+            children: [
+              Row(
+                children: [
+                  title(),
+                  Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.refresh),
+                    onPressed: () {},
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.more_horiz),
+                    onPressed: () => GameManaging.init(),
+                  )
+                ],
+              ),
+              const SizedBox(height: 10),
+              gridView(),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -116,7 +123,7 @@ class HomePage extends RoutePage {
   }
 
   Widget gridView() {
-    const versions = ["1.8", "1.19.2", "1.12.2"];
+    const versions = ["1.8"];
     final children = versions.map((e) => _Card(title: e)).toList();
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 0),
@@ -182,61 +189,71 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.lightBlueAccent,
+    return Container(
       clipBehavior: Clip.hardEdge,
-      child: Stack(
-        children: [
-          Column(
+      decoration: BoxDecoration(
+        color: Colors.lightBlueAccent,
+        borderRadius: BorderRadius.circular(12.5),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          splashColor: Colors.blue,
+          // onTap: () => Get.to(() => GamePage(), id: 2),
+          onTap: () => Navigator.of(context).push(_createRoute(GamePage())),
+          child: Stack(
             children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                    color: Colors.lightBlue,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 0,
-                child: SizedBox(
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleLarge!
-                            .copyWith(color: Colors.white),
+              Column(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Hero(
+                      tag: "image",
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(12.5)),
+                          image: DecorationImage(
+                            image: AssetImage(
+                                "assets/images/background/2020-04-11_20.30.41.png"),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
                       ),
                     ),
+                  ),
+                  Expanded(
+                    flex: 0,
+                    child: SizedBox(
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge!
+                                .copyWith(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.more_horiz, color: Colors.white),
                   ),
                 ),
               ),
             ],
           ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => Navigator.of(Get.context!).push(
-                _createRoute(GamePage()),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(5),
-            child: Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_horiz, color: Colors.white),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

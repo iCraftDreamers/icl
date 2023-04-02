@@ -25,59 +25,51 @@ class GamePage extends StatelessWidget {
           InnerShadow(
             blur: 20,
             shadowColor: Colors.black54,
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                      "assets/images/background/2020-04-11_20.30.41.png"),
-                  fit: BoxFit.cover,
+            child: Hero(
+              tag: "image",
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                        "assets/images/background/2020-04-11_20.30.41.png"),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
           ),
-          Flex(
-            direction: Axis.vertical,
+          Stack(
             children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    Flex(
-                      direction: Axis.horizontal,
-                      children: [
-                        NavigatorBackButton(
-                          context: context,
-                          animate: true,
-                          colors: buttonColors,
-                        ),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: WindowTitleBar(
-                            title: const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text("iCraft Launcher"),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.all(30),
-                        child: SizedBox(
-                          height: 70,
-                          child: FloatingActionButton.extended(
-                            onPressed: () {},
-                            icon: Icon(Icons.play_arrow, size: 32),
-                            label: Text(
-                              "开始游戏",
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
+              Flex(
+                direction: Axis.horizontal,
+                children: [
+                  NavigatorBackButton(
+                    context: context,
+                    animate: true,
+                    colors: buttonColors,
+                  )
+                ],
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                  padding: EdgeInsets.all(30),
+                  child: SizedBox(
+                    height: 70,
+                    child: FloatingActionButton.extended(
+                      onPressed: () {},
+                      isExtended: true,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      extendedPadding: EdgeInsets.only(left: 40, right: 50),
+                      icon: Icon(Icons.play_arrow, size: 32),
+                      label: Text(
+                        "开始游戏",
+                        style: TextStyle(fontSize: 24),
                       ),
                     ),
-                  ],
+                  ),
                 ),
               ),
             ],

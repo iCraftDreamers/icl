@@ -23,9 +23,8 @@ class MyTheme {
       );
   static final lightDialogTheme = ThemeData.light().dialogTheme.copyWith(
         backgroundColor: lightAppBarTheme.backgroundColor,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-        ),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       );
   //
   //  深色主题
@@ -52,8 +51,8 @@ class MyTheme {
       );
   static final darkDialogTheme = ThemeData.dark().dialogTheme.copyWith(
         backgroundColor: darkAppBarTheme.backgroundColor,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10))),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       );
 
   // 自定义字体

@@ -71,6 +71,7 @@ class GameManaging {
   static List<Directory> gameDirs = [
     //初始化游戏安装目录
     Directory('.minecraft'),
+    Directory('D:/游戏/Minecraft/1.8/.minecraft'),
     Directory('%appdata%/Roadming/.minecraft')
   ];
 
@@ -87,9 +88,8 @@ class GameManaging {
   static Future<void> init() async {
     installedGames.clear();
     List<FileSystemEntity> versionDirs = [];
-    print(gameDirs[0].toString());
+    //遍历游戏安装目录下的已安装游戏文件夹
     for (var dir in gameDirs) {
-      //遍历游戏安装目录下的已安装游戏文件夹
       var versionDir = Directory('${dir.path}/${'versions'}');
       if (await versionDir.exists()) {
         versionDirs.addAll(
@@ -100,8 +100,8 @@ class GameManaging {
         );
       }
     }
+    //解析已安装游戏的目录内的json文件，并以对象存储
     for (var dir in versionDirs) {
-      //解析已安装游戏的目录内的json文件，并以对象存储
       installedGames.add(Game(
           jsonDecode(await convertToFile(dir, "json").readAsString()),
           dir.path,

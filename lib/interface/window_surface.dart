@@ -141,7 +141,8 @@ class WindowSurface extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        color: Colors.transparent,
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(),
         child: Navigator(
           key: Get.nestedKey(1),
           initialRoute: '/home',
