@@ -218,10 +218,11 @@ class _Card extends StatelessWidget {
                     flex: 0,
                     child: ClipRect(
                       child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
                         child: Container(
                           padding: EdgeInsets.all(10),
                           alignment: Alignment.centerLeft,
+                          color: Colors.white.withOpacity(.15),
                           child: Text(
                             title,
                             style: Theme.of(context)

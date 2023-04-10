@@ -1,78 +1,71 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:icl/interface/window_bar.dart';
-
-import '/widgets/inner_shadow.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = Theme.of(context).iconTheme.color;
-    final buttonColors = WindowButtonColors(
-      normal: Colors.transparent,
-      mouseOver: Get.theme.hoverColor,
-      mouseDown: Get.theme.focusColor,
-      iconNormal: iconColor,
-      iconMouseOver: iconColor,
-      iconMouseDown: iconColor,
-    );
-    return Scaffold(
-      body: Stack(
+    final tabs = ["开始游戏", "配置"];
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          InnerShadow(
-            blur: 20,
-            shadowColor: Colors.black54,
-            child: Hero(
-              tag: "image",
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage(
-                        "assets/images/background/2020-04-11_20.30.41.png"),
-                    fit: BoxFit.cover,
-                  ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.arrow_back),
+                    ),
+                    Text(
+                      "1.8",
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(),
+                    ),
+                  ],
                 ),
-              ),
+                Row(
+                  children: [
+                    SizedBox(
+                      height: 30,
+                      width: 180,
+                      child: DefaultTabController(
+                        length: tabs.length,
+                        child: TabBar(
+                          tabs: tabs.map((e) => Tab(text: e)).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          Stack(
-            children: [
-              Flex(
-                direction: Axis.horizontal,
-                children: [
-                  NavigatorBackButton(
-                    context: context,
-                    animate: true,
-                    colors: buttonColors,
-                  )
-                ],
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: EdgeInsets.all(30),
-                  child: SizedBox(
-                    height: 70,
-                    child: FloatingActionButton.extended(
-                      onPressed: () {},
-                      isExtended: true,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      extendedPadding: EdgeInsets.only(left: 40, right: 50),
-                      icon: Icon(Icons.play_arrow, size: 32),
-                      label: Text(
-                        "开始游戏",
-                        style: TextStyle(fontSize: 24),
+          Expanded(
+            child: ListView(
+              children: [
+                SizedBox(
+                  height: 400,
+                  child: Hero(
+                    tag: "image",
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              "assets/images/background/2020-04-11_20.30.41.png"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
