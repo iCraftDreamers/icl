@@ -4,53 +4,56 @@ class MyTheme {
   //
   //  浅色主题
   //
-  static final ThemeData lightTheme = ThemeData(
-    fontFamily: 'MiSans',
-    brightness: Brightness.light,
-    colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
-    useMaterial3: true,
-    extensions: [ShadowButtonTheme.light],
-    scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
-    appBarTheme: lightAppBarTheme,
-    dividerTheme: lightDividerTheme,
-    dialogTheme: lightDialogTheme,
-  );
-  static final lightAppBarTheme = ThemeData.light().appBarTheme.copyWith(
-        backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+  static ThemeData lightTheme() => ThemeData(
+        fontFamily: 'MiSans',
+        brightness: Brightness.light,
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
+        useMaterial3: true,
+        extensions: [ShadowButtonTheme.light],
+        scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+        appBarTheme: lightAppBarTheme(),
+        dividerTheme: lightDividerTheme(),
+        dialogTheme: lightDialogTheme(),
       );
-  static final lightDividerTheme = ThemeData.light().dividerTheme.copyWith(
-        color: const Color.fromRGBO(197, 197, 197, 1),
-      );
-  static final lightDialogTheme = ThemeData.light().dialogTheme.copyWith(
-        backgroundColor: lightAppBarTheme.backgroundColor,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-      );
+  static AppBarTheme lightAppBarTheme() =>
+      ThemeData.light().appBarTheme.copyWith(
+            backgroundColor: const Color.fromRGBO(247, 247, 247, 1),
+          );
+  static DividerThemeData lightDividerTheme() =>
+      ThemeData.light().dividerTheme.copyWith(
+            color: const Color.fromRGBO(197, 197, 197, 1),
+          );
+  static DialogTheme lightDialogTheme() =>
+      ThemeData.light().dialogTheme.copyWith(
+            backgroundColor: lightAppBarTheme().backgroundColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.5)),
+          );
   //
   //  深色主题
   //
-  static final ThemeData darkTheme = ThemeData(
-    fontFamily: 'MiSans',
-    brightness: Brightness.dark,
-    colorScheme: ColorScheme.fromSwatch(
-      primarySwatch: Colors.blue,
-      brightness: Brightness.dark,
-    ),
-    useMaterial3: true,
-    extensions: [ShadowButtonTheme.dark],
-    scaffoldBackgroundColor: const Color.fromRGBO(58, 58, 58, 1),
-    appBarTheme: darkAppBarTheme,
-    dividerTheme: darkDividerTheme,
-    dialogTheme: darkDialogTheme,
-  );
-  static final darkAppBarTheme = ThemeData.dark().appBarTheme.copyWith(
+  static ThemeData darkTheme() => ThemeData(
+        fontFamily: 'MiSans',
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        extensions: [ShadowButtonTheme.dark],
+        scaffoldBackgroundColor: const Color.fromRGBO(58, 58, 58, 1),
+        appBarTheme: darkAppBarTheme(),
+        dividerTheme: darkDividerTheme(),
+        dialogTheme: darkDialogTheme(),
+      );
+  static darkAppBarTheme() => ThemeData.dark().appBarTheme.copyWith(
         backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
       );
-  static final darkDividerTheme = ThemeData.dark().dividerTheme.copyWith(
+  static darkDividerTheme() => ThemeData.dark().dividerTheme.copyWith(
         color: const Color.fromRGBO(104, 104, 104, 1),
       );
-  static final darkDialogTheme = ThemeData.dark().dialogTheme.copyWith(
-        backgroundColor: darkAppBarTheme.backgroundColor,
+  static darkDialogTheme() => ThemeData.dark().dialogTheme.copyWith(
+        backgroundColor: darkAppBarTheme().backgroundColor,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       );

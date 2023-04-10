@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,30 +22,33 @@ class HomePage extends RoutePage {
       observers: [HeroController()],
       onGenerateRoute: (settings) {
         return _createRoute(
-          ListView(
-            padding: const EdgeInsets.all(15),
-            children: [
-              Row(
-                children: [
-                  title(),
-                  Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.add),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.refresh),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.more_horiz),
-                    onPressed: () => GameManaging.init(),
-                  )
-                ],
-              ),
-              const SizedBox(height: 10),
-              gridView(),
-            ],
+          Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            child: ListView(
+              padding: const EdgeInsets.all(15),
+              children: [
+                Row(
+                  children: [
+                    title(),
+                    Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.refresh),
+                      onPressed: () {},
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.more_horiz),
+                      onPressed: () => GameManaging.init(),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                gridView(),
+              ],
+            ),
           ),
         );
       },
@@ -189,44 +193,34 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: Colors.lightBlueAccent,
-        borderRadius: BorderRadius.circular(12.5),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          splashColor: Colors.blue,
-          // onTap: () => Get.to(() => GamePage(), id: 2),
-          onTap: () => Navigator.of(context).push(_createRoute(GamePage())),
-          child: Stack(
-            children: [
-              Column(
+    return Hero(
+      tag: "image",
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.5)),
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                      "assets/images/background/2020-04-11_20.30.41.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              child: Flex(
+                direction: Axis.vertical,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: Hero(
-                      tag: "image",
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(12.5)),
-                          image: DecorationImage(
-                            image: AssetImage(
-                                "assets/images/background/2020-04-11_20.30.41.png"),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  Expanded(flex: 1, child: SizedBox()),
                   Expanded(
                     flex: 0,
-                    child: SizedBox(
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Align(
+                    child: ClipRect(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                        child: Container(
+                          padding: EdgeInsets.all(10),
                           alignment: Alignment.centerLeft,
                           child: Text(
                             title,
@@ -241,18 +235,26 @@ class _Card extends StatelessWidget {
                   ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.all(5),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.more_horiz, color: Colors.white),
-                  ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(5),
+              child: Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.more_horiz, color: Colors.white),
                 ),
               ),
-            ],
-          ),
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.black.withOpacity(.1),
+                onTap: () =>
+                    Navigator.of(context).push(_createRoute(GamePage())),
+              ),
+            ),
+          ],
         ),
       ),
     );
