@@ -8,34 +8,9 @@ abstract class _appWindow {
 }
 
 class WindowTitleBar extends StatelessWidget {
-  const WindowTitleBar({super.key, required this.title});
+  const WindowTitleBar({super.key, this.title});
 
   final Widget? title;
-
-  @override
-  Widget build(BuildContext context) {
-    return WindowTitleBarBox(
-      child: Flex(
-        direction: Axis.horizontal,
-        children: [
-          Expanded(
-            child: MoveWindow(
-              onDoubleTap: () => {
-                appWindow.maximizeOrRestore(),
-                _appWindow.isMaximize(!appWindow.isMaximized),
-              },
-              child: title ?? SizedBox(),
-            ),
-          ),
-          WindowButtons(),
-        ],
-      ),
-    );
-  }
-}
-
-class WindowButtons extends StatelessWidget {
-  WindowButtons({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +23,49 @@ class WindowButtons extends StatelessWidget {
       iconMouseOver: iconColor,
       iconMouseDown: iconColor,
     );
+    return WindowTitleBarBox(
+      child: Flex(
+        direction: Axis.horizontal,
+        children: [
+          Expanded(
+            child: MoveWindow(
+              onDoubleTap: () => {
+                appWindow.maximizeOrRestore(),
+                _appWindow.isMaximize(!appWindow.isMaximized),
+              },
+              child: title ??
+                  const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 15),
+                      child: Text("iCraft Launcher"),
+                    ),
+                  ),
+            ),
+          ),
+          WindowButtons(colors: buttonColors),
+        ],
+      ),
+    );
+  }
+}
+
+class WindowButtons extends StatelessWidget {
+  const WindowButtons({super.key, this.colors, this.animate});
+
+  final WindowButtonColors? colors;
+  final bool? animate;
+
+  @override
+  Widget build(BuildContext context) {
     return Flex(
       direction: Axis.horizontal,
       children: [
-        MinimizeWindowButton(colors: buttonColors, animate: true),
+        MinimizeWindowButton(colors: colors, animate: animate),
         Obx(
           () => _appWindow.isMaximize.value
               ? RestoreWindowButton(
-                  colors: buttonColors,
+                  colors: colors,
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
@@ -63,7 +73,7 @@ class WindowButtons extends StatelessWidget {
                   },
                 )
               : MaximizeWindowButton(
-                  colors: buttonColors,
+                  colors: colors,
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
@@ -71,7 +81,7 @@ class WindowButtons extends StatelessWidget {
                   },
                 ),
         ),
-        CloseWindowButton(colors: buttonColors, animate: true),
+        CloseWindowButton(colors: colors, animate: animate),
       ],
     );
   }

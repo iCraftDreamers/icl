@@ -18,40 +18,33 @@ class HomePage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      observers: [HeroController()],
-      onGenerateRoute: (settings) {
-        return _createRoute(
-          Container(
-            color: Theme.of(context).scaffoldBackgroundColor,
-            child: ListView(
-              padding: const EdgeInsets.all(15),
-              children: [
-                Row(
-                  children: [
-                    title(),
-                    Spacer(),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () {},
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.more_horiz),
-                      onPressed: () => GameManaging.init(),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 10),
-                gridView(),
-              ],
-            ),
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: ListView(
+        padding: const EdgeInsets.all(15),
+        children: [
+          Row(
+            children: [
+              title(),
+              Spacer(),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {},
+              ),
+              IconButton(
+                icon: const Icon(Icons.more_horiz),
+                onPressed: () => GameManaging.init(),
+              )
+            ],
           ),
-        );
-      },
+          const SizedBox(height: 10),
+          gridView(),
+        ],
+      ),
     );
   }
 
@@ -186,6 +179,25 @@ class IconTextField extends StatelessWidget {
   }
 }
 
+class MyClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    var path = Path();
+    // 添加一个全屏的矩形
+    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    // 添加一个圆角矩形
+    path.addRRect(RRect.fromLTRBR(0, 0, 0, 0, Radius.circular(20)));
+    // 设置剪裁模式为evenOdd
+    path.fillType = PathFillType.evenOdd;
+    // 关闭路径
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
+}
+
 class _Card extends StatelessWidget {
   const _Card({required this.title});
 
@@ -196,7 +208,7 @@ class _Card extends StatelessWidget {
     return Hero(
       tag: "image",
       child: Container(
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.5)),
         child: Stack(
           children: [
@@ -209,32 +221,40 @@ class _Card extends StatelessWidget {
                 ),
               ),
             ),
-            Container(
-              child: Flex(
-                direction: Axis.vertical,
-                children: [
-                  Expanded(flex: 1, child: SizedBox()),
-                  Expanded(
-                    flex: 0,
-                    child: ClipRect(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
-                        child: Container(
-                          padding: EdgeInsets.all(10),
-                          alignment: Alignment.centerLeft,
-                          color: Colors.white.withOpacity(.15),
-                          child: Text(
-                            title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleLarge!
-                                .copyWith(color: Colors.white),
-                          ),
+            Flex(
+              direction: Axis.vertical,
+              children: [
+                Expanded(flex: 1, child: SizedBox()),
+                Expanded(
+                  flex: 0,
+                  child: ClipPath(
+                    clipper: MyClipper(),
+                    child: BackdropFilter(
+                      filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        alignment: Alignment.centerLeft,
+                        color: Colors.grey.withOpacity(.3),
+                        child: Text(
+                          title,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge!
+                              .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
                   ),
-                ],
+                ),
+              ],
+            ),
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                splashColor: Colors.black.withOpacity(.1),
+                onTap: () => Navigator.of(Get.context!).push(
+                  _createRoute(GamePage()),
+                ),
               ),
             ),
             Padding(
@@ -247,14 +267,6 @@ class _Card extends StatelessWidget {
                 ),
               ),
             ),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                splashColor: Colors.black.withOpacity(.1),
-                onTap: () =>
-                    Navigator.of(context).push(_createRoute(GamePage())),
-              ),
-            ),
           ],
         ),
       ),
@@ -264,4 +276,6 @@ class _Card extends StatelessWidget {
 
 Route _createRoute(Widget page) {
   return MaterialPageRoute(builder: (context) => page);
+  // return PageRouteBuilder(
+  //     pageBuilder: (context, animation, secondaryAnimation) => page);
 }

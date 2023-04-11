@@ -32,15 +32,7 @@ class Home extends StatelessWidget {
         ),
         child: Column(
           children: const [
-            WindowTitleBar(
-              title: const Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 15),
-                  child: Text("iCraft Launcher"),
-                ),
-              ),
-            ),
+            WindowTitleBar(),
             Divider(height: 1),
             Expanded(child: WindowSurface()),
           ],
