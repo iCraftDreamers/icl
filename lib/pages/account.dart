@@ -283,7 +283,6 @@ class _EditAccountDialog extends StatelessWidget {
         TextEditingController(text: user['username']);
     final TextEditingController loginmode = TextEditingController(
         text: AccountManaging.loginModes[user['loginmode']]);
-    // final TextEditingController skin = TextEditingController();
     final formKey = GlobalKey<FormState>();
     RxString skinTemp = "${(user['skin'] ?? AccountManaging.Default)}".obs;
     List<Widget> children(int loginMode) {
@@ -446,8 +445,8 @@ class _EditAccountDialog extends StatelessWidget {
       ),
       actions: [
         DialogConfirmButton(onPressed: () {
-          AccountManaging.gameAccounts.refresh();
           if (formKey.currentState!.validate()) {
+            user.update("username", (value) => username.text);
             switch (skinSelected.toString()) {
               case "{default}":
                 AccountManaging.setDefaultSkin(user);
@@ -457,6 +456,7 @@ class _EditAccountDialog extends StatelessWidget {
             }
             ScaffoldMessenger.of(Get.context!)
                 .showSnackBar(SnackBar(content: Text("修改完成！")));
+            AccountManaging.gameAccounts.refresh();
             Get.back();
           }
         }),
