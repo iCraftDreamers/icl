@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
+import 'package:get/get.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
@@ -11,37 +12,51 @@ import 'package:archive/archive.dart';
 /// [jar]传入jar文件路径
 
 class Game {
-  late final jsonData;
   late final String path; //版本文件夹路径
   late final String jar; //jar文件路径
   late final String id; //游戏名
   late final String version; //游戏版本
-  late final String? Forge; //Forge版本
-  late final String? OptiFine; //OptiFine版本
+  String? Forge; //Forge版本
+  String? Fabric;
+  String? OptiFine; //OptiFine版本
 
-  Game(this.jsonData, this.path, this.jar) {
+  Game(Map jsonData, String this.path, String this.jar) {
     //初始化对象
-    id = decodeID();
-    version = decodeVersion();
+    _decodeJson(jsonData);
+    _decodeLibraries(jsonData['libraries']);
+  }
+  void printInfo() {
+    print("id: $id, version: $version, Forge:$Forge, OptiFine:$OptiFine");
   }
 
-  String decodeID() {
-    //解析游戏id
-    return jsonData['id'];
-  }
-
-  String decodeVersion() {
+  Future<void> _decodeJson(data) async {
     //解析游戏版本
     String fromJar() {
       final by = jsonDecode(utf8.decode(ZipDecoder()
           .decodeBytes(File(jar).readAsBytesSync())
           .findFile("version.json")!
           .content as List<int>));
-
       return by["id"];
     }
 
-    return jsonData['clientVersion'] ?? jsonData['jar'] ?? fromJar();
+    this.id = data['id'];
+    this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
+  }
+
+  Future<void> _decodeLibraries(libraries) async {
+    RegExp ForgeExp = RegExp(
+        "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
+    RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
+    RegExp OptifineExp = RegExp("optifine:OptiFine:1.[0-9+.]+_");
+    libraries.forEach((e) {
+      String str = e.toString();
+      if (ForgeExp.hasMatch(str))
+        this.Forge = e["name"].toString().replaceAll(ForgeExp, '');
+      if (OptifineExp.hasMatch(str))
+        this.OptiFine = e["name"].toString().replaceAll(OptifineExp, '');
+      if (FabricExp.hasMatch(str))
+        this.OptiFine = e["name"].toString().replaceAll(FabricExp, '');
+    });
   }
 }
 
@@ -71,41 +86,41 @@ class GameManaging {
   static List<Directory> gameDirs = [
     //初始化游戏安装目录
     Directory('.minecraft'),
+    Directory('%appdata%/Roadming/.minecraft'),
     Directory('D:/游戏/Minecraft/1.8/.minecraft'),
-    Directory('%appdata%/Roadming/.minecraft')
+    Directory('F:/mc/main/.minecraft'),
   ];
 
   static void addDir(String dir) {
     gameDirs.add(Directory(dir));
   }
 
-  static File convertToFile(FileSystemEntity dir, String type) {
-    //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
-    return File(
-        '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
-  }
-
   static Future<void> init() async {
     installedGames.clear();
-    List<FileSystemEntity> versionDirs = [];
-    //遍历游戏安装目录下的已安装游戏文件夹
-    for (var dir in gameDirs) {
-      var versionDir = Directory('${dir.path}/${'versions'}');
-      if (await versionDir.exists()) {
-        versionDirs.addAll(
-          versionDir
-              .listSync()
-              .where((element) => element is Directory)
-              .toList(),
-        );
-      }
+    File convertToFile(FileSystemEntity dir, String type) {
+      //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
+      return File(
+          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
     }
-    //解析已安装游戏的目录内的json文件，并以对象存储
-    for (var dir in versionDirs) {
-      installedGames.add(Game(
-          jsonDecode(await convertToFile(dir, "json").readAsString()),
-          dir.path,
-          convertToFile(dir, "jar").path));
+
+    Future<void> addGame(dir) async {
+      var json = convertToFile(dir, "json");
+      var jar = convertToFile(dir, "jar");
+      if (await json.exists())
+        installedGames.add(
+            Game(jsonDecode(await json.readAsString()), dir.path, jar.path));
+    }
+
+    //遍历游戏安装目录下的已安装游戏文件夹
+    for (Directory dir in gameDirs) {
+      Directory versionDir = Directory('${dir.path}/versions');
+      Future(() async => {
+            if (await versionDir.exists())
+              versionDir
+                  .listSync()
+                  .where((element) => element is Directory)
+                  .forEach((element) => addGame(element))
+          });
     }
   }
 }
