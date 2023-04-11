@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -75,10 +76,21 @@ class _AccountItem extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Image.memory(
-                Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
-                width: 40,
-                height: 40,
+              FutureBuilder<Uint8List>(
+                future: Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done)
+                    return Image.memory(
+                      snapshot.data!,
+                      width: 40,
+                      height: 40,
+                    );
+                  return Container(
+                    color: Colors.grey.withOpacity(.1),
+                    height: 40,
+                    width: 40,
+                  );
+                },
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -320,10 +332,21 @@ class _EditAccountDialog extends StatelessWidget {
                   () => SizedBox(
                     width: 125,
                     height: 125,
-                    child: Image.memory(
-                      Skin.toAvatar(skinTemp.value),
-                      width: 75,
-                      height: 75,
+                    child: FutureBuilder<Uint8List>(
+                      future: Skin.toAvatar(skinTemp.value),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done)
+                          return Image.memory(
+                            snapshot.data!,
+                            width: 40,
+                            height: 40,
+                          );
+                        return Container(
+                          color: Colors.grey.withOpacity(.1),
+                          height: 40,
+                          width: 40,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -413,6 +436,7 @@ class _EditAccountDialog extends StatelessWidget {
       ),
       actions: [
         DialogConfirmButton(onPressed: () {
+          AccountManaging.gameAccounts.refresh();
           if (formKey.currentState!.validate()) {
             switch (skinSelected.toString()) {
               case "{default}":
