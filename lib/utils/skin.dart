@@ -3,6 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
 class Skin {
+  static bool isLegal(file) {
+    final Image? source = decodePng(file.readAsBytesSync());
+    if (source!.width >= 64 &&
+        (source.width / source.height == 1 ||
+            source.width / source.height == 2) &&
+        source.width % source.height == 0 &&
+        source.width % 64 == 0) return true;
+    return false;
+  }
+
   static Future<Uint8List> toAvatar(file) async {
     late final Uint8List u8l;
     switch (file) {

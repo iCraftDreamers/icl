@@ -376,12 +376,22 @@ class _EditAccountDialog extends StatelessWidget {
                       ButtonSegment(value: "custom", label: Text("自定义"))
                     ],
                     selected: skinSelected,
-                    // onSelectionChanged: (p0) => selected(p0),
                     onSelectionChanged: (p0) async {
                       switch (p0.toString()) {
                         case "{custom}":
                           final File? file = await filePicker(['png']);
                           if (file != null) {
+                            if (!Skin.isLegal(file)) {
+                              showDialog(
+                                  context: Get.context!,
+                                  builder: (context) => ErrorDialog(
+                                      title: "错误",
+                                      content: "你选择的文件不是一个有效的皮肤文件，请重新选择。",
+                                      onConfirmed: () {
+                                        Get.back();
+                                      }));
+                              break;
+                            }
                             skinTemp(file.path);
                             skinSelected(p0);
                           }
@@ -445,6 +455,8 @@ class _EditAccountDialog extends StatelessWidget {
               default:
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
+            ScaffoldMessenger.of(Get.context!)
+                .showSnackBar(SnackBar(content: Text("修改完成！")));
             Get.back();
           }
         }),
