@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -75,10 +76,21 @@ class _AccountItem extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Image.memory(
-                Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
-                width: 40,
-                height: 40,
+              FutureBuilder<Uint8List>(
+                future: Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done)
+                    return Image.memory(
+                      snapshot.data!,
+                      width: 40,
+                      height: 40,
+                    );
+                  return Container(
+                    color: Colors.grey.withOpacity(.1),
+                    height: 40,
+                    width: 40,
+                  );
+                },
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +283,6 @@ class _EditAccountDialog extends StatelessWidget {
         TextEditingController(text: user['username']);
     final TextEditingController loginmode = TextEditingController(
         text: AccountManaging.loginModes[user['loginmode']]);
-    // final TextEditingController skin = TextEditingController();
     final formKey = GlobalKey<FormState>();
     RxString skinTemp = "${(user['skin'] ?? AccountManaging.Default)}".obs;
     List<Widget> children(int loginMode) {
@@ -320,10 +331,21 @@ class _EditAccountDialog extends StatelessWidget {
                   () => SizedBox(
                     width: 125,
                     height: 125,
-                    child: Image.memory(
-                      Skin.toAvatar(skinTemp.value),
-                      width: 75,
-                      height: 75,
+                    child: FutureBuilder<Uint8List>(
+                      future: Skin.toAvatar(skinTemp.value),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done)
+                          return Image.memory(
+                            snapshot.data!,
+                            width: 40,
+                            height: 40,
+                          );
+                        return Container(
+                          color: Colors.grey.withOpacity(.1),
+                          height: 40,
+                          width: 40,
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -353,12 +375,22 @@ class _EditAccountDialog extends StatelessWidget {
                       ButtonSegment(value: "custom", label: Text("自定义"))
                     ],
                     selected: skinSelected,
-                    // onSelectionChanged: (p0) => selected(p0),
                     onSelectionChanged: (p0) async {
                       switch (p0.toString()) {
                         case "{custom}":
                           final File? file = await filePicker(['png']);
                           if (file != null) {
+                            if (!Skin.isLegal(file)) {
+                              showDialog(
+                                  context: Get.context!,
+                                  builder: (context) => ErrorDialog(
+                                      title: "错误",
+                                      content: "你选择的文件不是一个有效的皮肤文件，请重新选择。",
+                                      onConfirmed: () {
+                                        Get.back();
+                                      }));
+                              break;
+                            }
                             skinTemp(file.path);
                             skinSelected(p0);
                           }
@@ -414,6 +446,7 @@ class _EditAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
+            user.update("username", (value) => username.text);
             switch (skinSelected.toString()) {
               case "{default}":
                 AccountManaging.setDefaultSkin(user);
@@ -421,6 +454,9 @@ class _EditAccountDialog extends StatelessWidget {
               default:
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
+            ScaffoldMessenger.of(Get.context!)
+                .showSnackBar(SnackBar(content: Text("修改完成！")));
+            AccountManaging.gameAccounts.refresh();
             Get.back();
           }
         }),

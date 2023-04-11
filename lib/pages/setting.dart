@@ -45,15 +45,15 @@ class SettingPage extends RoutePage {
             FilledButton(
               onPressed: () {
                 GameManaging.installedGames.forEach(
-                  (element) => print(element.path),
+                  (element) => element.printInfo(),
                 );
-                showDialog(
-                  context: Get.context!,
-                  builder: (context) => SimpleDialog(
-                    title: Text("测试"),
-                    children: [Text(GameManaging.installedGames.toString())],
-                  ),
-                );
+                // showDialog(
+                //   context: Get.context!,
+                //   builder: (context) => SimpleDialog(
+                //     title: Text("测试"),
+                //     children: [Text(GameManaging.installedGames.toString())],
+                //   ),
+                // );
               },
               child: const Text("打印搜索到的游戏"),
             ),

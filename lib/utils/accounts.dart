@@ -8,8 +8,8 @@ class AccountManaging {
     2: '外置登录',
   };
 
-  static const String Steve = "assets/images/skins/steve.png";
-  static const String Alex = "assets/images/skins/alex.png";
+  static const String Steve = "Steve";
+  static const String Alex = "Alex";
   static String Default = Steve;
 
   static void add(String? username, String? password, int loginMode) {
@@ -49,8 +49,8 @@ class AccountManaging {
       Map<String, dynamic> theSkin = {"skin": skin};
       user.addAll(theSkin);
     }
-    if (user.containsKey("user")) {
-      user.update(user, (value) => skin);
+    if (user.containsKey("skin")) {
+      user.update("skin", (value) => skin);
     }
   }
 

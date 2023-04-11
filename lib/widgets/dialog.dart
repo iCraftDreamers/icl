@@ -71,13 +71,13 @@ class ErrorDialog extends StatelessWidget {
     this.title,
     this.content,
     this.onConfirmed,
-    this.onCanceled,
+    // this.onCanceled,
   });
 
   final String? title;
   final String? content;
   final void Function()? onConfirmed;
-  final void Function()? onCanceled;
+  // final void Function()? onCanceled;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class ErrorDialog extends StatelessWidget {
       ]),
       actions: [
         DialogConfirmButton(onPressed: onConfirmed),
-        DialogCancelButton(onPressed: onCanceled),
+        // DialogCancelButton(onPressed: onCanceled),
       ],
     );
   }
