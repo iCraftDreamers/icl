@@ -19,6 +19,8 @@ class Game {
   String? Forge; //Forge版本
   String? Fabric;
   String? OptiFine; //OptiFine版本
+  bool? LiteLoader;
+  String? Quilt;
 
   Game(Map jsonData, String this.path, String this.jar) {
     //初始化对象
@@ -36,14 +38,17 @@ class Game {
     Map<String, String> typeName = {
       "release": "正式版",
       "snapshot": "预览版",
+      "old_beta": "远古版",
     };
     return "${typeName[type]}, $version";
   }
 
   String longDescribe() {
     StringBuffer desc = StringBuffer("$version");
+    if (LiteLoader == true) desc.write("  LiteLoader");
     if (Forge != null) desc.write("  Forge:$Forge");
     if (Fabric != null) desc.write("  Fabric:$Fabric");
+    if (Quilt != null) desc.write("  Quilt:$Quilt");
     if (OptiFine != null) desc.write("  OptiFine:$OptiFine");
     return desc.toString();
   }
@@ -67,15 +72,20 @@ class Game {
     RegExp ForgeExp = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
     RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
+    RegExp LiteLoaderExp = RegExp("liteloader");
+    RegExp QuiltExp = RegExp("org.quiltmc:quilt-loader:");
     RegExp OptifineExp = RegExp("optifine:OptiFine:1.[0-9+.]+_");
     libraries.forEach((e) {
       String str = e.toString();
+      if (LiteLoaderExp.hasMatch(str)) this.LiteLoader = true;
       if (ForgeExp.hasMatch(str))
         this.Forge = e["name"].toString().replaceAll(ForgeExp, '');
+      if (FabricExp.hasMatch(str))
+        this.Fabric = e["name"].toString().replaceAll(FabricExp, '');
+      if (QuiltExp.hasMatch(str))
+        this.Quilt = e["name"].toString().replaceAll(QuiltExp, '');
       if (OptifineExp.hasMatch(str))
         this.OptiFine = e["name"].toString().replaceAll(OptifineExp, '');
-      if (FabricExp.hasMatch(str))
-        this.OptiFine = e["name"].toString().replaceAll(FabricExp, '');
     });
   }
 }
