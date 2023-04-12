@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
-import 'package:get/get.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
