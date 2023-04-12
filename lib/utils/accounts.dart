@@ -45,8 +45,7 @@ class AccountManaging {
 
   static void setCustomSkin(Map user, String skin) {
     if (!user.containsKey("skin")) {
-      print("object");
-      Map<String, dynamic> theSkin = {"skin": skin};
+      Map<String, String> theSkin = {"skin": skin};
       user.addAll(theSkin);
     }
     if (user.containsKey("skin")) {
