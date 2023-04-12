@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:icl/interface/window_bar.dart';
 import 'package:icl/widgets/transition.dart';
 
@@ -10,6 +12,20 @@ class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = ["开始游戏", "配置"];
+    var boxShadow = RxList<BoxShadow>();
+    Timer(
+      Duration(milliseconds: 600),
+      () {
+        boxShadow.clear();
+        boxShadow.add(
+          BoxShadow(
+            color: Colors.grey.withOpacity(.3),
+            blurRadius: 30,
+            blurStyle: BlurStyle.outer,
+          ),
+        );
+      },
+    );
     return Scaffold(
       body: Stack(
         children: [
@@ -26,76 +42,72 @@ class GamePage extends StatelessWidget {
             ),
           ),
           FadeTransitionBuilder(
-            child: Container(
-              height: 105,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(.2),
-                    offset: const Offset(0, 0),
-                    blurRadius: 10,
-                    spreadRadius: 10,
-                  ),
-                ],
-              ),
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    color: Colors.white.withOpacity(.15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        WindowTitleBar(),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  IconButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    icon: Icon(Icons.arrow_back),
-                                  ),
-                                  SizedBox(width: 5),
-                                  Text(
-                                    "1.8",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge!
-                                        .copyWith(),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: 30,
-                                width: 180,
-                                child: DefaultTabController(
-                                  length: tabs.length,
-                                  child: TabBar(
-                                    dividerColor: Colors.transparent,
-                                    labelColor: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withGreen(150),
-                                    labelStyle: Theme.of(context)
-                                        .tabBarTheme
-                                        .labelStyle
-                                        ?.copyWith(
-                                          fontSize: 14,
-                                        ),
-                                    tabs:
-                                        tabs.map((e) => Tab(text: e)).toList(),
+            child: Obx(
+              () => AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                height: 105,
+                decoration: BoxDecoration(boxShadow: boxShadow.toList()),
+                child: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      color: Colors.white.withOpacity(.15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          WindowTitleBar(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    IconButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      icon: Icon(Icons.arrow_back),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Text(
+                                      "1.8",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleLarge!
+                                          .copyWith(),
+                                    ),
+                                    SizedBox(width: 10),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 30,
+                                  width: 180,
+                                  child: DefaultTabController(
+                                    length: tabs.length,
+                                    child: TabBar(
+                                      dividerColor: Colors.transparent,
+                                      labelColor: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withGreen(150),
+                                      labelStyle: Theme.of(context)
+                                          .tabBarTheme
+                                          .labelStyle
+                                          ?.copyWith(
+                                            fontSize: 14,
+                                          ),
+                                      tabs: tabs
+                                          .map((e) => Tab(text: e))
+                                          .toList(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),
