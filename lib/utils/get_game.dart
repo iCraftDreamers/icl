@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
-import 'package:get/get.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
@@ -16,17 +15,42 @@ class Game {
   late final String jar; //jar文件路径
   late final String id; //游戏名
   late final String version; //游戏版本
+  late final String type;
   String? Forge; //Forge版本
   String? Fabric;
   String? OptiFine; //OptiFine版本
+  bool? LiteLoader;
+  String? Quilt;
 
   Game(Map jsonData, String this.path, String this.jar) {
     //初始化对象
     _decodeJson(jsonData);
     _decodeLibraries(jsonData['libraries']);
   }
+
   void printInfo() {
-    print("id: $id, version: $version, Forge:$Forge, OptiFine:$OptiFine");
+    print(longDescribe());
+    // print(
+    // "id: $id, version: $version, type:$type, Forge:$Forge, OptiFine:$OptiFine");
+  }
+
+  String shortDescribe() {
+    Map<String, String> typeName = {
+      "release": "正式版",
+      "snapshot": "预览版",
+      "old_beta": "远古版",
+    };
+    return "${typeName[type]}, $version";
+  }
+
+  String longDescribe() {
+    StringBuffer desc = StringBuffer("$version");
+    if (LiteLoader == true) desc.write("  LiteLoader");
+    if (Forge != null) desc.write("  Forge:$Forge");
+    if (Fabric != null) desc.write("  Fabric:$Fabric");
+    if (Quilt != null) desc.write("  Quilt:$Quilt");
+    if (OptiFine != null) desc.write("  OptiFine:$OptiFine");
+    return desc.toString();
   }
 
   Future<void> _decodeJson(data) async {
@@ -40,6 +64,7 @@ class Game {
     }
 
     this.id = data['id'];
+    this.type = data['type'];
     this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
   }
 
@@ -47,15 +72,20 @@ class Game {
     RegExp ForgeExp = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
     RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
+    RegExp LiteLoaderExp = RegExp("liteloader");
+    RegExp QuiltExp = RegExp("org.quiltmc:quilt-loader:");
     RegExp OptifineExp = RegExp("optifine:OptiFine:1.[0-9+.]+_");
     libraries.forEach((e) {
       String str = e.toString();
+      if (LiteLoaderExp.hasMatch(str)) this.LiteLoader = true;
       if (ForgeExp.hasMatch(str))
         this.Forge = e["name"].toString().replaceAll(ForgeExp, '');
+      if (FabricExp.hasMatch(str))
+        this.Fabric = e["name"].toString().replaceAll(FabricExp, '');
+      if (QuiltExp.hasMatch(str))
+        this.Quilt = e["name"].toString().replaceAll(QuiltExp, '');
       if (OptifineExp.hasMatch(str))
         this.OptiFine = e["name"].toString().replaceAll(OptifineExp, '');
-      if (FabricExp.hasMatch(str))
-        this.OptiFine = e["name"].toString().replaceAll(FabricExp, '');
     });
   }
 }
