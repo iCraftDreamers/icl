@@ -16,6 +16,7 @@ class Game {
   late final String jar; //jar文件路径
   late final String id; //游戏名
   late final String version; //游戏版本
+  late final String type;
   String? Forge; //Forge版本
   String? Fabric;
   String? OptiFine; //OptiFine版本
@@ -25,8 +26,27 @@ class Game {
     _decodeJson(jsonData);
     _decodeLibraries(jsonData['libraries']);
   }
+
   void printInfo() {
-    print("id: $id, version: $version, Forge:$Forge, OptiFine:$OptiFine");
+    print(longDescribe());
+    // print(
+    // "id: $id, version: $version, type:$type, Forge:$Forge, OptiFine:$OptiFine");
+  }
+
+  String shortDescribe() {
+    Map<String, String> typeName = {
+      "release": "正式版",
+      "snapshot": "预览版",
+    };
+    return "${typeName[type]}, $version";
+  }
+
+  String longDescribe() {
+    StringBuffer desc = StringBuffer("$version");
+    if (Forge != null) desc.write("  Forge:$Forge");
+    if (Fabric != null) desc.write("  Fabric:$Fabric");
+    if (OptiFine != null) desc.write("  OptiFine:$OptiFine");
+    return desc.toString();
   }
 
   Future<void> _decodeJson(data) async {
@@ -40,6 +60,7 @@ class Game {
     }
 
     this.id = data['id'];
+    this.type = data['type'];
     this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
   }
 
