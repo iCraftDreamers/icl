@@ -26,11 +26,11 @@ class AccountPage extends RoutePage {
         Row(
           children: [
             title(),
-            Spacer(),
+            const Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(
                 context: Get.context!,
-                builder: (context) => _AddAccountDialog(),
+                builder: (context) => const _AddAccountDialog(),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -45,7 +45,7 @@ class AccountPage extends RoutePage {
             ),
           ],
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Obx(
           () => Column(
             children: AccountManaging.gameAccounts
@@ -79,12 +79,13 @@ class _AccountItem extends StatelessWidget {
               FutureBuilder<Uint8List>(
                 future: Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done)
+                  if (snapshot.connectionState == ConnectionState.done) {
                     return Image.memory(
                       snapshot.data!,
                       width: 40,
                       height: 40,
                     );
+                  }
                   return Container(
                     color: Colors.grey.withOpacity(.1),
                     height: 40,
@@ -97,14 +98,14 @@ class _AccountItem extends StatelessWidget {
                 children: [
                   Text(
                     user['username'],
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(AccountManaging.loginModes[user["loginmode"]].toString())
                 ],
               ),
             ],
           ),
-          Spacer(),
+          const Spacer(),
           Wrap(
             spacing: 5,
             children: [
@@ -115,10 +116,10 @@ class _AccountItem extends StatelessWidget {
                     user: user,
                   ),
                 ),
-                icon: Icon(Icons.edit),
+                icon: const Icon(Icons.edit),
               ),
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 onPressed: () => showDialog(
                   context: Get.context!,
                   builder: (context) => WarningDialog(
@@ -128,7 +129,7 @@ class _AccountItem extends StatelessWidget {
                       AccountManaging.removeAccount(user);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!)
-                          .showSnackBar(SnackBar(content: Text("删除成功！")));
+                          .showSnackBar(const SnackBar(content: Text("删除成功！")));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -252,7 +253,7 @@ class _AddAccountDialog extends StatelessWidget {
             );
             Get.back();
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(SnackBar(content: Text("添加成功！")));
+                .showSnackBar(const SnackBar(content: Text("添加成功！")));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
@@ -305,7 +306,7 @@ class _EditAccountDialog extends StatelessWidget {
               textEditingController: loginmode,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TitleTextFormFiled(
@@ -322,7 +323,7 @@ class _EditAccountDialog extends StatelessWidget {
 
     return AlertDialog(
       title: Text("编辑${user['username']}",
-          style: TextStyle(fontWeight: FontWeight.bold)),
+          style: const TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -338,12 +339,13 @@ class _EditAccountDialog extends StatelessWidget {
                     child: FutureBuilder<Uint8List>(
                       future: Skin.toAvatar(skinTemp.value),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done)
+                        if (snapshot.connectionState == ConnectionState.done) {
                           return Image.memory(
                             snapshot.data!,
                             width: 40,
                             height: 40,
                           );
+                        }
                         return Container(
                           color: Colors.grey.withOpacity(.1),
                           height: 40,
@@ -367,12 +369,12 @@ class _EditAccountDialog extends StatelessWidget {
             Obx(
               () => Row(
                 children: [
-                  Text("展示皮肤:"),
-                  SizedBox(
+                  const Text("展示皮肤:"),
+                  const SizedBox(
                     width: 80,
                   ),
                   SegmentedButton(
-                    segments: [
+                    segments: const [
                       ButtonSegment(value: "default", label: Text("默认")),
                       ButtonSegment(value: "steve", label: Text("Steve")),
                       ButtonSegment(value: "alex", label: Text("Alex")),
@@ -459,7 +461,7 @@ class _EditAccountDialog extends StatelessWidget {
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(SnackBar(content: Text("修改成功！")));
+                .showSnackBar(const SnackBar(content: Text("修改成功！")));
             AccountManaging.gameAccounts.refresh();
             Get.back();
           }
