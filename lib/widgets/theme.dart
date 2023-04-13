@@ -14,6 +14,7 @@ class MyTheme {
         appBarTheme: lightAppBarTheme(),
         dividerTheme: lightDividerTheme(),
         dialogTheme: lightDialogTheme(),
+        snackBarTheme: lightSnackbarTheme()
       );
   static AppBarTheme lightAppBarTheme() =>
       ThemeData.light().appBarTheme.copyWith(
@@ -23,6 +24,12 @@ class MyTheme {
       ThemeData.light().dividerTheme.copyWith(
             color: const Color.fromRGBO(197, 197, 197, 1),
           );
+  static SnackBarThemeData lightSnackbarTheme() => ThemeData.light().snackBarTheme.copyWith(
+    behavior: SnackBarBehavior.floating,
+    width: 200,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
+    backgroundColor: Colors.blue,
+  );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(
             backgroundColor: lightAppBarTheme().backgroundColor,
@@ -45,6 +52,7 @@ class MyTheme {
         appBarTheme: darkAppBarTheme(),
         dividerTheme: darkDividerTheme(),
         dialogTheme: darkDialogTheme(),
+        snackBarTheme: darkSnackbarTheme()
       );
   static darkAppBarTheme() => ThemeData.dark().appBarTheme.copyWith(
         backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
@@ -52,6 +60,12 @@ class MyTheme {
   static darkDividerTheme() => ThemeData.dark().dividerTheme.copyWith(
         color: const Color.fromRGBO(104, 104, 104, 1),
       );
+  static darkSnackbarTheme() => ThemeData.dark().snackBarTheme.copyWith(
+        behavior: SnackBarBehavior.floating,
+        width: 200,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
+        backgroundColor: const Color.fromRGBO(200, 200,200, 1),
+  );
   static darkDialogTheme() => ThemeData.dark().dialogTheme.copyWith(
         backgroundColor: darkAppBarTheme().backgroundColor,
         shape:

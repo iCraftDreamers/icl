@@ -129,18 +129,8 @@ class _AccountItem extends StatelessWidget {
                     onConfirmed: () {
                       AccountManaging.removeAccount(user);
                       Get.back();
-                      ScaffoldMessenger.of(Get.context!).showSnackBar(
-                          const SnackBar(
-                              content: Text("删除成功！"),
-                              duration: Duration(seconds: 1),
-                              behavior: SnackBarBehavior.floating,
-                              width: 200,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(10),
-                                      topRight: Radius.circular(10),
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(10)))));
+                      ScaffoldMessenger.of(Get.context!)
+                          .showSnackBar(SnackBar(content: Text("删除成功！"),duration:Duration(seconds: 1)));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -264,16 +254,7 @@ class _AddAccountDialog extends StatelessWidget {
             );
             Get.back();
             ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
-                content: Text("添加成功！"),
-                duration: Duration(seconds: 1),
-                behavior: SnackBarBehavior.floating,
-                width: 200,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10)))));
+                content: Text("添加成功！"),duration: Duration(seconds: 1)));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
@@ -482,16 +463,7 @@ class _EditAccountDialog extends StatelessWidget {
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
             ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
-                content: Text("修改成功！"),
-                duration: Duration(seconds: 1),
-                behavior: SnackBarBehavior.floating,
-                width: 200,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                        bottomLeft: Radius.circular(10),
-                        bottomRight: Radius.circular(10)))));
+                content: Text("修改成功！"),duration: Duration(seconds: 1)));
             AccountManaging.gameAccounts.refresh();
             Get.back();
           }
