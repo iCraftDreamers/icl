@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
@@ -17,22 +16,21 @@ class Game {
   late final String id; //游戏名
   late final String version; //游戏版本
   late final String type;
-  String? Forge; //Forge版本
-  String? Fabric;
-  String? OptiFine; //OptiFine版本
-  bool? LiteLoader;
-  String? Quilt;
+  String? forge; //Forge版本
+  String? fabric;
+  bool? liteloader;
+  String? quilt;
+  String? optifine; //OptiFine版本
 
-  Game(Map jsonData, String this.path, String this.jar) {
+  Game(Map jsonData, this.path, this.jar) {
     //初始化对象,并读取该版本的信息
     _readInfo(jsonData);
     _readLibraries(jsonData['libraries']);
   }
 
-  void printInfo() {
-    print(longDescribe());
-    // print(
-    // "id: $id, version: $version, type:$type, Forge:$Forge, OptiFine:$OptiFine");
+  @override
+  String toString() {
+    return shortDescribe() + longDescribe();
   }
 
   String shortDescribe() {
@@ -45,12 +43,12 @@ class Game {
   }
 
   String longDescribe() {
-    StringBuffer desc = StringBuffer("$version");
-    if (LiteLoader == true) desc.write("  LiteLoader");
-    if (Forge != null) desc.write("  Forge:$Forge");
-    if (Fabric != null) desc.write("  Fabric:$Fabric");
-    if (Quilt != null) desc.write("  Quilt:$Quilt");
-    if (OptiFine != null) desc.write("  OptiFine:$OptiFine");
+    StringBuffer desc = StringBuffer(version);
+    if (liteloader == true) desc.write("  LiteLoader");
+    if (forge != null) desc.write("  Forge:$forge");
+    if (fabric != null) desc.write("  Fabric:$fabric");
+    if (quilt != null) desc.write("  Quilt:$quilt");
+    if (optifine != null) desc.write("  OptiFine:$optifine");
     return desc.toString();
   }
 
@@ -65,30 +63,34 @@ class Game {
       return by["id"];
     }
 
-    this.id = data['id'];
-    this.type = data['type'];
-    this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
+    id = data['id'];
+    type = data['type'];
+    version = data['clientVersion'] ?? data['jar'] ?? fromJar();
   }
 
   Future<void> _readLibraries(libraries) async {
     //读取是否安装Forge,高清修复等
-    RegExp ForgeExp = RegExp(
+    RegExp expForge = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
-    RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
-    RegExp LiteLoaderExp = RegExp("liteloader");
-    RegExp QuiltExp = RegExp("org.quiltmc:quilt-loader:");
-    RegExp OptifineExp = RegExp("optifine:OptiFine:1.[0-9+.]+_");
+    RegExp expFabric = RegExp("net.fabricmc:fabric-loader:");
+    RegExp expLiteLoader = RegExp("liteloader");
+    RegExp expQuilt = RegExp("org.quiltmc:quilt-loader:");
+    RegExp expOptifine = RegExp("optifine:OptiFine:1.[0-9+.]+_");
     libraries.forEach((e) {
       String str = e.toString();
-      if (LiteLoaderExp.hasMatch(str)) this.LiteLoader = true;
-      if (ForgeExp.hasMatch(str))
-        this.Forge = e["name"].toString().replaceAll(ForgeExp, '');
-      if (FabricExp.hasMatch(str))
-        this.Fabric = e["name"].toString().replaceAll(FabricExp, '');
-      if (QuiltExp.hasMatch(str))
-        this.Quilt = e["name"].toString().replaceAll(QuiltExp, '');
-      if (OptifineExp.hasMatch(str))
-        this.OptiFine = e["name"].toString().replaceAll(OptifineExp, '');
+      if (expLiteLoader.hasMatch(str)) liteloader = true;
+      if (expForge.hasMatch(str)) {
+        forge = e["name"].toString().replaceAll(expForge, '');
+      }
+      if (expFabric.hasMatch(str)) {
+        fabric = e["name"].toString().replaceAll(expFabric, '');
+      }
+      if (expQuilt.hasMatch(str)) {
+        quilt = e["name"].toString().replaceAll(expQuilt, '');
+      }
+      if (expOptifine.hasMatch(str)) {
+        optifine = e["name"].toString().replaceAll(expOptifine, '');
+      }
     });
   }
 }
@@ -142,32 +144,30 @@ class GameManaging {
     File convertToFile(FileSystemEntity dir, String type) {
       //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
       return File(
-          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
+          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.$type');
     }
 
-    Future<void> _searchGame(Directory dir) async {
+    Future<void> searchGame(Directory dir) async {
       //搜索versions文件夹下的文件夹
-      if (await dir.exists())
-        dir
-            .listSync()
-            .where((e) => e is Directory)
-            .forEach((e) => Future(() async {
-                  File json = convertToFile(dir, "json");
-                  File jar = convertToFile(dir, "jar");
-                  //判断是否为合法的已安装版本目录
-                  if (await json.exists())
-                    //解析json文件并添加
-                    installedGames.add(Game(
-                        jsonDecode(await json.readAsString()),
-                        dir.path,
-                        jar.path));
-                }));
+      if (await dir.exists()) {
+        dir.listSync().whereType<Directory>().forEach((e) => Future(() async {
+              File json = convertToFile(e, "json");
+              File jar = convertToFile(e, "jar");
+              //判断是否为合法的已安装版本目录
+              if (await json.exists()) {
+                installedGames.add(Game(
+                    jsonDecode(await json.readAsString()), dir.path, jar.path));
+              }
+            }));
+      }
     }
 
     //遍历游戏搜索.minecraft目录
-    for (Map map in constGameDirs)
-      _searchGame(Directory('${map["Directory"].path}/versions'));
-    for (Map map in additionGameDir)
-      _searchGame(Directory('${map["Directory"].path}/versions'));
+    for (Map map in constGameDirs) {
+      searchGame(Directory('${map["Directory"].path}/versions'));
+    }
+    for (Map map in additionGameDir) {
+      searchGame(Directory('${map["Directory"].path}/versions'));
+    }
   }
 }
