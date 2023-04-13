@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/interface/window_bar.dart';
-import 'package:icl/widgets/transition.dart';
 
 class GamePage extends StatelessWidget {
   const GamePage({super.key});
@@ -13,8 +12,10 @@ class GamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final tabs = ["开始游戏", "配置"];
     var boxShadow = RxList<BoxShadow>();
+    var opacity = .0.obs;
+    Timer(const Duration(milliseconds: 200), () => opacity(1));
     Timer(
-      Duration(milliseconds: 600),
+      const Duration(milliseconds: 700),
       () {
         boxShadow.clear();
         boxShadow.add(
@@ -32,7 +33,7 @@ class GamePage extends StatelessWidget {
           Hero(
             tag: "image",
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
                       "assets/images/background/2020-04-11_20.30.41.png"),
@@ -41,10 +42,12 @@ class GamePage extends StatelessWidget {
               ),
             ),
           ),
-          FadeTransitionBuilder(
-            child: Obx(
-              () => AnimatedContainer(
-                duration: Duration(milliseconds: 500),
+          Obx(
+            () => AnimatedOpacity(
+              opacity: opacity.value,
+              duration: const Duration(milliseconds: 500),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
                 height: 105,
                 decoration: BoxDecoration(boxShadow: boxShadow.toList()),
                 child: ClipRect(
@@ -56,9 +59,9 @@ class GamePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          WindowTitleBar(),
+                          const WindowTitleBar(),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -67,9 +70,9 @@ class GamePage extends StatelessWidget {
                                     IconButton(
                                       onPressed: () =>
                                           Navigator.of(context).pop(),
-                                      icon: Icon(Icons.arrow_back),
+                                      icon: const Icon(Icons.arrow_back),
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                     Text(
                                       "1.8",
                                       style: Theme.of(context)
@@ -77,7 +80,7 @@ class GamePage extends StatelessWidget {
                                           .titleLarge!
                                           .copyWith(),
                                     ),
-                                    SizedBox(width: 10),
+                                    const SizedBox(width: 10),
                                   ],
                                 ),
                                 SizedBox(

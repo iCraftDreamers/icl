@@ -26,11 +26,11 @@ class AccountPage extends RoutePage {
         Row(
           children: [
             title(),
-            const Spacer(),
+            Spacer(),
             ElevatedButton(
               onPressed: () => showDialog(
                 context: Get.context!,
-                builder: (context) => const _AddAccountDialog(),
+                builder: (context) => _AddAccountDialog(),
               ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -45,7 +45,7 @@ class AccountPage extends RoutePage {
             ),
           ],
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Obx(
           () => Column(
             children: AccountManaging.gameAccounts
@@ -65,7 +65,6 @@ class _AccountItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var skin = Skin();
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -78,15 +77,14 @@ class _AccountItem extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               FutureBuilder<Uint8List>(
-                future: skin.toAvatar(user['skin'] ?? AccountManaging.Default),
+                future: Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.connectionState == ConnectionState.done)
                     return Image.memory(
                       snapshot.data!,
                       width: 40,
                       height: 40,
                     );
-                  }
                   return Container(
                     color: Colors.grey.withOpacity(.1),
                     height: 40,
@@ -99,14 +97,14 @@ class _AccountItem extends StatelessWidget {
                 children: [
                   Text(
                     user['username'],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   Text(AccountManaging.loginModes[user["loginmode"]].toString())
                 ],
               ),
             ],
           ),
-          const Spacer(),
+          Spacer(),
           Wrap(
             spacing: 5,
             children: [
@@ -117,10 +115,10 @@ class _AccountItem extends StatelessWidget {
                     user: user,
                   ),
                 ),
-                icon: const Icon(Icons.edit),
+                icon: Icon(Icons.edit),
               ),
               IconButton(
-                icon: const Icon(Icons.delete),
+                icon: Icon(Icons.delete),
                 onPressed: () => showDialog(
                   context: Get.context!,
                   builder: (context) => WarningDialog(
@@ -130,7 +128,7 @@ class _AccountItem extends StatelessWidget {
                       AccountManaging.removeAccount(user);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!)
-                          .showSnackBar(const SnackBar(content: Text("删除成功！")));
+                          .showSnackBar(SnackBar(content: Text("删除成功！"),duration:Duration(seconds: 1)));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -254,7 +252,7 @@ class _AddAccountDialog extends StatelessWidget {
             );
             Get.back();
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(const SnackBar(content: Text("添加成功！")));
+                .showSnackBar(SnackBar(content: Text("添加成功！"),duration:Duration(seconds: 1)));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
@@ -270,7 +268,6 @@ class _EditAccountDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var skin = Skin();
     RxSet<String> switchSelected() {
       if (user['skin'] != null) {
         switch (user['skin']) {
@@ -308,7 +305,7 @@ class _EditAccountDialog extends StatelessWidget {
               textEditingController: loginmode,
               validator: (value) => MyTextFormField.checkEmpty(value),
             ),
-            const SizedBox(
+            SizedBox(
               height: 10,
             ),
             TitleTextFormFiled(
@@ -325,7 +322,7 @@ class _EditAccountDialog extends StatelessWidget {
 
     return AlertDialog(
       title: Text("编辑${user['username']}",
-          style: const TextStyle(fontWeight: FontWeight.bold)),
+          style: TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -339,15 +336,14 @@ class _EditAccountDialog extends StatelessWidget {
                     width: 125,
                     height: 125,
                     child: FutureBuilder<Uint8List>(
-                      future: skin.toAvatar(skinTemp.value),
+                      future: Skin.toAvatar(skinTemp.value),
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.connectionState == ConnectionState.done)
                           return Image.memory(
                             snapshot.data!,
                             width: 40,
                             height: 40,
                           );
-                        }
                         return Container(
                           color: Colors.grey.withOpacity(.1),
                           height: 40,
@@ -371,12 +367,12 @@ class _EditAccountDialog extends StatelessWidget {
             Obx(
               () => Row(
                 children: [
-                  const Text("展示皮肤:"),
-                  const SizedBox(
+                  Text("展示皮肤:"),
+                  SizedBox(
                     width: 80,
                   ),
                   SegmentedButton(
-                    segments: const [
+                    segments: [
                       ButtonSegment(value: "default", label: Text("默认")),
                       ButtonSegment(value: "steve", label: Text("Steve")),
                       ButtonSegment(value: "alex", label: Text("Alex")),
@@ -388,7 +384,7 @@ class _EditAccountDialog extends StatelessWidget {
                         case "{custom}":
                           final File? file = await filePicker(['png']);
                           if (file != null) {
-                            if (!skin.isLegal(file)) {
+                            if (!Skin.isLegal(file)) {
                               showDialog(
                                   context: Get.context!,
                                   builder: (context) => ErrorDialog(
@@ -463,7 +459,7 @@ class _EditAccountDialog extends StatelessWidget {
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(const SnackBar(content: Text("修改成功！")));
+                .showSnackBar(SnackBar(content: Text("修改成功！"),duration:Duration(seconds: 1)));
             AccountManaging.gameAccounts.refresh();
             Get.back();
           }
