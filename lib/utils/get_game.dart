@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
@@ -23,9 +24,9 @@ class Game {
   String? Quilt;
 
   Game(Map jsonData, String this.path, String this.jar) {
-    //初始化对象
-    _decodeJson(jsonData);
-    _decodeLibraries(jsonData['libraries']);
+    //初始化对象,并读取该版本的信息
+    _readInfo(jsonData);
+    _readLibraries(jsonData['libraries']);
   }
 
   void printInfo() {
@@ -53,8 +54,9 @@ class Game {
     return desc.toString();
   }
 
-  Future<void> _decodeJson(data) async {
-    //解析游戏版本
+  Future<void> _readInfo(data) async {
+    //读取版本，发布类型与版本号
+
     String fromJar() {
       final by = jsonDecode(utf8.decode(ZipDecoder()
           .decodeBytes(File(jar).readAsBytesSync())
@@ -68,7 +70,8 @@ class Game {
     this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
   }
 
-  Future<void> _decodeLibraries(libraries) async {
+  Future<void> _readLibraries(libraries) async {
+    //读取是否安装Forge,高清修复等
     RegExp ForgeExp = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
     RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
@@ -113,44 +116,58 @@ class GameManaging {
   ///
   /// ```
   static List<Game> installedGames = []; //以对象存储已安装的游戏
-  static List<Directory> gameDirs = [
-    //初始化游戏安装目录
-    Directory('.minecraft'),
-    Directory('%appdata%/Roadming/.minecraft'),
-    Directory('D:/游戏/Minecraft/1.8/.minecraft'),
-    Directory('F:/mc/main/.minecraft'),
+
+  static final List<Map<String, dynamic>> constGameDirs = [
+    //固有.minecraft目录
+    {"name": "启动器下游戏目录", "Directory": Directory('.minecraft')},
+    {
+      "name": "官方启动器游戏目录",
+      "Directory": Directory('%appdata%/Roadming/.minecraft')
+    },
   ];
 
-  static void addDir(String dir) {
-    gameDirs.add(Directory(dir));
+  static List<Map<String, dynamic>> additionGameDir = [
+    //额外.minecraft目录，可添加可删除
+    {"name": "", "Directory": Directory('D:/游戏/Minecraft/1.8/.minecraft')},
+    {"name": "", "Directory": Directory('F:/mc/main/.minecraft')},
+  ];
+
+  static void addDir(String dir, String? name) {
+    additionGameDir.add({"name": name, "Directory": Directory(dir)});
   }
 
   static Future<void> init() async {
     installedGames.clear();
+
     File convertToFile(FileSystemEntity dir, String type) {
       //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
       return File(
           '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
     }
 
-    Future<void> addGame(dir) async {
-      var json = convertToFile(dir, "json");
-      var jar = convertToFile(dir, "jar");
-      if (await json.exists())
-        installedGames.add(
-            Game(jsonDecode(await json.readAsString()), dir.path, jar.path));
+    Future<void> _searchGame(Directory dir) async {
+      //搜索versions文件夹下的文件夹
+      if (await dir.exists())
+        dir
+            .listSync()
+            .where((e) => e is Directory)
+            .forEach((e) => Future(() async {
+                  File json = convertToFile(dir, "json");
+                  File jar = convertToFile(dir, "jar");
+                  //判断是否为合法的已安装版本目录
+                  if (await json.exists())
+                    //解析json文件并添加
+                    installedGames.add(Game(
+                        jsonDecode(await json.readAsString()),
+                        dir.path,
+                        jar.path));
+                }));
     }
 
-    //遍历游戏安装目录下的已安装游戏文件夹
-    for (Directory dir in gameDirs) {
-      Directory versionDir = Directory('${dir.path}/versions');
-      Future(() async => {
-            if (await versionDir.exists())
-              versionDir
-                  .listSync()
-                  .where((element) => element is Directory)
-                  .forEach((element) => addGame(element))
-          });
-    }
+    //遍历游戏搜索.minecraft目录
+    for (Map map in constGameDirs)
+      _searchGame(Directory('${map["Directory"].path}/versions'));
+    for (Map map in additionGameDir)
+      _searchGame(Directory('${map["Directory"].path}/versions'));
   }
 }
