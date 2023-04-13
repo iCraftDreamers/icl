@@ -31,9 +31,9 @@ class MyTextFormField extends StatelessWidget {
       validator: validator,
       readOnly: readOnly,
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         border: const OutlineInputBorder(borderRadius: borderRadius),
-        enabledBorder: OutlineInputBorder(
+        enabledBorder: const OutlineInputBorder(
           borderRadius: borderRadius,
           borderSide: BorderSide(color: Colors.grey),
         ),
