@@ -28,7 +28,7 @@ class MyTheme {
     behavior: SnackBarBehavior.floating,
     width: 200,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-    backgroundColor: Colors.blue,
+    backgroundColor: Colors.blue
   );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(
@@ -64,7 +64,7 @@ class MyTheme {
         behavior: SnackBarBehavior.floating,
         width: 200,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-        backgroundColor: const Color.fromRGBO(200, 200,200, 1),
+        backgroundColor: Colors.white70,
   );
   static darkDialogTheme() => ThemeData.dark().dialogTheme.copyWith(
         backgroundColor: darkAppBarTheme().backgroundColor,
