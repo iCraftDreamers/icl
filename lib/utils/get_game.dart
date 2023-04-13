@@ -16,22 +16,21 @@ class Game {
   late final String id; //游戏名
   late final String version; //游戏版本
   late final String type;
-  String? Forge; //Forge版本
-  String? Fabric;
-  String? OptiFine; //OptiFine版本
-  bool? LiteLoader;
-  String? Quilt;
+  String? forge; //Forge版本
+  String? fabric;
+  bool? liteloader;
+  String? quilt;
+  String? optifine; //OptiFine版本
 
-  Game(Map jsonData, String this.path, String this.jar) {
-    //初始化对象
-    _decodeJson(jsonData);
-    _decodeLibraries(jsonData['libraries']);
+  Game(Map jsonData, this.path, this.jar) {
+    //初始化对象,并读取该版本的信息
+    _readInfo(jsonData);
+    _readLibraries(jsonData['libraries']);
   }
 
-  void printInfo() {
-    print(longDescribe());
-    // print(
-    // "id: $id, version: $version, type:$type, Forge:$Forge, OptiFine:$OptiFine");
+  @override
+  String toString() {
+    return shortDescribe() + longDescribe();
   }
 
   String shortDescribe() {
@@ -44,17 +43,18 @@ class Game {
   }
 
   String longDescribe() {
-    StringBuffer desc = StringBuffer("$version");
-    if (LiteLoader == true) desc.write("  LiteLoader");
-    if (Forge != null) desc.write("  Forge:$Forge");
-    if (Fabric != null) desc.write("  Fabric:$Fabric");
-    if (Quilt != null) desc.write("  Quilt:$Quilt");
-    if (OptiFine != null) desc.write("  OptiFine:$OptiFine");
+    StringBuffer desc = StringBuffer(version);
+    if (liteloader == true) desc.write("  LiteLoader");
+    if (forge != null) desc.write("  Forge:$forge");
+    if (fabric != null) desc.write("  Fabric:$fabric");
+    if (quilt != null) desc.write("  Quilt:$quilt");
+    if (optifine != null) desc.write("  OptiFine:$optifine");
     return desc.toString();
   }
 
-  Future<void> _decodeJson(data) async {
-    //解析游戏版本
+  Future<void> _readInfo(data) async {
+    //读取版本，发布类型与版本号
+
     String fromJar() {
       final by = jsonDecode(utf8.decode(ZipDecoder()
           .decodeBytes(File(jar).readAsBytesSync())
@@ -63,29 +63,34 @@ class Game {
       return by["id"];
     }
 
-    this.id = data['id'];
-    this.type = data['type'];
-    this.version = data['clientVersion'] ?? data['jar'] ?? fromJar();
+    id = data['id'];
+    type = data['type'];
+    version = data['clientVersion'] ?? data['jar'] ?? fromJar();
   }
 
-  Future<void> _decodeLibraries(libraries) async {
-    RegExp ForgeExp = RegExp(
+  Future<void> _readLibraries(libraries) async {
+    //读取是否安装Forge,高清修复等
+    RegExp expForge = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
-    RegExp FabricExp = RegExp("net.fabricmc:fabric-loader:");
-    RegExp LiteLoaderExp = RegExp("liteloader");
-    RegExp QuiltExp = RegExp("org.quiltmc:quilt-loader:");
-    RegExp OptifineExp = RegExp("optifine:OptiFine:1.[0-9+.]+_");
+    RegExp expFabric = RegExp("net.fabricmc:fabric-loader:");
+    RegExp expLiteLoader = RegExp("liteloader");
+    RegExp expQuilt = RegExp("org.quiltmc:quilt-loader:");
+    RegExp expOptifine = RegExp("optifine:OptiFine:1.[0-9+.]+_");
     libraries.forEach((e) {
       String str = e.toString();
-      if (LiteLoaderExp.hasMatch(str)) this.LiteLoader = true;
-      if (ForgeExp.hasMatch(str))
-        this.Forge = e["name"].toString().replaceAll(ForgeExp, '');
-      if (FabricExp.hasMatch(str))
-        this.Fabric = e["name"].toString().replaceAll(FabricExp, '');
-      if (QuiltExp.hasMatch(str))
-        this.Quilt = e["name"].toString().replaceAll(QuiltExp, '');
-      if (OptifineExp.hasMatch(str))
-        this.OptiFine = e["name"].toString().replaceAll(OptifineExp, '');
+      if (expLiteLoader.hasMatch(str)) liteloader = true;
+      if (expForge.hasMatch(str)) {
+        forge = e["name"].toString().replaceAll(expForge, '');
+      }
+      if (expFabric.hasMatch(str)) {
+        fabric = e["name"].toString().replaceAll(expFabric, '');
+      }
+      if (expQuilt.hasMatch(str)) {
+        quilt = e["name"].toString().replaceAll(expQuilt, '');
+      }
+      if (expOptifine.hasMatch(str)) {
+        optifine = e["name"].toString().replaceAll(expOptifine, '');
+      }
     });
   }
 }
@@ -113,44 +118,56 @@ class GameManaging {
   ///
   /// ```
   static List<Game> installedGames = []; //以对象存储已安装的游戏
-  static List<Directory> gameDirs = [
-    //初始化游戏安装目录
-    Directory('.minecraft'),
-    Directory('%appdata%/Roadming/.minecraft'),
-    Directory('D:/游戏/Minecraft/1.8/.minecraft'),
-    Directory('F:/mc/main/.minecraft'),
+
+  static final List<Map<String, dynamic>> constGameDirs = [
+    //固有.minecraft目录
+    {"name": "启动器下游戏目录", "Directory": Directory('.minecraft')},
+    {
+      "name": "官方启动器游戏目录",
+      "Directory": Directory('%appdata%/Roadming/.minecraft')
+    },
   ];
 
-  static void addDir(String dir) {
-    gameDirs.add(Directory(dir));
+  static List<Map<String, dynamic>> additionGameDir = [
+    //额外.minecraft目录，可添加可删除
+    {"name": "", "Directory": Directory('D:/游戏/Minecraft/1.8/.minecraft')},
+    {"name": "", "Directory": Directory('F:/mc/main/.minecraft')},
+  ];
+
+  static void addDir(String dir, String? name) {
+    additionGameDir.add({"name": name, "Directory": Directory(dir)});
   }
 
   static Future<void> init() async {
     installedGames.clear();
+
     File convertToFile(FileSystemEntity dir, String type) {
       //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
       return File(
-          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.${type}');
+          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.$type');
     }
 
-    Future<void> addGame(dir) async {
-      var json = convertToFile(dir, "json");
-      var jar = convertToFile(dir, "jar");
-      if (await json.exists())
-        installedGames.add(
-            Game(jsonDecode(await json.readAsString()), dir.path, jar.path));
+    Future<void> searchGame(Directory dir) async {
+      //搜索versions文件夹下的文件夹
+      if (await dir.exists()) {
+        dir.listSync().whereType<Directory>().forEach((e) => Future(() async {
+              File json = convertToFile(e, "json");
+              File jar = convertToFile(e, "jar");
+              //判断是否为合法的已安装版本目录
+              if (await json.exists()) {
+                installedGames.add(Game(
+                    jsonDecode(await json.readAsString()), dir.path, jar.path));
+              }
+            }));
+      }
     }
 
-    //遍历游戏安装目录下的已安装游戏文件夹
-    for (Directory dir in gameDirs) {
-      Directory versionDir = Directory('${dir.path}/versions');
-      Future(() async => {
-            if (await versionDir.exists())
-              versionDir
-                  .listSync()
-                  .where((element) => element is Directory)
-                  .forEach((element) => addGame(element))
-          });
+    //遍历游戏搜索.minecraft目录
+    for (Map map in constGameDirs) {
+      searchGame(Directory('${map["Directory"].path}/versions'));
+    }
+    for (Map map in additionGameDir) {
+      searchGame(Directory('${map["Directory"].path}/versions'));
     }
   }
 }

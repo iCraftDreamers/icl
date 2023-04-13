@@ -30,7 +30,7 @@ class WindowSurface extends StatelessWidget {
       () => AnimatedContainer(
         height: 54,
         clipBehavior: Clip.antiAlias,
-        duration: Duration(milliseconds: currentIndex == index ? 200 : 0),
+        duration: Duration(milliseconds: currentIndex.value == index ? 200 : 0),
         decoration: BoxDecoration(
           borderRadius: MyTheme.borderRadius,
           color: currentIndex.value == index
@@ -42,7 +42,7 @@ class WindowSurface extends StatelessWidget {
               ? [
                   BoxShadow(
                     color: Colors.black.withOpacity(.2), // 阴影的颜色
-                    offset: Offset(0, 5), // 阴影与容器的距离
+                    offset: const Offset(0, 5), // 阴影与容器的距离
                     blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
                     spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
                   )
@@ -62,7 +62,7 @@ class WindowSurface extends StatelessWidget {
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                currentIndex == index
+                currentIndex.value == index
                     ? Icon(icon, color: Colors.white)
                     : Icon(unselectIcon),
                 const SizedBox(width: 5),
@@ -118,7 +118,7 @@ class WindowSurface extends StatelessWidget {
         pageBuilder: (context, animation, secondaryAnimation) =>
             SharedAxisTransition(
           transitionType: SharedAxisTransitionType.vertical,
-          fillColor: Color.fromRGBO(0, 0, 0, 0),
+          fillColor: const Color.fromRGBO(0, 0, 0, 0),
           animation: animation,
           secondaryAnimation: secondaryAnimation,
           child: widget,
@@ -140,9 +140,8 @@ class WindowSurface extends StatelessWidget {
     }
 
     return Expanded(
-      child: Container(
+      child: ClipRect(
         clipBehavior: Clip.hardEdge,
-        decoration: BoxDecoration(),
         child: Navigator(
           key: Get.nestedKey(1),
           initialRoute: '/home',

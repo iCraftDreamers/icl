@@ -26,7 +26,7 @@ class HomePage extends RoutePage {
           Row(
             children: [
               title(),
-              Spacer(),
+              const Spacer(),
               IconButton(
                 icon: const Icon(Icons.add),
                 onPressed: () {},
@@ -49,30 +49,31 @@ class HomePage extends RoutePage {
   }
 
   Widget toolBar() {
-    return Container(
+    return SizedBox(
       height: 65,
-      color: Color.fromARGB(0, 0, 0, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Row(
-        children: [
-          const Spacer(),
-          ElevatedButton(
-            onPressed: () => showDialog(
-              context: Get.context!,
-              builder: (context) => addGameDialog(),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Row(
-                children: const [
-                  Icon(Icons.add),
-                  Text("添加游戏"),
-                  SizedBox(width: 7),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          children: [
+            const Spacer(),
+            ElevatedButton(
+              onPressed: () => showDialog(
+                context: Get.context!,
+                builder: (context) => addGameDialog(),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: const [
+                    Icon(Icons.add),
+                    Text("添加游戏"),
+                    SizedBox(width: 7),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -122,16 +123,13 @@ class HomePage extends RoutePage {
   Widget gridView() {
     const versions = ["1.8"];
     final children = versions.map((e) => _Card(title: e)).toList();
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 0),
-      child: GridView.extent(
-        maxCrossAxisExtent: 150,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-        childAspectRatio: 1 / 1.333,
-        shrinkWrap: true,
-        children: children,
-      ),
+    return GridView.extent(
+      maxCrossAxisExtent: 150,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 1 / 1.333,
+      shrinkWrap: true,
+      children: children,
     );
   }
 }
@@ -179,25 +177,6 @@ class IconTextField extends StatelessWidget {
   }
 }
 
-class MyClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    // 添加一个全屏的矩形
-    path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-    // 添加一个圆角矩形
-    path.addRRect(RRect.fromLTRBR(0, 0, 0, 0, Radius.circular(20)));
-    // 设置剪裁模式为evenOdd
-    path.fillType = PathFillType.evenOdd;
-    // 关闭路径
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => true;
-}
-
 class _Card extends StatelessWidget {
   const _Card({required this.title});
 
@@ -205,15 +184,16 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var hover = false.obs;
     return Hero(
       tag: "image",
-      child: Container(
+      child: ClipRRect(
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.5)),
+        borderRadius: BorderRadius.circular(12.5),
         child: Stack(
           children: [
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
                       "assets/images/background/2020-04-11_20.30.41.png"),
@@ -224,17 +204,26 @@ class _Card extends StatelessWidget {
             Flex(
               direction: Axis.vertical,
               children: [
-                Expanded(flex: 1, child: SizedBox()),
+                const Expanded(child: SizedBox()),
                 Expanded(
                   flex: 0,
-                  child: ClipPath(
-                    clipper: MyClipper(),
+                  child: Container(
+                    clipBehavior: Clip.hardEdge,
+                    decoration: const BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black38,
+                          blurRadius: 15,
+                          blurStyle: BlurStyle.outer,
+                        ),
+                      ],
+                    ),
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
                       child: Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         alignment: Alignment.centerLeft,
-                        color: Colors.grey.withOpacity(.3),
+                        color: Colors.white.withOpacity(.1),
                         child: Text(
                           title,
                           style: Theme.of(context)
@@ -252,18 +241,48 @@ class _Card extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 splashColor: Colors.black.withOpacity(.1),
-                onTap: () => Navigator.of(Get.context!).push(
-                  _createRoute(GamePage()),
-                ),
+                onTap: () => {
+                  Navigator.of(Get.context!).push(
+                    _createRoute(const GamePage()),
+                  ),
+                },
+                onHover: (value) => hover(value),
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               child: Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {},
-                  icon: Icon(Icons.more_horiz, color: Colors.white),
+                  icon: const Icon(Icons.more_horiz, color: Colors.white),
+                ),
+              ),
+            ),
+            Obx(
+              () => TweenAnimationBuilder(
+                tween: Tween<Offset>(
+                  begin: Offset.zero,
+                  end: hover.value ? const Offset(0, 0) : const Offset(0, 51),
+                ),
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.linearToEaseOut,
+                builder: (context, offset, child) =>
+                    Transform.translate(offset: offset, child: child),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 10, right: 10),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: MouseRegion(
+                      onEnter: (event) => hover(true),
+                      onExit: (event) => hover(false),
+                      child: FloatingActionButton.small(
+                        onPressed: () => {},
+                        heroTag: null,
+                        child: const Icon(Icons.play_arrow),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
