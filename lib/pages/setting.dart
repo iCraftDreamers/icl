@@ -44,9 +44,7 @@ class SettingPage extends RoutePage {
             ),
             FilledButton(
               onPressed: () {
-                GameManaging.installedGames.forEach(
-                  (element) => element.printInfo(),
-                );
+                print(GameManaging.installedGames);
                 // showDialog(
                 //   context: Get.context!,
                 //   builder: (context) => SimpleDialog(
