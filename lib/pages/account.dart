@@ -71,7 +71,7 @@ class _AccountItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       margin: const EdgeInsets.only(bottom: 15),
       decoration: ShadowBoxDecoration(Get.context!),
-      child: Row(//
+      child: Row(
         children: [
           Wrap(
             spacing: 15,
