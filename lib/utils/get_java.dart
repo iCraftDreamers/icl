@@ -34,13 +34,8 @@ class GetJava {
 
   static Future<void> init() async {
     list.clear();
-    pathOnEnvironment().then(
-      (paths) => paths.forEach(
-        (path) {
-          list.add(Java(path));
-        },
-      ),
-    );
+    pathOnEnvironment()
+        .then((paths) => {for (final path in paths) list.add(path)});
   }
 
   static Future<List> pathOnEnvironment() async {
