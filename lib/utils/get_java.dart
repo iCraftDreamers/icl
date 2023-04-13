@@ -35,10 +35,10 @@ class GetJava {
   static Future<void> init() async {
     list.clear();
     pathOnEnvironment()
-        .then((paths) => {for (final path in paths) list.add(path)});
+        .then((paths) => {for (final path in paths) list.add(Java(path))});
   }
 
-  static Future<List> pathOnEnvironment() async {
+  static Future<List<String>> pathOnEnvironment() async {
     var result = <String>[];
     final command = Platform.isWindows ? "where" : "which";
     var args = Platform.isWindows ? ["\$PATH:java"] : ["-a", "\$PATH", "java"];
