@@ -459,7 +459,7 @@ class _EditAccountDialog extends StatelessWidget {
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(SnackBar(content: Text("修改成功！")));
+                .showSnackBar(SnackBar(content: Text("修改成功！"),duration:Duration(seconds: 1)));
             AccountManaging.gameAccounts.refresh();
             Get.back();
           }
