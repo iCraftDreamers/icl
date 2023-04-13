@@ -128,7 +128,7 @@ class _AccountItem extends StatelessWidget {
                       AccountManaging.removeAccount(user);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!)
-                          .showSnackBar(SnackBar(content: Text("删除成功！")));
+                          .showSnackBar(SnackBar(content: Text("删除成功！"),duration:Duration(seconds: 1)));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -252,7 +252,7 @@ class _AddAccountDialog extends StatelessWidget {
             );
             Get.back();
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(SnackBar(content: Text("添加成功！")));
+                .showSnackBar(SnackBar(content: Text("添加成功！"),duration:Duration(seconds: 1)));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
@@ -459,7 +459,7 @@ class _EditAccountDialog extends StatelessWidget {
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
             ScaffoldMessenger.of(Get.context!)
-                .showSnackBar(SnackBar(content: Text("修改成功！")));
+                .showSnackBar(SnackBar(content: Text("修改成功！"),duration:Duration(seconds: 1)));
             AccountManaging.gameAccounts.refresh();
             Get.back();
           }
