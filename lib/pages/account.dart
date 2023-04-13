@@ -65,6 +65,7 @@ class _AccountItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var skin = Skin();
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -77,7 +78,7 @@ class _AccountItem extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               FutureBuilder<Uint8List>(
-                future: Skin.toAvatar(user['skin'] ?? AccountManaging.Default),
+                future: skin.toAvatar(user['skin'] ?? AccountManaging.Default),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Image.memory(
@@ -269,6 +270,7 @@ class _EditAccountDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var skin = Skin();
     RxSet<String> switchSelected() {
       if (user['skin'] != null) {
         switch (user['skin']) {
@@ -337,7 +339,7 @@ class _EditAccountDialog extends StatelessWidget {
                     width: 125,
                     height: 125,
                     child: FutureBuilder<Uint8List>(
-                      future: Skin.toAvatar(skinTemp.value),
+                      future: skin.toAvatar(skinTemp.value),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.done) {
                           return Image.memory(
@@ -386,7 +388,7 @@ class _EditAccountDialog extends StatelessWidget {
                         case "{custom}":
                           final File? file = await filePicker(['png']);
                           if (file != null) {
-                            if (!Skin.isLegal(file)) {
+                            if (!skin.isLegal(file)) {
                               showDialog(
                                   context: Get.context!,
                                   builder: (context) => ErrorDialog(

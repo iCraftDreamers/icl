@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
 class Skin {
-  static bool isLegal(file) {
+  bool isLegal(file) {
     final Image? source = decodePng(file.readAsBytesSync());
     if (source!.width >= 64 &&
         (source.width / source.height == 1 ||
@@ -13,7 +13,7 @@ class Skin {
     return false;
   }
 
-  static Future<Uint8List> toAvatar(file) async {
+  Future<Uint8List> toAvatar(file) async {
     late final Uint8List u8l;
     switch (file) {
       case "Steve":
