@@ -16,7 +16,7 @@ class AccountPage extends RoutePage {
   const AccountPage({super.key});
 
   @override
-  String routeName() => "账号";
+  String routeName() => "用户";
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +124,8 @@ class _AccountItem extends StatelessWidget {
                 onPressed: () => showDialog(
                   context: Get.context!,
                   builder: (context) => WarningDialog(
-                    title: "删除账号",
-                    content: "你确定要删除这个账号吗？此操作将无法撤销！",
+                    title: "删除用户",
+                    content: "你确定要删除这个用户吗？此操作将无法撤销！",
                     onConfirmed: () {
                       AccountManaging.removeAccount(user);
                       Get.back();

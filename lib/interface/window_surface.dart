@@ -82,7 +82,7 @@ class WindowSurface extends StatelessWidget {
 
   Widget navigation(context) {
     const items = {
-      "账号": [Icons.people, Icons.people_outline],
+      "用户": [Icons.people, Icons.people_outline],
       "库": [Icons.apps, Icons.apps_outlined],
       "外观": [Icons.palette, Icons.palette_outlined],
       "设置": [Icons.settings, Icons.settings_outlined],
