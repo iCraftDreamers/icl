@@ -262,7 +262,7 @@ class _Card extends StatelessWidget {
             Obx(
               () => TweenAnimationBuilder(
                 tween: Tween<Offset>(
-                  begin: Offset.zero,
+                  begin: const Offset(0, 51),
                   end: hover.value ? const Offset(0, 0) : const Offset(0, 51),
                 ),
                 duration: const Duration(milliseconds: 250),
