@@ -14,7 +14,7 @@ class MyTheme {
         appBarTheme: lightAppBarTheme(),
         dividerTheme: lightDividerTheme(),
         dialogTheme: lightDialogTheme(),
-        snackBarTheme: lightSnackbarTheme()
+        snackBarTheme: lightSnackbarTheme(),
       );
   static AppBarTheme lightAppBarTheme() =>
       ThemeData.light().appBarTheme.copyWith(
@@ -27,8 +27,9 @@ class MyTheme {
   static SnackBarThemeData lightSnackbarTheme() => ThemeData.light().snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     width: 200,
+    elevation: 2,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-    backgroundColor: Colors.blue
+    backgroundColor: Colors.blue,
   );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(
@@ -63,8 +64,10 @@ class MyTheme {
   static darkSnackbarTheme() => ThemeData.dark().snackBarTheme.copyWith(
         behavior: SnackBarBehavior.floating,
         width: 200,
+        elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-        backgroundColor: Colors.white70,
+        backgroundColor: Colors.white,
+        insetPadding: EdgeInsets.all(16),
   );
   static darkDialogTheme() => ThemeData.dark().dialogTheme.copyWith(
         backgroundColor: darkAppBarTheme().backgroundColor,
