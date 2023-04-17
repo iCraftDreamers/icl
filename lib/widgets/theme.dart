@@ -24,16 +24,17 @@ class MyTheme {
       ThemeData.light().dividerTheme.copyWith(
             color: const Color.fromRGBO(197, 197, 197, 1),
           );
+
   static SnackBarThemeData lightSnackbarTheme() => ThemeData.light().snackBarTheme.copyWith(
     behavior: SnackBarBehavior.floating,
     width: 200,
     elevation: 2,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-    backgroundColor: Colors.blue,
+    backgroundColor: Colors.black54,
   );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(
-            backgroundColor: lightAppBarTheme().backgroundColor,
+            backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.5)),
           );

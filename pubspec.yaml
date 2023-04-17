@@ -30,6 +30,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  dart_minecraft:
+
   bitsdojo_window:
 
   get:
