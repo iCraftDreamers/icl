@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:icl/utils/accounts.dart';
 import 'package:icl/utils/get_game.dart';
 import 'package:icl/utils/get_java.dart';
+import 'package:icl/utils/sysinfo.dart';
 
 import '/widgets/page.dart';
 
@@ -14,19 +15,20 @@ class SettingPage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
+    var mem = 1024.obs;
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
         title(),
-        ValueBuilder<double?>(
-          initialValue: 1024,
-          builder: (value, updater) => Slider(
-            value: value!,
-            min: 512,
-            max: 4096,
-            divisions: 7,
-            label: value.toInt().toString(),
-            onChanged: (value) => updater(value),
+        Obx(() => Text("内存分配大小：${mem.value} MB")),
+        Obx(
+          () => Slider(
+            value: mem.value.toDouble(),
+            min: 0,
+            max:
+                (Sysinfo.getTotalPhysicalMemory ~/ Sysinfo.megaByte).toDouble(),
+            label: mem.toString(),
+            onChanged: (value) => mem(value.toInt()),
           ),
         ),
         Row(
@@ -43,16 +45,7 @@ class SettingPage extends RoutePage {
               child: const Text("搜索游戏"),
             ),
             FilledButton(
-              onPressed: () {
-                print(GameManaging.installedGames);
-                // showDialog(
-                //   context: Get.context!,
-                //   builder: (context) => SimpleDialog(
-                //     title: Text("测试"),
-                //     children: [Text(GameManaging.installedGames.toString())],
-                //   ),
-                // );
-              },
+              onPressed: () => print(GameManaging.installedGames),
               child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(
