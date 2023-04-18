@@ -130,7 +130,7 @@ class _AccountItem extends StatelessWidget {
                       AccountManaging.removeAccount(user);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!)
-                          .showSnackBar(SnackBar(content: Text("删除成功！"),duration:Duration(seconds: 1)));
+                          .showSnackBar(const SnackBar(content: Text("删除成功！"),duration:Duration(seconds: 1)));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -161,7 +161,7 @@ class _AddAccountDialog extends StatelessWidget {
         case 2:
           return [
             TitleTextFormFiled(
-              titelText: "用户名：",
+              titleText: "用户名：",
               titleWidth: 75,
               obscureText: false,
               readOnly: false,
@@ -170,7 +170,7 @@ class _AddAccountDialog extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             TitleTextFormFiled(
-              titelText: "密码：",
+              titleText: "密码：",
               titleWidth: 75,
               obscureText: true,
               readOnly: false,
@@ -181,7 +181,7 @@ class _AddAccountDialog extends StatelessWidget {
         default:
           return [
             TitleTextFormFiled(
-              titelText: "用户名：",
+              titleText: "用户名：",
               titleWidth: 75,
               obscureText: false,
               readOnly: false,
@@ -209,7 +209,7 @@ class _AddAccountDialog extends StatelessWidget {
                   width: 100,
                   child: Obx(
                     () => DropdownButton(
-                      borderRadius: BorderRadius.circular(7.5),
+                      borderRadius: BorderRadius.circular(12.5),
                       isExpanded: true,
                       value: loginMode.value,
                       items: AccountManaging.loginModes.keys
@@ -301,7 +301,7 @@ class _EditAccountDialog extends StatelessWidget {
         default:
           return [
             TitleTextFormFiled(
-              titelText: "登录模式:",
+              titleText: "登录模式:",
               titleWidth: 75,
               obscureText: false,
               readOnly: true,
@@ -312,7 +312,7 @@ class _EditAccountDialog extends StatelessWidget {
               height: 10,
             ),
             TitleTextFormFiled(
-              titelText: "用户名:",
+              titleText: "用户名:",
               titleWidth: 75,
               obscureText: false,
               readOnly: false,
