@@ -462,10 +462,10 @@ class _EditAccountDialog extends StatelessWidget {
               default:
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
-            ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
-                content: Text("修改成功！"),duration: Duration(seconds: 1)));
             AccountManaging.gameAccounts.refresh();
             Get.back();
+            ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
+                content: Text("修改成功！"),duration: Duration(seconds: 1)));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
