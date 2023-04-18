@@ -8,6 +8,10 @@ import '/pages/home.dart';
 import '/pages/appearance.dart';
 import '/pages/setting.dart';
 
+class _NavigatorController extends GetxController {
+  var currentIndex = 1.obs;
+}
+
 class WindowSurface extends StatelessWidget {
   const WindowSurface({super.key});
 
@@ -22,18 +26,18 @@ class WindowSurface extends StatelessWidget {
     );
   }
 
-  static var currentIndex = 1.obs;
-
   Widget navigationButton(int index, String routeName, String text,
       IconData icon, IconData unselectIcon, BuildContext context) {
+    final controller = Get.put(_NavigatorController());
     return Obx(
       () => AnimatedContainer(
         height: 54,
         clipBehavior: Clip.antiAlias,
-        duration: Duration(milliseconds: currentIndex.value == index ? 200 : 0),
+        duration: Duration(
+            milliseconds: controller.currentIndex.value == index ? 200 : 0),
         decoration: BoxDecoration(
           borderRadius: MyTheme.borderRadius,
-          color: currentIndex.value == index
+          color: controller.currentIndex.value == index
               ? Theme.of(context).colorScheme.primary
               : index == 0
                   ? Theme.of(context).extension<ShadowButtonTheme>()!.background
@@ -54,22 +58,24 @@ class WindowSurface extends StatelessWidget {
           child: InkWell(
             splashColor: Theme.of(context).colorScheme.primary,
             onTap: () {
-              if (currentIndex.value != index) {
-                currentIndex(index);
+              if (controller.currentIndex.value != index) {
+                controller.currentIndex(index);
                 Get.offNamed(routeName, id: 1);
               }
             },
             child: Row(
               children: [
                 const SizedBox(width: 10),
-                currentIndex.value == index
+                controller.currentIndex.value == index
                     ? Icon(icon, color: Colors.white)
                     : Icon(unselectIcon),
                 const SizedBox(width: 5),
                 Text(
                   text,
                   style: TextStyle(
-                    color: currentIndex.value == index ? Colors.white : null,
+                    color: controller.currentIndex.value == index
+                        ? Colors.white
+                        : null,
                   ),
                 ),
               ],

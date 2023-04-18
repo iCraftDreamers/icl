@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:get/get.dart';
 
-abstract class _appWindow {
-  static var isMaximize = appWindow.isMaximized.obs;
+class _AppWindowController extends GetxController {
+  var isMaximize = appWindow.isMaximized.obs;
 }
 
 class WindowTitleBar extends StatelessWidget {
@@ -14,6 +14,7 @@ class WindowTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(_AppWindowController());
     final iconColor = Theme.of(context).iconTheme.color;
     final buttonColors = WindowButtonColors(
       normal: Colors.transparent,
@@ -31,7 +32,7 @@ class WindowTitleBar extends StatelessWidget {
             child: MoveWindow(
               onDoubleTap: () => {
                 appWindow.maximizeOrRestore(),
-                _appWindow.isMaximize(!appWindow.isMaximized),
+                controller.isMaximize(!appWindow.isMaximized),
               },
               child: title ??
                   const Align(
@@ -58,18 +59,19 @@ class WindowButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(_AppWindowController());
     return Flex(
       direction: Axis.horizontal,
       children: [
         MinimizeWindowButton(colors: colors, animate: animate),
         Obx(
-          () => _appWindow.isMaximize.value
+          () => controller.isMaximize.value
               ? RestoreWindowButton(
                   colors: colors,
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
-                    _appWindow.isMaximize(!appWindow.isMaximized),
+                    controller.isMaximize(!appWindow.isMaximized),
                   },
                 )
               : MaximizeWindowButton(
@@ -77,7 +79,7 @@ class WindowButtons extends StatelessWidget {
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
-                    _appWindow.isMaximize(!appWindow.isMaximized),
+                    controller.isMaximize(!appWindow.isMaximized),
                   },
                 ),
         ),
