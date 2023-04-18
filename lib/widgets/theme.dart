@@ -30,7 +30,7 @@ class MyTheme {
     width: 200,
     elevation: 2,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-    backgroundColor: Colors.black54,
+    backgroundColor: Colors.white38,
   );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(

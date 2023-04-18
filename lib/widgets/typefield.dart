@@ -33,7 +33,7 @@ class MyTextFormField extends StatelessWidget {
       readOnly: readOnly,
       maxLength: 30,
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9_]+')),
+        FilteringTextInputFormatter.allow(RegExp("[\u4e00-\u9fa5_a-zA-Z]")),
       ],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
