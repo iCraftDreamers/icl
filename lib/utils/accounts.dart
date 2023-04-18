@@ -23,7 +23,7 @@ class AccountManaging {
         );
         break;
       case 1:
-        // users.add([c.loginMode.value, c.loginUsername]);
+
         break;
       case 2:
         // users.add([c.loginMode.value, c.loginUsername, c.loginPassword]);

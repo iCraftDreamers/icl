@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextFormField extends StatelessWidget {
   const MyTextFormField({
@@ -30,9 +31,14 @@ class MyTextFormField extends StatelessWidget {
       obscureText: obscureText,
       validator: validator,
       readOnly: readOnly,
+      maxLength: 30,
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp("[\u4e00-\u9fa5_a-zA-Z0-9]")),
+      ],
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         border: const OutlineInputBorder(borderRadius: borderRadius),
+        counterText: "",
         enabledBorder: const OutlineInputBorder(
           borderRadius: borderRadius,
           borderSide: BorderSide(color: Colors.grey),
@@ -48,7 +54,7 @@ class TitleTextFormFiled extends MyTextFormField {
   const TitleTextFormFiled({
     super.key,
     this.titleWidth,
-    required this.titelText,
+    required this.titleText,
     super.textEditingController,
     super.validator,
     super.labelText,
@@ -58,7 +64,7 @@ class TitleTextFormFiled extends MyTextFormField {
   });
 
   final double? titleWidth;
-  final String titelText;
+  final String titleText;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,7 @@ class TitleTextFormFiled extends MyTextFormField {
       children: [
         SizedBox(
           width: titleWidth,
-          child: Text(titelText),
+          child: Text(titleText),
         ),
         Expanded(
           child: super.build(context),
