@@ -124,15 +124,16 @@ class _AccountItem extends StatelessWidget {
                 onPressed: () => showDialog(
                   context: Get.context!,
                   builder: (context) => WarningDialog(
-                    title: "删除用户",
-                    content: "你确定要删除这个用户吗？此操作将无法撤销！",
+                    title: "移除用户",
+                    content: "你确定要移除这个用户吗？此操作将无法撤销！",
                     onConfirmed: () {
                       AccountManaging.removeAccount(user);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!).showSnackBar(
                           const SnackBar(
-                              content: Text("删除成功！"),
-                              duration: Duration(seconds: 1)));
+                              content: Text("移除成功！"),
+                              duration: Duration(seconds: 1),
+                              ));
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -328,7 +329,7 @@ class _EditAccountDialog extends StatelessWidget {
     }
 
     return AlertDialog(
-      title: Text("编辑${user['username']}",
+      title: Text("编辑 - ${user['username']}",
           style: const TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 400,
@@ -466,10 +467,6 @@ class _EditAccountDialog extends StatelessWidget {
               default:
                 AccountManaging.setCustomSkin(user, skinTemp.value);
             }
-            ScaffoldMessenger.of(Get.context!).showSnackBar(
-              const SnackBar(
-                  content: Text("修改成功！"), duration: Duration(seconds: 1)),
-            );
             AccountManaging.gameAccounts.refresh();
             Get.back();
             ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
