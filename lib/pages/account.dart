@@ -128,8 +128,8 @@ class _AccountItem extends StatelessWidget {
                 onPressed: () => showDialog(
                   context: Get.context!,
                   builder: (context) => WarningDialog(
-                    title: "删除用户",
-                    content: "你确定要删除这个用户吗？此操作将无法撤销！",
+                    title: "移除用户",
+                    content: "你确定要移除这个用户吗？此操作将无法撤销！",
                     onConfirmed: () {
                       Accounts.accounts.remove(account);
                       Get.back();
