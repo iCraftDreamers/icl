@@ -1,47 +1,8 @@
 import 'package:get/get.dart';
+import 'package:icl/utils/auth/account.dart';
 
-class AccountManaging {
-  static RxList gameAccounts = [].obs;
-  static const Map<int, String> loginModes = {
-    0: '离线登录',
-    1: '正版登录',
-    2: '外置登录',
-  };
-
-  static const String Steve = "Steve";
-  static const String Alex = "Alex";
-  static String Default = Steve;
-
-  static void add(String? username, String? password, int loginMode) {
-    switch (0) {
-      case 0:
-        gameAccounts.add(
-          {
-            "loginmode": loginMode,
-            "username": username,
-          },
-        );
-        break;
-      case 1:
-
-        break;
-      case 2:
-        // users.add([c.loginMode.value, c.loginUsername, c.loginPassword]);
-        break;
-      default:
-        gameAccounts.add(
-          {
-            "loginmode": loginMode,
-            "username": username,
-          },
-        );
-        break;
-    }
-  }
-
-  static void removeAccount(user) {
-    gameAccounts.remove(user);
-  }
+class Accounts {
+  static final accounts = <Account>[].obs;
 
   static void setCustomSkin(Map user, String skin) {
     if (!user.containsKey("skin")) {

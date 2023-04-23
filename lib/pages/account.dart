@@ -1,14 +1,16 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/utils/accounts.dart';
+import 'package:icl/utils/auth/microsoft/microsoft_account.dart';
+import 'package:icl/utils/auth/offline/offline_account.dart';
+import 'package:icl/utils/auth/account.dart';
+import 'package:icl/utils/auth/offline/skin.dart';
 import 'package:icl/widgets/page.dart';
+import 'package:uuid/uuid.dart';
 
 import '/widgets/shadow_box_decoration.dart';
-import '/utils/file_picker.dart';
-import '/utils/skin.dart';
-import '/utils/accounts.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
 
@@ -48,8 +50,8 @@ class AccountPage extends RoutePage {
         const SizedBox(height: 10),
         Obx(
           () => Column(
-            children: AccountManaging.gameAccounts
-                .map((acc) => _AccountItem(user: acc))
+            children: Accounts.accounts
+                .map((acc) => _AccountItem(account: acc))
                 .toList(),
           ),
         ),
@@ -59,13 +61,12 @@ class AccountPage extends RoutePage {
 }
 
 class _AccountItem extends StatelessWidget {
-  const _AccountItem({required this.user});
+  const _AccountItem({required this.account});
 
-  final Map user;
+  final Account account;
 
   @override
   Widget build(BuildContext context) {
-    var skin = Skin();
     return Container(
       height: 60,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
@@ -77,8 +78,10 @@ class _AccountItem extends StatelessWidget {
             spacing: 15,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              FutureBuilder<Uint8List>(
-                future: skin.toAvatar(user['skin'] ?? AccountManaging.Default),
+              FutureBuilder<Uint8List?>(
+                // TODO: 正版账号皮肤获取
+                // account is OfflineAccount ? (account as OfflineAccount).skin.avatar : getSkin(account)
+                future: (account as OfflineAccount).skin!.avatar,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Image.memory(
@@ -98,10 +101,16 @@ class _AccountItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    user['username'],
+                    account.username,
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  Text(AccountManaging.loginModes[user["loginmode"]].toString())
+                  Text(
+                    account is OfflineAccount
+                        ? "离线账号"
+                        : account is MicrosoftAccount
+                            ? "微软账号"
+                            : "未知账号",
+                  ),
                 ],
               ),
             ],
@@ -111,13 +120,8 @@ class _AccountItem extends StatelessWidget {
             spacing: 5,
             children: [
               IconButton(
-                onPressed: () => showDialog(
-                  context: Get.context!,
-                  builder: (context) => _EditAccountDialog(
-                    user: user,
-                  ),
-                ),
-                icon: const Icon(Icons.edit),
+                onPressed: () {},
+                icon: const Icon(Icons.checkroom_rounded),
               ),
               IconButton(
                 icon: const Icon(Icons.delete),
@@ -127,12 +131,14 @@ class _AccountItem extends StatelessWidget {
                     title: "删除用户",
                     content: "你确定要删除这个用户吗？此操作将无法撤销！",
                     onConfirmed: () {
-                      AccountManaging.removeAccount(user);
+                      Accounts.accounts.remove(account);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!).showSnackBar(
-                          const SnackBar(
-                              content: Text("删除成功！"),
-                              duration: Duration(seconds: 1)));
+                        const SnackBar(
+                          content: Text("删除成功！"),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
                     },
                     onCanceled: () => Get.back(),
                   ),
@@ -194,6 +200,22 @@ class _AddAccountDialog extends StatelessWidget {
       }
     }
 
+    const items = ["离线账户", "微软账户", "外置登录"];
+    final dropdownItems = <DropdownMenuItem>[];
+    for (int i = 0; i < items.length; i++) {
+      dropdownItems.add(
+        DropdownMenuItem(
+          value: i,
+          child: Container(
+            alignment: Alignment.center,
+            child: Text(
+              items[i],
+              style: Get.textTheme.titleSmall,
+            ),
+          ),
+        ),
+      );
+    }
     return AlertDialog(
       title: const Text("添加用户", style: TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
@@ -214,20 +236,7 @@ class _AddAccountDialog extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.5),
                       isExpanded: true,
                       value: loginMode.value,
-                      items: AccountManaging.loginModes.keys
-                          .map(
-                            (value) => DropdownMenuItem(
-                              value: value,
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Text(
-                                  AccountManaging.loginModes[value]!,
-                                  style: Get.textTheme.titleSmall,
-                                ),
-                              ),
-                            ),
-                          )
-                          .toList(),
+                      items: dropdownItems,
                       onChanged: (value) => loginMode(value),
                     ),
                   ),
@@ -249,231 +258,18 @@ class _AddAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
-            AccountManaging.add(
-              username.text,
-              password.text,
-              loginMode.value,
+            Accounts.accounts.add(
+              OfflineAccount(
+                username.text,
+                const Uuid().v5(Uuid.NAMESPACE_OID, username.text),
+                const Skin(SkinType.steve),
+              ),
             );
             Get.back();
             ScaffoldMessenger.of(Get.context!).showSnackBar(
               const SnackBar(
                   content: Text("添加成功！"), duration: Duration(seconds: 1)),
             );
-          }
-        }),
-        DialogCancelButton(onPressed: () => Get.back())
-      ],
-    );
-  }
-}
-
-class _EditAccountDialog extends StatelessWidget {
-  const _EditAccountDialog({required this.user});
-
-  final Map user;
-
-  @override
-  Widget build(BuildContext context) {
-    var skin = Skin();
-    RxSet<String> switchSelected() {
-      if (user['skin'] != null) {
-        switch (user['skin']) {
-          case AccountManaging.Steve:
-            return {"steve"}.obs;
-          case AccountManaging.Alex:
-            return {"alex"}.obs;
-          default:
-            return {"custom"}.obs;
-        }
-      }
-      return {"default"}.obs;
-    }
-
-    RxSet<String> skinSelected = switchSelected();
-    final TextEditingController username =
-        TextEditingController(text: user['username']);
-    final TextEditingController loginmode = TextEditingController(
-        text: AccountManaging.loginModes[user['loginmode']]);
-    final formKey = GlobalKey<FormState>();
-    RxString skinTemp = "${(user['skin'] ?? AccountManaging.Default)}".obs;
-    List<Widget> children(int loginMode) {
-      switch (user['loginmode']) {
-        case 1:
-          return [];
-        case 2:
-          return [];
-        default:
-          return [
-            TitleTextFormFiled(
-              titleText: "登录模式:",
-              titleWidth: 75,
-              obscureText: false,
-              readOnly: true,
-              textEditingController: loginmode,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            TitleTextFormFiled(
-              titleText: "用户名:",
-              titleWidth: 75,
-              obscureText: false,
-              readOnly: false,
-              textEditingController: username,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-          ];
-      }
-    }
-
-    return AlertDialog(
-      title: Text("编辑${user['username']}",
-          style: const TextStyle(fontWeight: FontWeight.bold)),
-      content: SizedBox(
-        width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 15),
-            Row(
-              children: [
-                Obx(
-                  () => SizedBox(
-                    width: 125,
-                    height: 125,
-                    child: FutureBuilder<Uint8List>(
-                      future: skin.toAvatar(skinTemp.value),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done) {
-                          return Image.memory(
-                            snapshot.data!,
-                            width: 40,
-                            height: 40,
-                          );
-                        }
-                        return Container(
-                          color: Colors.grey.withOpacity(.1),
-                          height: 40,
-                          width: 40,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: Form(
-                    key: formKey,
-                    child: Column(
-                      children: children(user['loginmode']),
-                    ),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 15),
-            Obx(
-              () => Row(
-                children: [
-                  const Text("展示皮肤:"),
-                  const SizedBox(
-                    width: 80,
-                  ),
-                  SegmentedButton(
-                    segments: const [
-                      ButtonSegment(value: "default", label: Text("默认")),
-                      ButtonSegment(value: "steve", label: Text("Steve")),
-                      ButtonSegment(value: "alex", label: Text("Alex")),
-                      ButtonSegment(value: "custom", label: Text("自定义"))
-                    ],
-                    selected: skinSelected,
-                    onSelectionChanged: (p0) async {
-                      switch (p0.toString()) {
-                        case "{custom}":
-                          final File? file = await filePicker(['png']);
-                          if (file != null) {
-                            if (!skin.isLegal(file)) {
-                              showDialog(
-                                  context: Get.context!,
-                                  builder: (context) => ErrorDialog(
-                                      title: "错误",
-                                      content: "你选择的文件不是一个有效的皮肤文件，请重新选择。",
-                                      onConfirmed: () {
-                                        Get.back();
-                                      }));
-                              break;
-                            }
-                            skinTemp(file.path);
-                            skinSelected(p0);
-                          }
-                          break;
-                        case "{steve}":
-                          skinTemp(AccountManaging.Steve);
-                          skinSelected(p0);
-                          break;
-                        case "{alex}":
-                          skinTemp(AccountManaging.Alex);
-                          skinSelected(p0);
-                          break;
-                        default:
-                          skinTemp(AccountManaging.Default);
-                          skinSelected(p0);
-                      }
-                    },
-                    showSelectedIcon: false,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 15),
-            // Obx(() {
-            //   switch (selected.toString()) {
-            //     case "{custom}":
-            //       return Row(
-            //         children: [
-            //           Text("皮肤路径:"),
-            //           SizedBox(
-            //             width: 20,
-            //           ),
-            //           Expanded(
-            //               child: MyTextFormField(
-            //             obscureText: false,
-            //             textEditingController: skin,
-            //           )),
-            //           IconButton(
-            //               onPressed: () async {
-            //                 final File? file = await filePicker(['png']);
-            //                 skin.text = file!.path;
-            //               },
-            //               icon: Icon(Icons.file_open))
-            //         ],
-            //       );
-            //     default:
-            //       return Row();
-            //   }
-            // }),
-          ],
-        ),
-      ),
-      actions: [
-        DialogConfirmButton(onPressed: () {
-          if (formKey.currentState!.validate()) {
-            user.update("username", (value) => username.text);
-            switch (skinSelected.toString()) {
-              case "{default}":
-                AccountManaging.setDefaultSkin(user);
-                break;
-              default:
-                AccountManaging.setCustomSkin(user, skinTemp.value);
-            }
-            ScaffoldMessenger.of(Get.context!).showSnackBar(
-              const SnackBar(
-                  content: Text("修改成功！"), duration: Duration(seconds: 1)),
-            );
-            AccountManaging.gameAccounts.refresh();
-            Get.back();
-            ScaffoldMessenger.of(Get.context!).showSnackBar(const SnackBar(
-                content: Text("修改成功！"), duration: Duration(seconds: 1)));
           }
         }),
         DialogCancelButton(onPressed: () => Get.back())
