@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:icl/utils/auth/account.dart';
 import 'package:icl/utils/auth/offline/skin.dart';
 
@@ -15,4 +17,7 @@ class OfflineAccount extends Account {
   String get uuid => _uuid;
 
   Skin? get skin => _skin;
+
+  @override
+  Future<Uint8List> get u8l => _skin!.u8l;
 }

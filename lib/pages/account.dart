@@ -81,7 +81,7 @@ class _AccountItem extends StatelessWidget {
               FutureBuilder<Uint8List?>(
                 // TODO: 正版账号皮肤获取
                 // account is OfflineAccount ? (account as OfflineAccount).skin.avatar : getSkin(account)
-                future: (account as OfflineAccount).skin!.avatar,
+                future: account.avatar,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Image.memory(
