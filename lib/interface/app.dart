@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '/widgets/theme.dart';
+import '../theme.dart';
 import 'window_bar.dart';
 import 'window_surface.dart';
 

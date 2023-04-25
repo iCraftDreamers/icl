@@ -2,14 +2,12 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/utils/accounts.dart';
-import 'package:icl/utils/auth/microsoft/microsoft_account.dart';
-import 'package:icl/utils/auth/offline/offline_account.dart';
-import 'package:icl/utils/auth/account.dart';
-import 'package:icl/utils/auth/offline/skin.dart';
-import 'package:icl/widgets/page.dart';
-import 'package:uuid/uuid.dart';
 
+import '/utils/auth/accounts.dart';
+import '/utils/auth/microsoft/microsoft_account.dart';
+import '/utils/auth/offline/offline_account.dart';
+import '/utils/auth/account.dart';
+import '/widgets/page.dart';
 import '/widgets/shadow_box_decoration.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
@@ -257,10 +255,9 @@ class _AddAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
-            var action = Accounts();
             switch (loginMode.value) {
               case 0:
-                action.addOffine(username.text);
+                Accounts.add(OfflineAccount(username.text));
                 break;
               default:
             }
@@ -275,4 +272,10 @@ class _AddAccountDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+enum AccountLoginMode {
+  offline,
+  ms,
+  custom,
 }

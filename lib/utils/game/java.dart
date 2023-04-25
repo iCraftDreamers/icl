@@ -1,16 +1,16 @@
 import 'dart:io';
 
 class Java {
-  late final String? path;
+  final String path;
   late final String? version;
 
-  Java([this.path, version]) {
-    this.version = version ?? getVersion();
+  Java(this.path, {version}) {
+    this.version = version ?? getVersion;
   }
 
-  String getVersion() {
+  String get getVersion {
     final regExp = RegExp(r'\\bin\\java\.exe$');
-    final javaPath = path?.replaceAll(regExp, '');
+    final javaPath = path.replaceAll(regExp, '');
     final releaseFile = File('$javaPath/release');
 
     if (!releaseFile.existsSync()) {
@@ -29,7 +29,7 @@ class Java {
   }
 }
 
-class GetJava {
+abstract class Javas {
   static List<Java> list = [];
 
   static Future<void> init() async {

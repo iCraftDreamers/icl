@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/widgets/theme.dart';
+import 'package:icl/theme.dart';
 
 import '/widgets/page.dart';
 

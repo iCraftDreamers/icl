@@ -5,7 +5,7 @@ abstract class Sysinfo {
   static late final int getFreePhysicalMemory;
   static const int megaByte = 1024 * 1024;
 
-  static init() async {
+  static Future<void> init() async {
     getTotalPhysicalMemory = SysInfo.getTotalPhysicalMemory();
     getFreePhysicalMemory = SysInfo.getFreePhysicalMemory();
   }

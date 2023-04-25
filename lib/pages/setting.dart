@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/utils/accounts.dart';
-import 'package:icl/utils/get_game.dart';
-import 'package:icl/utils/get_java.dart';
-import 'package:icl/utils/sysinfo.dart';
 
+import '/utils/auth/accounts.dart';
+import '/utils/game/game.dart';
+import '/utils/game/java.dart';
+import '/utils/sysinfo.dart';
 import '/widgets/page.dart';
 
 class SettingPage extends RoutePage {
@@ -34,18 +34,18 @@ class SettingPage extends RoutePage {
         Row(
           children: [
             FilledButton(
-              onPressed: () => GetJava.list.forEach((java) => print(java)),
+              onPressed: () => Javas.list.forEach((java) => print(java)),
               child: const Text("测试"),
             ),
             FilledButton(
               onPressed: () {
-                GameManaging.init();
-                GetJava.init();
+                Games.init();
+                Javas.init();
               },
               child: const Text("搜索游戏"),
             ),
             FilledButton(
-              onPressed: () => print(GameManaging.installedGames),
+              onPressed: () => print(Games.installedGames),
               child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(

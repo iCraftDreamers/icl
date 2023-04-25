@@ -15,6 +15,6 @@ class MicrosoftAccount extends Account {
   String get uuid => _uuid;
 
   @override
-  // TODO: implement u8l
-  Future<Uint8List> get u8l => throw UnimplementedError();
+  // TODO: implement avatar
+  Future<Uint8List?> get avatar => throw UnimplementedError();
 }

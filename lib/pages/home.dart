@@ -4,11 +4,11 @@ import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/pages/game.dart';
-import 'package:icl/utils/file_picker.dart';
-import 'package:icl/utils/get_game.dart';
-import 'package:icl/widgets/page.dart';
 
+import '/pages/game.dart';
+import '/utils/file_picker.dart';
+import '/utils/game/game.dart';
+import '/widgets/page.dart';
 import '/widgets/dialog.dart';
 
 class HomePage extends RoutePage {
@@ -38,7 +38,7 @@ class HomePage extends RoutePage {
               ),
               IconButton(
                 icon: const Icon(Icons.more_horiz),
-                onPressed: () => GameManaging.init(),
+                onPressed: () => Games.init(),
               )
             ],
           ),

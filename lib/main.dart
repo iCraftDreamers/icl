@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:icl/utils/get_game.dart';
-import 'package:icl/utils/get_java.dart';
-import 'package:icl/utils/sysinfo.dart';
 
+import '/utils/game/game.dart';
+import '/utils/game/java.dart';
+import '/utils/sysinfo.dart';
 import 'interface/app.dart';
 
 void main() {
   runApp(const MyApp());
-  init();
+  Future(() => init());
 }
 
 void init() async {
-  GetJava.init();
-  GameManaging.init();
+  Javas.init();
+  Games.init();
   Sysinfo.init();
   doWhenWindowReady(() {
     const initialSize = Size(960, 593);

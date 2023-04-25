@@ -95,7 +95,7 @@ class Game {
   }
 }
 
-class GameManaging {
+class Games {
   /// GameManaging.installedGames[下标].[变量]
   /// 以获取相应下标的对象的变量值
   /// [path] 版本文件夹路径

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:icl/widgets/theme.dart';
+import 'package:icl/theme.dart';
 
 abstract class RoutePage extends StatelessWidget {
   const RoutePage({super.key});

@@ -65,6 +65,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.1.5"
+  blurred:
+    dependency: "direct main"
+    description:
+      name: blurred
+      sha256: "539cb6d9a5148f941e7a04cf6d4d99f47ceca6c6c682300358e1682b67d10c9b"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
   characters:
     dependency: transitive
     description:

@@ -1,16 +1,15 @@
 import 'package:get/get.dart';
-import 'package:icl/utils/auth/account.dart';
-import 'package:uuid/uuid.dart';
 
-import 'auth/offline/offline_account.dart';
+import '/utils/auth/account.dart';
 
-class Accounts {
+abstract class Accounts {
   static final list = <Account>[].obs;
-  void addOffine(String username) {
-    Accounts.list.add(
-      OfflineAccount(
-          username, const Uuid().v5(Uuid.NAMESPACE_OID, username), null),
-    );
+  static bool add(Account account) {
+    if (list.contains(account)) {
+      return true;
+    }
+    Accounts.list.add(account);
+    return false;
   }
 
   static void setCustomSkin(Map user, String skin) {
