@@ -8,7 +8,11 @@ class OfflineAccount extends Account {
   final String _uuid;
   final Skin? _skin;
 
-  const OfflineAccount(this._username, this._uuid, this._skin);
+  const OfflineAccount(
+    this._username,
+    this._uuid,
+    this._skin,
+  );
 
   @override
   String get username => _username;
@@ -16,7 +20,7 @@ class OfflineAccount extends Account {
   @override
   String get uuid => _uuid;
 
-  Skin? get skin => _skin;
+  Skin get skin => _skin ?? DefaultSkin().skin();
 
   @override
   Future<Uint8List> get u8l => _skin!.u8l;

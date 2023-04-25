@@ -3,6 +3,21 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 
+class DefaultSkin {
+  String? uuid;
+  DefaultSkin({this.uuid});
+  Skin skin() {
+    //TODO: load default from config file
+    return uuid == null ? const Skin(SkinType.steve) : detectUUID();
+  }
+
+  Skin detectUUID() {
+    return (uuid.hashCode & 1) == 1
+        ? const Skin(SkinType.alex)
+        : const Skin(SkinType.steve);
+  }
+}
+
 class Skin {
   final SkinType type;
   final TextureModel? textureModel;

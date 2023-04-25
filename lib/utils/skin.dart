@@ -1,8 +1,6 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
-class Skin {
+class SkinUtil {
   bool isLegal(file) {
     final Image? source = decodePng(file.readAsBytesSync());
     if (source!.width >= 64 &&

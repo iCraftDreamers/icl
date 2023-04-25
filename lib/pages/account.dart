@@ -50,9 +50,8 @@ class AccountPage extends RoutePage {
         const SizedBox(height: 10),
         Obx(
           () => Column(
-            children: Accounts.accounts
-                .map((acc) => _AccountItem(account: acc))
-                .toList(),
+            children:
+                Accounts.list.map((acc) => _AccountItem(account: acc)).toList(),
           ),
         ),
       ],
@@ -131,7 +130,7 @@ class _AccountItem extends StatelessWidget {
                     title: "移除用户",
                     content: "你确定要移除这个用户吗？此操作将无法撤销！",
                     onConfirmed: () {
-                      Accounts.accounts.remove(account);
+                      Accounts.list.remove(account);
                       Get.back();
                       ScaffoldMessenger.of(Get.context!).showSnackBar(
                         const SnackBar(
@@ -258,13 +257,13 @@ class _AddAccountDialog extends StatelessWidget {
       actions: [
         DialogConfirmButton(onPressed: () {
           if (formKey.currentState!.validate()) {
-            Accounts.accounts.add(
-              OfflineAccount(
-                username.text,
-                const Uuid().v5(Uuid.NAMESPACE_OID, username.text),
-                const Skin(SkinType.steve),
-              ),
-            );
+            var action = Accounts();
+            switch (loginMode.value) {
+              case 0:
+                action.addOffine(username.text);
+                break;
+              default:
+            }
             Get.back();
             ScaffoldMessenger.of(Get.context!).showSnackBar(
               const SnackBar(
