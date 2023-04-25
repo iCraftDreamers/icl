@@ -9,7 +9,7 @@ class MyTheme {
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue),
         useMaterial3: true,
-        extensions: [ShadowButtonTheme.light],
+        extensions: const [ShadowButtonTheme.light],
         scaffoldBackgroundColor: const Color.fromRGBO(247, 247, 247, 1),
         appBarTheme: lightAppBarTheme(),
         dividerTheme: lightDividerTheme(),
@@ -25,13 +25,15 @@ class MyTheme {
             color: const Color.fromRGBO(197, 197, 197, 1),
           );
 
-  static SnackBarThemeData lightSnackbarTheme() => ThemeData.light().snackBarTheme.copyWith(
-    behavior: SnackBarBehavior.floating,
-    width: 200,
-    elevation: 2,
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
-    backgroundColor: Colors.white38,
-  );
+  static SnackBarThemeData lightSnackbarTheme() =>
+      ThemeData.light().snackBarTheme.copyWith(
+            behavior: SnackBarBehavior.floating,
+            width: 200,
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.5)),
+            backgroundColor: Colors.white38,
+          );
   static DialogTheme lightDialogTheme() =>
       ThemeData.light().dialogTheme.copyWith(
             backgroundColor: Colors.white,
@@ -49,13 +51,14 @@ class MyTheme {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
-        extensions: [ShadowButtonTheme.dark],
+        extensions: const [ShadowButtonTheme.dark],
         scaffoldBackgroundColor: const Color.fromRGBO(58, 58, 58, 1),
         appBarTheme: darkAppBarTheme(),
         dividerTheme: darkDividerTheme(),
         dialogTheme: darkDialogTheme(),
-        snackBarTheme: darkSnackbarTheme()
+        snackBarTheme: darkSnackbarTheme(),
       );
+
   static darkAppBarTheme() => ThemeData.dark().appBarTheme.copyWith(
         backgroundColor: const Color.fromRGBO(66, 66, 66, 1),
       );
@@ -66,10 +69,11 @@ class MyTheme {
         behavior: SnackBarBehavior.floating,
         width: 200,
         elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
         backgroundColor: Colors.white,
-        insetPadding: EdgeInsets.all(16),
-  );
+        insetPadding: const EdgeInsets.all(16),
+      );
   static darkDialogTheme() => ThemeData.dark().dialogTheme.copyWith(
         backgroundColor: darkAppBarTheme().backgroundColor,
         shape:
@@ -77,8 +81,8 @@ class MyTheme {
       );
 
   // 自定义字体
-  static final title = TextStyle(fontSize: 32);
-  static final secondTitle = TextStyle(fontSize: 24);
+  static const title = TextStyle(fontSize: 32);
+  static const secondTitle = TextStyle(fontSize: 24);
 
   // 自定义规格
   static final borderRadius = BorderRadius.circular(7.5);
@@ -98,7 +102,7 @@ class ShadowButtonTheme extends ThemeExtension<ShadowButtonTheme> {
     Color? danger,
   }) {
     return ShadowButtonTheme(
-      background: success ?? this.background,
+      background: success ?? background,
     );
   }
 

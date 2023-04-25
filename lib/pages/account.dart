@@ -233,7 +233,7 @@ class _AddAccountDialog extends StatelessWidget {
                   width: 100,
                   child: Obx(
                     () => DropdownButton(
-                      borderRadius: BorderRadius.circular(12.5),
+                      borderRadius: BorderRadius.circular(7.5),
                       isExpanded: true,
                       value: loginMode.value,
                       items: dropdownItems,
