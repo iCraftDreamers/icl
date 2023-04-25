@@ -49,7 +49,7 @@ class SettingPage extends RoutePage {
               child: const Text("打印搜索到的游戏"),
             ),
             FilledButton(
-              onPressed: () => print(Accounts.accounts),
+              onPressed: () => print(Accounts.list),
               child: const Text("打印存储的账号"),
             ),
           ],

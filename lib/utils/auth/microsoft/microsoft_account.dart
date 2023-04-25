@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:icl/utils/auth/account.dart';
 
 class MicrosoftAccount extends Account {
@@ -11,4 +13,8 @@ class MicrosoftAccount extends Account {
 
   @override
   String get uuid => _uuid;
+
+  @override
+  // TODO: implement u8l
+  Future<Uint8List> get u8l => throw UnimplementedError();
 }
