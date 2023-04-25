@@ -20,7 +20,7 @@ class OfflineAccount extends Account {
   @override
   String get uuid => _uuid;
 
-  Skin get skin => _skin ?? DefaultSkin().skin();
+  Skin get skin => _skin ?? DefaultSkin(uuid: uuid).skin();
 
   @override
   Future<Uint8List> get u8l => _skin!.u8l;
