@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
+import 'package:icl/utils/game/java.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
@@ -19,13 +20,23 @@ class Game {
   String? forge; //Forge版本
   String? fabric;
   bool? liteloader;
+  Java? _java;
   String? quilt;
   String? optifine; //OptiFine版本
-
+  late final String _arguments;
   Game(Map jsonData, this.path, this.jar) {
     //初始化对象,并读取该版本的信息
     _readInfo(jsonData);
     _readLibraries(jsonData['libraries']);
+    var arguments = (jsonData["arguments"] == null)
+        ? jsonData["minecraftArguments"]
+        : jsonData["arguments"]["game"];
+    _readArguments(arguments);
+  }
+
+  Java get java {
+    //TODO: Java的自动选择
+    return java ?? new Java(path);
   }
 
   @override
@@ -92,6 +103,18 @@ class Game {
         optifine = e["name"].toString().replaceAll(expOptifine, '');
       }
     });
+  }
+
+  Future<void> _readArguments(arguments) async {
+    //TODO: 具体替换参数
+    if (arguments.runtimeType == String) {
+      _arguments = arguments;
+      print(arguments);
+    }
+    if (arguments.runtimeType == List) {
+      _arguments = arguments.toString();
+      print(arguments);
+    }
   }
 }
 
