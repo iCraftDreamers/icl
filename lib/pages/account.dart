@@ -258,7 +258,7 @@ class _AddAccountDialog extends StatelessWidget {
           if (formKey.currentState!.validate()) {
             switch (loginMode.value) {
               case 0:
-                Accounts.add(OfflineAccount(username.text));
+                Accounts.list.add(OfflineAccount(username.text));
                 break;
               default:
             }
