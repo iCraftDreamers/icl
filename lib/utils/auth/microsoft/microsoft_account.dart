@@ -1,6 +1,6 @@
-import 'dart:typed_data';
-
 import 'package:icl/utils/auth/account.dart';
+
+import '../offline/skin.dart';
 
 class MicrosoftAccount extends Account {
   final String _username;
@@ -15,6 +15,6 @@ class MicrosoftAccount extends Account {
   String get uuid => _uuid;
 
   @override
-  // TODO: implement avatar
-  Future<Uint8List?> get avatar => throw UnimplementedError();
+  // TODO: implement skin
+  Skin get skin => throw UnimplementedError();
 }

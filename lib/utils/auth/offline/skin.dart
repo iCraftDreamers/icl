@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 
 class Skin {
-  final SkinType type;
-  final TextureModel? textureModel;
-  final String? localSkinPath;
-  final String? localCapePath;
+  final SkinType type; //类型
+  final TextureModel? textureModel; //模型
+  final String? localSkinPath; //皮肤
+  final String? localCapePath; //披风
 
   const Skin(
     this.type, {
@@ -16,28 +16,24 @@ class Skin {
     this.localCapePath,
   });
 
-  Future<Uint8List> get u8l async {
-    final Uint8List u8l;
+  Future<Uint8List?> get u8l async {
+    const steve = "assets/images/skins/steve.png";
+    const alex = "assets/images/skins/alex.png";
     switch (type) {
       case SkinType.steve:
-        u8l = (await rootBundle.load("assets/images/skins/steve.png"))
-            .buffer
-            .asUint8List();
-        break;
+        return (await rootBundle.load(steve)).buffer.asUint8List();
       case SkinType.alex:
-        u8l = (await rootBundle.load("assets/images/skins/alex.png"))
-            .buffer
-            .asUint8List();
-        break;
+        return (await rootBundle.load(alex)).buffer.asUint8List();
+      // TODO: 正版皮肤获取
+      case SkinType.online:
+        return null;
       case SkinType.custom:
-        u8l = File(localSkinPath!).readAsBytesSync();
-        break;
+        return File(localSkinPath!).readAsBytesSync();
     }
-    return u8l;
   }
 
-  Future<Uint8List?> get avatar async {
-    final source = decodePng(await u8l);
+  static Uint8List drawAvatar(Uint8List u8l) {
+    final source = decodePng(u8l);
     final wratio = source!.width ~/ 64;
     final lratio =
         (source.height == source.width) ? wratio : source.height ~/ 32;
@@ -70,6 +66,7 @@ class Skin {
 enum SkinType {
   steve,
   alex,
+  online,
   custom;
 }
 

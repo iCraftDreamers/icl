@@ -1,12 +1,11 @@
-import 'dart:typed_data';
+import 'package:icl/utils/auth/offline/skin.dart';
 
 abstract class Account {
-  String get username;
-  String get uuid;
-
   const Account();
 
-  Future<Uint8List?> get avatar;
+  String get username;
+  String get uuid;
+  Skin get skin;
 
   @override
   String toString() => "username: $username, uuid: $uuid";

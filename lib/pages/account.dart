@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '/utils/auth/offline/skin.dart';
 import '/utils/auth/accounts.dart';
 import '/utils/auth/microsoft/microsoft_account.dart';
 import '/utils/auth/offline/offline_account.dart';
@@ -78,11 +79,11 @@ class _AccountItem extends StatelessWidget {
               FutureBuilder<Uint8List?>(
                 // TODO: 正版账号皮肤获取
                 // account is OfflineAccount ? (account as OfflineAccount).skin.avatar : getSkin(account)
-                future: account.avatar,
+                future: account.skin.u8l,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Image.memory(
-                      snapshot.data!,
+                      Skin.drawAvatar(snapshot.data!),
                       width: 40,
                       height: 40,
                     );
