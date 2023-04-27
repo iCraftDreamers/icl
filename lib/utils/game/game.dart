@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
-import 'package:icl/utils/game/java.dart';
+
+import 'setting.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
@@ -17,32 +18,22 @@ class Game {
   late final String id; //游戏名
   late final String version; //游戏版本
   late final String type;
+
   String? forge; //Forge版本
   String? fabric;
   bool? liteloader;
-  Java? _java;
   String? quilt;
   String? optifine; //OptiFine版本
-  late final String _arguments;
+  bool? useGlobalSetting;
+  Setting? _setting;
+
   Game(Map jsonData, this.path, this.jar) {
     //初始化对象,并读取该版本的信息
     _readInfo(jsonData);
     _readLibraries(jsonData['libraries']);
-    var arguments = (jsonData["arguments"] == null)
-        ? jsonData["minecraftArguments"]
-        : jsonData["arguments"]["game"];
-    _readArguments(arguments);
   }
 
-  Java get java {
-    //TODO: Java的自动选择
-    return java ?? new Java(path);
-  }
-
-  @override
-  String toString() {
-    return shortDescribe() + longDescribe();
-  }
+  Setting get setting => useGlobalSetting ?? false ? _setting! : globalSetting;
 
   String shortDescribe() {
     Map<String, String> typeName = {
@@ -67,10 +58,14 @@ class Game {
     //读取版本，发布类型与版本号
 
     String fromJar() {
-      final by = jsonDecode(utf8.decode(ZipDecoder()
-          .decodeBytes(File(jar).readAsBytesSync())
-          .findFile("version.json")!
-          .content as List<int>));
+      final by = jsonDecode(
+        utf8.decode(
+          ZipDecoder()
+              .decodeBytes(File(jar).readAsBytesSync())
+              .findFile("version.json")!
+              .content,
+        ),
+      );
       return by["id"];
     }
 
@@ -105,16 +100,9 @@ class Game {
     });
   }
 
-  Future<void> _readArguments(arguments) async {
-    //TODO: 具体替换参数
-    if (arguments.runtimeType == String) {
-      _arguments = arguments;
-      print(arguments);
-    }
-    if (arguments.runtimeType == List) {
-      _arguments = arguments.toString();
-      print(arguments);
-    }
+  @override
+  String toString() {
+    return shortDescribe() + longDescribe();
   }
 }
 
