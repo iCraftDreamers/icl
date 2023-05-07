@@ -24,4 +24,6 @@ class Setting {
   });
 }
 
-final globalSetting = Setting();
+final globalSetting = Setting(
+  java: Javas.list[0],
+);

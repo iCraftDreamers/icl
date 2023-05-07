@@ -1,17 +1,22 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../theme.dart';
 import '/utils/auth/offline/skin.dart';
 import '/utils/auth/accounts.dart';
 import '/utils/auth/microsoft/microsoft_account.dart';
 import '/utils/auth/offline/offline_account.dart';
 import '/utils/auth/account.dart';
 import '/widgets/page.dart';
-import '/widgets/shadow_box_decoration.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
+
+class AccountController extends GetxController {
+  var currentIndex = 0.obs;
+}
 
 class AccountPage extends RoutePage {
   const AccountPage({super.key});
@@ -21,7 +26,10 @@ class AccountPage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(AccountController());
+
     return ListView(
+      shrinkWrap: true,
       padding: const EdgeInsets.all(15),
       children: [
         Row(
@@ -47,104 +55,175 @@ class AccountPage extends RoutePage {
           ],
         ),
         const SizedBox(height: 10),
-        Obx(
-          () => Column(
-            children:
-                Accounts.list.map((acc) => _AccountItem(account: acc)).toList(),
-          ),
-        ),
+        Obx(() {
+          final children = <Widget>[];
+          for (int i = 0; i < Accounts.list.length; i++) {
+            children.add(
+              _AccountItem(
+                account: Accounts.list[i],
+                isSelected: i == controller.currentIndex.value,
+                onTap: () => controller.currentIndex(i),
+              ),
+            );
+          }
+          return Column(children: children);
+        }),
       ],
     );
   }
 }
 
-class _AccountItem extends StatelessWidget {
-  const _AccountItem({required this.account});
+class _AccountItem extends StatefulWidget {
+  const _AccountItem({required this.account, this.isSelected, this.onTap});
 
   final Account account;
+  final bool? isSelected;
+  final void Function()? onTap;
+
+  @override
+  State<_AccountItem> createState() => _AccountItemState();
+}
+
+class _AccountItemState extends State<_AccountItem> {
+  final _streamController = StreamController<Uint8List>();
+  bool _isPressed = false;
+  final List<BoxShadow> boxShadow = const [
+    BoxShadow(
+      color: Colors.black26, // 阴影的颜色
+      offset: Offset(0, 5), // 阴影与容器的距离
+      blurRadius: 15.0, // 高斯的标准偏差与盒子的形状卷积。
+      spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+    ),
+  ];
+
+  @override
+  void initState() {
+    widget.account.skin.u8l
+        .then((value) => _streamController.add(Skin.drawAvatar(value!)));
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: ShadowBoxDecoration(Get.context!),
-      child: Row(
-        children: [
-          Wrap(
-            spacing: 15,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              FutureBuilder<Uint8List?>(
-                // TODO: 正版账号皮肤获取
-                // account is OfflineAccount ? (account as OfflineAccount).skin.avatar : getSkin(account)
-                future: account.skin.u8l,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return Image.memory(
-                      Skin.drawAvatar(snapshot.data!),
-                      width: 40,
-                      height: 40,
-                    );
-                  }
-                  return Container(
-                    color: Colors.grey.withOpacity(.1),
-                    height: 40,
-                    width: 40,
-                  );
-                },
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    account.username,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+    final backgroundColor =
+        Theme.of(context).extension<ShadowButtonTheme>()!.background!;
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: (details) => setState(() => _isPressed = true),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTapUp: (details) => setState(() => _isPressed = false),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: AnimatedContainer(
+          height: 60,
+          margin: EdgeInsets.fromLTRB(
+            _isPressed ? 5 : 0,
+            _isPressed ? 5 : 0,
+            _isPressed ? 5 : 0,
+            _isPressed ? 10 : 15,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          duration: const Duration(milliseconds: 120),
+          decoration: BoxDecoration(
+            borderRadius: MyTheme.borderRadius,
+            color: widget.isSelected ?? false
+                ? Theme.of(context).colorScheme.primary
+                : backgroundColor.withAlpha(
+                    backgroundColor.alpha - (_isPressed ? 50 : 0),
                   ),
-                  Text(
-                    account is OfflineAccount
-                        ? "离线账号"
-                        : account is MicrosoftAccount
-                            ? "微软账号"
-                            : "未知账号",
+            boxShadow: _isPressed ? null : boxShadow,
+          ),
+          child: Row(
+            children: [
+              Wrap(
+                spacing: 15,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black26, // 阴影的颜色
+                          blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                          blurStyle: BlurStyle.outer,
+                        ),
+                      ],
+                    ),
+                    child: StreamBuilder<Uint8List>(
+                      stream: _streamController.stream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return SizedBox(
+                            width: 36,
+                            height: 36,
+                            child: Image.memory(
+                              snapshot.data!,
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        }
+                        return const SizedBox(width: 36, height: 36);
+                      },
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.account.username,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        widget.account is OfflineAccount
+                            ? "离线账号"
+                            : widget.account is MicrosoftAccount
+                                ? "微软账号"
+                                : "未知账号",
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Wrap(
+                spacing: 5,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.checkroom_rounded),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () => showDialog(
+                      context: Get.context!,
+                      builder: (context) => WarningDialog(
+                        title: "移除用户",
+                        content: "你确定要移除这个用户吗？此操作将无法撤销！",
+                        onConfirmed: () {
+                          Accounts.list.remove(widget.account);
+                          Get.back();
+                          ScaffoldMessenger.of(Get.context!).showSnackBar(
+                            const SnackBar(
+                              content: Text("删除成功！"),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        onCanceled: () => Get.back(),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ],
           ),
-          const Spacer(),
-          Wrap(
-            spacing: 5,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.checkroom_rounded),
-              ),
-              IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () => showDialog(
-                  context: Get.context!,
-                  builder: (context) => WarningDialog(
-                    title: "移除用户",
-                    content: "你确定要移除这个用户吗？此操作将无法撤销！",
-                    onConfirmed: () {
-                      Accounts.list.remove(account);
-                      Get.back();
-                      ScaffoldMessenger.of(Get.context!).showSnackBar(
-                        const SnackBar(
-                          content: Text("删除成功！"),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                    onCanceled: () => Get.back(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

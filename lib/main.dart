@@ -9,10 +9,10 @@ import 'interface/app.dart';
 
 void main() {
   runApp(const MyApp());
-  Future(() => init());
+  init();
 }
 
-void init() async {
+Future<void> init() async {
   Javas.init();
   Games.init();
   Sysinfo.init();

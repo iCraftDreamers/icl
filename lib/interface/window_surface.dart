@@ -26,66 +26,6 @@ class WindowSurface extends StatelessWidget {
     );
   }
 
-  Widget navigationButton(int index, String routeName, String text,
-      IconData icon, IconData unselectIcon, BuildContext context) {
-    final controller = Get.put(_NavigatorController());
-    return Obx(
-      () => AnimatedContainer(
-        height: 54,
-        clipBehavior: Clip.antiAlias,
-        duration: Duration(
-            milliseconds: controller.currentIndex.value == index ? 200 : 0),
-        decoration: BoxDecoration(
-          borderRadius: MyTheme.borderRadius,
-          color: controller.currentIndex.value == index
-              ? Theme.of(context).colorScheme.primary
-              : index == 0
-                  ? Theme.of(context).extension<ShadowButtonTheme>()!.background
-                  : Theme.of(context).colorScheme.primary.withOpacity(0),
-          boxShadow: index == 0
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(.2), // 阴影的颜色
-                    offset: const Offset(0, 5), // 阴影与容器的距离
-                    blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
-                    spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
-                  )
-                ]
-              : [],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            splashColor: Theme.of(context).colorScheme.primary,
-            onTap: () {
-              if (controller.currentIndex.value != index) {
-                controller.currentIndex(index);
-                Get.offNamed(routeName, id: 1);
-              }
-            },
-            child: Row(
-              children: [
-                const SizedBox(width: 10),
-                controller.currentIndex.value == index
-                    ? Icon(icon, color: Colors.white)
-                    : Icon(unselectIcon),
-                const SizedBox(width: 5),
-                Text(
-                  text,
-                  style: TextStyle(
-                    color: controller.currentIndex.value == index
-                        ? Colors.white
-                        : null,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget navigation(context) {
     const items = {
       "用户": [Icons.people, Icons.people_outline],
@@ -99,12 +39,29 @@ class WindowSurface extends StatelessWidget {
       "/appearance",
       "/setting",
     ];
+    final controller = Get.put(_NavigatorController());
     var i = 0;
-    List<Widget> children = [];
+    var children = <Widget>[];
     items.forEach(
       (key, value) => children.add(
-        navigationButton(
-            i++, routeName[i - 1], key, value[0], value[1], context),
+        _NavigationButton(
+          index: i,
+          route: routeName[i],
+          text: key,
+          icon: value[0],
+          unselectIcon: value[1],
+          controller: controller,
+          boxShadow: i++ == 0
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(.2), // 阴影的颜色
+                    offset: const Offset(0, 5), // 阴影与容器的距离
+                    blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                    spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+                  ),
+                ]
+              : null,
+        ),
       ),
     );
     children.insert(1, const SizedBox(height: 15));
@@ -164,6 +121,76 @@ class WindowSurface extends StatelessWidget {
             }
             return null;
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _NavigationButton extends StatelessWidget {
+  const _NavigationButton({
+    required this.index,
+    required this.route,
+    required this.text,
+    required this.icon,
+    required this.unselectIcon,
+    required this.controller,
+    this.boxShadow,
+  });
+
+  final int index;
+  final String route;
+  final String text;
+  final IconData icon;
+  final IconData unselectIcon;
+  final _NavigatorController controller;
+  final List<BoxShadow>? boxShadow;
+
+  @override
+  Widget build(BuildContext context) {
+    isSelected() => controller.currentIndex.value == index;
+    return Obx(
+      () => AnimatedContainer(
+        height: 54,
+        clipBehavior: Clip.antiAlias,
+        duration: Duration(milliseconds: isSelected() ? 200 : 0),
+        decoration: BoxDecoration(
+          borderRadius: MyTheme.borderRadius,
+          color: isSelected()
+              ? Theme.of(context).colorScheme.primary
+              : boxShadow != null
+                  ? Theme.of(context).extension<ShadowButtonTheme>()!.background
+                  : Theme.of(context).colorScheme.primary.withOpacity(0),
+          boxShadow: boxShadow,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            splashColor: Theme.of(context).colorScheme.primary,
+            onTap: () {
+              if (!isSelected()) {
+                controller.currentIndex(index);
+                Get.offNamed(route, id: 1);
+              }
+            },
+            child: Row(
+              children: [
+                const SizedBox(width: 10),
+                isSelected()
+                    ? Icon(icon, color: Colors.white)
+                    : Icon(unselectIcon),
+                const SizedBox(width: 5),
+                Text(
+                  text,
+                  style: TextStyle(
+                    color: controller.currentIndex.value == index
+                        ? Colors.white
+                        : null,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
