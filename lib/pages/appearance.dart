@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/theme.dart';
 
 import '/widgets/page.dart';
 
@@ -14,7 +13,7 @@ class AppearancePage extends RoutePage {
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(15),
-      children: [title(), const SizedBox(height: 10), body()],
+      children: [title(), body()],
     );
   }
 
@@ -61,7 +60,12 @@ class AppearancePage extends RoutePage {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("主题", style: MyTheme.secondTitle),
+        Text(
+          "主题",
+          style: TextStyle(
+            fontSize: Theme.of(Get.context!).textTheme.titleLarge!.fontSize,
+          ),
+        ),
         const SizedBox(height: 5),
         Column(
           children: radioValues.map((e) => radio(e, themeMode)).toList(),

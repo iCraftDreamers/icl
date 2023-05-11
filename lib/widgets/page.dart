@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:icl/theme.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
 abstract class RoutePage extends StatelessWidget {
   const RoutePage({super.key});
@@ -7,11 +8,11 @@ abstract class RoutePage extends StatelessWidget {
   String routeName();
 
   Widget title() {
-    return Text(routeName(), style: MyTheme.title);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
+    return Text(
+      routeName(),
+      style: TextStyle(
+        fontSize: Theme.of(Get.context!).textTheme.headlineLarge!.fontSize,
+      ),
+    );
   }
 }

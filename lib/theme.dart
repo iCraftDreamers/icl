@@ -80,10 +80,6 @@ class MyTheme {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.5)),
       );
 
-  // 自定义字体
-  static const title = TextStyle(fontSize: 32);
-  static const secondTitle = TextStyle(fontSize: 24);
-
   // 自定义规格
   static final borderRadius = BorderRadius.circular(7.5);
 }
