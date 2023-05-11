@@ -15,18 +15,57 @@ class SettingPage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            top: 15,
+          ),
+          child: title(),
+        ),
+        SizedBox(
+          height: 30,
+          child: GetBuilder<_TabController>(
+            init: _TabController(),
+            builder: (c) => TabBar(
+              isScrollable: true,
+              controller: c.tabController,
+              tabs: c.tabs.keys.map((text) => Tab(text: text)).toList(),
+            ),
+          ),
+        ),
+        Expanded(
+          child: GetBuilder<_TabController>(
+            init: _TabController(),
+            builder: (c) => TabBarView(
+              controller: c.tabController,
+              children: c.tabs.values.toList(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _GlobalGameSettingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var mem = 1024.obs;
+    final maxMemSize =
+        (Sysinfo.getTotalPhysicalMemory ~/ Sysinfo.megaByte).toDouble();
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        title(),
-        Obx(() => Text("内存分配大小：${mem.value} MB")),
+        Obx(() => Text("内存分配大小：${mem.value} / ${maxMemSize.toInt()} MB")),
         Obx(
           () => Slider(
             value: mem.value.toDouble(),
             min: 0,
-            max:
-                (Sysinfo.getTotalPhysicalMemory ~/ Sysinfo.megaByte).toDouble(),
+            max: maxMemSize,
             label: mem.toString(),
             onChanged: (value) => mem(value.toInt()),
           ),
@@ -56,5 +95,34 @@ class SettingPage extends RoutePage {
         ),
       ],
     );
+  }
+}
+
+class _LauncherSettingPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
+}
+
+class _TabController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  late final TabController tabController;
+  final tabs = {
+    "全局游戏设置": _GlobalGameSettingPage(),
+    "启动器": _LauncherSettingPage(),
+  };
+
+  @override
+  void onInit() {
+    super.onInit();
+    Get.lazyPut(() => this);
+    tabController = TabController(length: tabs.length, vsync: this);
+  }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
   }
 }

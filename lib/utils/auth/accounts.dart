@@ -28,3 +28,9 @@ abstract class Accounts {
     }
   }
 }
+
+enum AccountLoginMode {
+  offline,
+  ms,
+  custom,
+}

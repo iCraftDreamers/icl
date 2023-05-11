@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controller/account.dart';
 import '../theme.dart';
 import '/utils/auth/offline/skin.dart';
 import '/utils/auth/accounts.dart';
@@ -13,10 +14,6 @@ import '/utils/auth/account.dart';
 import '/widgets/page.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
-
-class AccountController extends GetxController {
-  var currentIndex = 0.obs;
-}
 
 class AccountPage extends RoutePage {
   const AccountPage({super.key});
@@ -352,10 +349,4 @@ class _AddAccountDialog extends StatelessWidget {
       ],
     );
   }
-}
-
-enum AccountLoginMode {
-  offline,
-  ms,
-  custom,
 }

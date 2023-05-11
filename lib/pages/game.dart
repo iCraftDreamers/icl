@@ -10,9 +10,6 @@ class GamePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tabs = ["开始游戏", "配置"];
-    final c = Get.put(_TabController());
-
     return Scaffold(
       body: Stack(
         children: [
@@ -61,20 +58,24 @@ class GamePage extends StatelessWidget {
                             SizedBox(
                               height: 30,
                               width: 180,
-                              child: TabBar(
-                                controller: c.tabController,
-                                dividerColor: Colors.transparent,
-                                labelColor: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withGreen(150),
-                                labelStyle: Theme.of(context)
-                                    .tabBarTheme
-                                    .labelStyle
-                                    ?.copyWith(
-                                      fontSize: 14,
-                                    ),
-                                tabs: tabs.map((e) => Tab(text: e)).toList(),
+                              child: GetBuilder<_TabController>(
+                                init: _TabController(),
+                                builder: (c) => TabBar(
+                                  controller: c.tabController,
+                                  dividerColor: Colors.transparent,
+                                  labelColor: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withGreen(150),
+                                  labelStyle: Theme.of(context)
+                                      .tabBarTheme
+                                      .labelStyle
+                                      ?.copyWith(
+                                        fontSize: 14,
+                                      ),
+                                  tabs:
+                                      c.tabs.map((e) => Tab(text: e)).toList(),
+                                ),
                               ),
                             ),
                           ],
@@ -85,9 +86,12 @@ class GamePage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: TabBarView(
-                  controller: c.tabController,
-                  children: const [_HomePage(), _SetupPage()],
+                child: GetBuilder(
+                  init: _TabController(),
+                  builder: (c) => TabBarView(
+                    controller: c.tabController,
+                    children: const [_HomePage(), _SetupPage()],
+                  ),
                 ),
               ),
             ],
@@ -127,12 +131,12 @@ class GamePage extends StatelessWidget {
 class _TabController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final tabs = ["开始游戏", "配置"];
-  late TabController tabController;
+  late final TabController tabController;
 
   @override
   void onInit() {
     super.onInit();
-    Get.lazyPut(() => _TabController());
+    Get.lazyPut(() => this);
     tabController = TabController(length: tabs.length, vsync: this);
   }
 
