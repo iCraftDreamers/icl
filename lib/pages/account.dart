@@ -110,6 +110,15 @@ class _AccountItemState extends State<_AccountItem> {
   Widget build(BuildContext context) {
     final backgroundColor =
         Theme.of(context).extension<ShadowButtonTheme>()!.background!;
+    final primaryColor = Theme.of(context).colorScheme.primary;
+    final fontColor = widget.isSelected ?? false ? Colors.white : null;
+    selectedColor() {
+      final r = primaryColor.red + 25;
+      final g = primaryColor.green + 25;
+      final b = primaryColor.blue;
+      return Color.fromARGB(255, r, g, b);
+    }
+
     return GestureDetector(
       onTap: widget.onTap,
       onTapDown: (details) => setState(() => _isPressed = true),
@@ -130,10 +139,10 @@ class _AccountItemState extends State<_AccountItem> {
           decoration: BoxDecoration(
             borderRadius: MyTheme.borderRadius,
             color: widget.isSelected ?? false
-                ? Theme.of(context).colorScheme.primary
-                : backgroundColor.withAlpha(
-                    backgroundColor.alpha - (_isPressed ? 50 : 0),
-                  ),
+                ? primaryColor
+                : _isPressed
+                    ? selectedColor()
+                    : backgroundColor,
             boxShadow: _isPressed ? null : boxShadow,
           ),
           child: Row(
@@ -174,7 +183,10 @@ class _AccountItemState extends State<_AccountItem> {
                     children: [
                       Text(
                         widget.account.username,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: fontColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Text(
                         widget.account is OfflineAccount
@@ -182,41 +194,47 @@ class _AccountItemState extends State<_AccountItem> {
                             : widget.account is MicrosoftAccount
                                 ? "微软账号"
                                 : "未知账号",
+                        style: TextStyle(color: fontColor),
                       ),
                     ],
                   ),
                 ],
               ),
               const Spacer(),
-              Wrap(
-                spacing: 5,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.checkroom_rounded),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => showDialog(
-                      context: Get.context!,
-                      builder: (context) => WarningDialog(
-                        title: "移除用户",
-                        content: "你确定要移除这个用户吗？此操作将无法撤销！",
-                        onConfirmed: () {
-                          Accounts.list.remove(widget.account);
-                          Get.back();
-                          ScaffoldMessenger.of(Get.context!).showSnackBar(
-                            const SnackBar(
-                              content: Text("删除成功！"),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                        onCanceled: () => Get.back(),
+              Theme(
+                data: widget.isSelected ?? false
+                    ? ThemeData(brightness: Brightness.dark)
+                    : Theme.of(context),
+                child: Wrap(
+                  spacing: 5,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.checkroom_rounded),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () => showDialog(
+                        context: Get.context!,
+                        builder: (context) => WarningDialog(
+                          title: "移除用户",
+                          content: "你确定要移除这个用户吗？此操作将无法撤销！",
+                          onConfirmed: () {
+                            Accounts.list.remove(widget.account);
+                            Get.back();
+                            ScaffoldMessenger.of(Get.context!).showSnackBar(
+                              const SnackBar(
+                                content: Text("删除成功！"),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                          onCanceled: () => Get.back(),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
