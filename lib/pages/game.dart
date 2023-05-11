@@ -1,5 +1,6 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:icl/interface/window_bar.dart';
 
 import '../widgets/blurred.dart';
@@ -10,9 +11,7 @@ class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const tabs = ["开始游戏", "配置"];
-    const routes = ["/home", "/setup"];
-    final key = GlobalKey<NavigatorState>();
-    var index = 0;
+    final c = Get.put(_TabController());
 
     return Scaffold(
       body: Stack(
@@ -62,29 +61,20 @@ class GamePage extends StatelessWidget {
                             SizedBox(
                               height: 30,
                               width: 180,
-                              child: DefaultTabController(
-                                length: tabs.length,
-                                child: TabBar(
-                                  dividerColor: Colors.transparent,
-                                  labelColor: Theme.of(context)
-                                      .colorScheme
-                                      .primary
-                                      .withGreen(150),
-                                  labelStyle: Theme.of(context)
-                                      .tabBarTheme
-                                      .labelStyle
-                                      ?.copyWith(
-                                        fontSize: 14,
-                                      ),
-                                  tabs: tabs.map((e) => Tab(text: e)).toList(),
-                                  onTap: (value) {
-                                    if (index != value) {
-                                      key.currentState
-                                          ?.pushReplacementNamed(routes[value]);
-                                    }
-                                    index = value;
-                                  },
-                                ),
+                              child: TabBar(
+                                controller: c.tabController,
+                                dividerColor: Colors.transparent,
+                                labelColor: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withGreen(150),
+                                labelStyle: Theme.of(context)
+                                    .tabBarTheme
+                                    .labelStyle
+                                    ?.copyWith(
+                                      fontSize: 14,
+                                    ),
+                                tabs: tabs.map((e) => Tab(text: e)).toList(),
                               ),
                             ),
                           ],
@@ -95,18 +85,9 @@ class GamePage extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Navigator(
-                  key: key,
-                  initialRoute: routes[index],
-                  onGenerateRoute: (settings) {
-                    switch (settings.name) {
-                      case '/home':
-                        return createRoute(const _HomePage());
-                      case '/setup':
-                        return createRoute(const _SetupPage());
-                    }
-                    return null;
-                  },
+                child: TabBarView(
+                  controller: c.tabController,
+                  children: const [_HomePage(), _SetupPage()],
                 ),
               ),
             ],
@@ -140,6 +121,25 @@ class GamePage extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _TabController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  final tabs = ["开始游戏", "配置"];
+  late TabController tabController;
+
+  @override
+  void onInit() {
+    super.onInit();
+    Get.lazyPut(() => _TabController());
+    tabController = TabController(length: tabs.length, vsync: this);
+  }
+
+  @override
+  void onClose() {
+    tabController.dispose();
+    super.onClose();
   }
 }
 
