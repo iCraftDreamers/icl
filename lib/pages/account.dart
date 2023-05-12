@@ -38,10 +38,10 @@ class AccountPage extends RoutePage {
                 context: Get.context!,
                 builder: (context) => const _AddAccountDialog(),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.add),
                     Text("添加用户"),
                     SizedBox(width: 7),

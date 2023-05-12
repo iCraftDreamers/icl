@@ -53,7 +53,7 @@ class WarningDialog extends StatelessWidget {
       content: Row(
         children: [
           Icon(Icons.warning_rounded, size: 36, color: Colors.orange[800]),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(content ?? ""),
         ],
       ),
@@ -92,7 +92,7 @@ class ErrorDialog extends StatelessWidget {
           size: 36,
           color: Colors.red[400],
         ),
-        SizedBox(width: 10),
+        const SizedBox(width: 10),
         Text(content ?? "")
       ]),
       actions: [

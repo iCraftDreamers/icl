@@ -62,10 +62,10 @@ class HomePage extends RoutePage {
                 context: Get.context!,
                 builder: (context) => addGameDialog(),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.add),
                     Text("添加游戏"),
                     SizedBox(width: 7),

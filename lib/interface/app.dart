@@ -30,8 +30,8 @@ class Home extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
-        child: Column(
-          children: const [
+        child: const Column(
+          children: [
             WindowTitleBar(),
             Divider(height: 1),
             Expanded(child: WindowSurface()),
