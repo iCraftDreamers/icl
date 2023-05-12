@@ -7,7 +7,7 @@ class DialogConfirmButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OutlinedButton(
+    return FilledButton(
       style: ButtonStyle(
         side: MaterialStateProperty.all(BorderSide(
             color: Theme.of(context).colorScheme.primary, width: 1.0)),
@@ -32,6 +32,33 @@ class DialogCancelButton extends StatelessWidget {
   }
 }
 
+class Dialog extends StatelessWidget {
+  const Dialog({
+    super.key,
+    this.title,
+    this.content,
+    this.onConfirmed,
+    this.onCanceled,
+  });
+
+  final Widget? title;
+  final Widget? content;
+  final void Function()? onConfirmed;
+  final void Function()? onCanceled;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: title,
+      content: content,
+      actions: [
+        DialogCancelButton(onPressed: onCanceled),
+        DialogConfirmButton(onPressed: onConfirmed),
+      ],
+    );
+  }
+}
+
 class WarningDialog extends StatelessWidget {
   const WarningDialog({
     super.key,
@@ -41,25 +68,25 @@ class WarningDialog extends StatelessWidget {
     this.onCanceled,
   });
 
-  final String? title;
-  final String? content;
+  final Widget? title;
+  final Widget? content;
   final void Function()? onConfirmed;
   final void Function()? onCanceled;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(title ?? "", style: TextStyle(color: Colors.orange[800])),
+      title: title,
       content: Row(
         children: [
-          Icon(Icons.warning_rounded, size: 36, color: Colors.orange[800]),
+          Icon(Icons.warning_rounded, size: 36, color: Colors.orange[600]),
           const SizedBox(width: 10),
-          Text(content ?? ""),
+          content ?? const SizedBox(),
         ],
       ),
       actions: [
-        DialogConfirmButton(onPressed: onConfirmed),
         DialogCancelButton(onPressed: onCanceled),
+        DialogConfirmButton(onPressed: onConfirmed),
       ],
     );
   }
@@ -71,21 +98,16 @@ class ErrorDialog extends StatelessWidget {
     this.title,
     this.content,
     this.onConfirmed,
-    // this.onCanceled,
   });
 
-  final String? title;
-  final String? content;
+  final Widget? title;
+  final Widget? content;
   final void Function()? onConfirmed;
-  // final void Function()? onCanceled;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        title ?? "",
-        style: TextStyle(color: Colors.red[400]),
-      ),
+      title: title,
       content: Row(children: [
         Icon(
           Icons.error_outline,
@@ -93,11 +115,10 @@ class ErrorDialog extends StatelessWidget {
           color: Colors.red[400],
         ),
         const SizedBox(width: 10),
-        Text(content ?? "")
+        content ?? const SizedBox(),
       ]),
       actions: [
         DialogConfirmButton(onPressed: onConfirmed),
-        // DialogCancelButton(onPressed: onCanceled),
       ],
     );
   }

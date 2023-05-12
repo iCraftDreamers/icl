@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Dialog;
 import 'package:get/get.dart';
 
 import '../controller/account.dart';
@@ -217,8 +217,8 @@ class _AccountItemState extends State<_AccountItem> {
                       onPressed: () => showDialog(
                         context: Get.context!,
                         builder: (context) => WarningDialog(
-                          title: "移除用户",
-                          content: "你确定要移除这个用户吗？此操作将无法撤销！",
+                          title: const Text("移除用户"),
+                          content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
                           onConfirmed: () {
                             Accounts.list.remove(widget.account);
                             Get.back();
@@ -252,43 +252,26 @@ class _AddAccountDialog extends StatelessWidget {
     final TextEditingController username = TextEditingController();
     final TextEditingController password = TextEditingController();
     final formKey = GlobalKey<FormState>();
-    var loginMode = 0.obs;
+    var loginMode = AccountLoginMode.offline.obs;
 
-    List<Widget> children(int loginMode) {
+    List<Widget> children(AccountLoginMode loginMode) {
       switch (loginMode) {
-        case 1:
+        case AccountLoginMode.offline:
+          return [
+            TitleTextFormFiled(
+              titleText: "用户名：",
+              titleWidth: 75,
+              obscureText: false,
+              readOnly: false,
+              textEditingController: username,
+              validator: (value) => MyTextFormField.checkEmpty(value),
+            ),
+          ];
+        // TODO: 正版验证
+        case AccountLoginMode.ms:
           return [];
-        case 2:
-          return [
-            TitleTextFormFiled(
-              titleText: "用户名：",
-              titleWidth: 75,
-              obscureText: false,
-              readOnly: false,
-              textEditingController: username,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-            const SizedBox(height: 15),
-            TitleTextFormFiled(
-              titleText: "密码：",
-              titleWidth: 75,
-              obscureText: true,
-              readOnly: false,
-              textEditingController: password,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-          ];
-        default:
-          return [
-            TitleTextFormFiled(
-              titleText: "用户名：",
-              titleWidth: 75,
-              obscureText: false,
-              readOnly: false,
-              textEditingController: username,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-          ];
+        case AccountLoginMode.custom:
+          return [];
       }
     }
 
@@ -297,7 +280,7 @@ class _AddAccountDialog extends StatelessWidget {
     for (int i = 0; i < items.length; i++) {
       dropdownItems.add(
         DropdownMenuItem(
-          value: i,
+          value: AccountLoginMode.values[i],
           child: Container(
             alignment: Alignment.center,
             child: Text(
@@ -308,7 +291,7 @@ class _AddAccountDialog extends StatelessWidget {
         ),
       );
     }
-    return AlertDialog(
+    return Dialog(
       title: const Text("添加用户", style: TextStyle(fontWeight: FontWeight.bold)),
       content: SizedBox(
         width: 400,
@@ -347,24 +330,24 @@ class _AddAccountDialog extends StatelessWidget {
           ],
         ),
       ),
-      actions: [
-        DialogConfirmButton(onPressed: () {
-          if (formKey.currentState!.validate()) {
-            switch (loginMode.value) {
-              case 0:
-                Accounts.add(OfflineAccount(username.text));
-                break;
-              default:
-            }
-            Get.back();
-            ScaffoldMessenger.of(Get.context!).showSnackBar(
-              const SnackBar(
-                  content: Text("添加成功！"), duration: Duration(seconds: 1)),
-            );
+      onConfirmed: () {
+        if (formKey.currentState!.validate()) {
+          switch (loginMode.value) {
+            case AccountLoginMode.offline:
+              Accounts.add(OfflineAccount(username.text));
+            // TODO: 正版验证
+            case AccountLoginMode.ms:
+            // TODO: 第三方登录
+            case AccountLoginMode.custom:
           }
-        }),
-        DialogCancelButton(onPressed: () => Get.back())
-      ],
+          Get.back();
+          ScaffoldMessenger.of(Get.context!).showSnackBar(
+            const SnackBar(
+                content: Text("添加成功！"), duration: Duration(seconds: 1)),
+          );
+        }
+      },
+      onCanceled: () => Get.back(),
     );
   }
 }
