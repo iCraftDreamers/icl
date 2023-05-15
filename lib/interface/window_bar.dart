@@ -25,8 +25,7 @@ class WindowTitleBar extends StatelessWidget {
       iconMouseDown: iconColor,
     );
     return WindowTitleBarBox(
-      child: Flex(
-        direction: Axis.horizontal,
+      child: Row(
         children: [
           Expanded(
             child: MoveWindow(
