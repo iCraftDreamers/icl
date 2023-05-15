@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/widgets/widget_set.dart';
 
 import '/utils/auth/accounts.dart';
 import '/utils/game/game.dart';
@@ -55,20 +56,54 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mem = 1024.obs;
-    final maxMemSize =
-        (Sysinfo.getTotalPhysicalMemory ~/ Sysinfo.megaByte).toDouble();
+    final maxMemSize = (Sysinfo.totalPhysicalMemory ~/ kMegaByte).toDouble();
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        Obx(() => Text("内存分配大小：${mem.value} / ${maxMemSize.toInt()} MB")),
-        Obx(
-          () => Slider(
-            value: mem.value.toDouble(),
-            min: 0,
-            max: maxMemSize,
-            label: mem.toString(),
-            onChanged: (value) => mem(value.toInt()),
+        WidgetSet(
+          divider: const Divider(height: 1),
+          dividerPadding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(7.5),
+            color: const Color.fromRGBO(77, 77, 77, 1),
           ),
+          clipBehavior: Clip.antiAlias,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // TODO: Java版本优选
+            ListTile(
+              title: const Text("Java路径"),
+              subtitle: Text(Javas.list[0].path),
+            ),
+            ListTile(
+              title: const Text("游戏内存"),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Obx(
+                    () => Row(
+                      children: [
+                        Text("内存分配大小：${mem.value} / ${maxMemSize.toInt()} MB"),
+                        const SizedBox(width: 15),
+                        Text(
+                            "空闲内存：${Sysinfo.freePhysicalMemory ~/ kMegaByte} MB")
+                      ],
+                    ),
+                  ),
+                  Obx(
+                    () => Slider(
+                      value: mem.value.toDouble(),
+                      min: 0,
+                      max: maxMemSize,
+                      label: mem.toString(),
+                      onChanged: (value) => mem(value.toInt()),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const ListTile(title: Text("第三行")),
+          ],
         ),
         Row(
           children: [
@@ -116,7 +151,6 @@ class _TabController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    Get.lazyPut(() => this);
     tabController = TabController(length: tabs.length, vsync: this);
   }
 
