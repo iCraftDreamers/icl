@@ -56,7 +56,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var mem = 1024.obs;
-    final maxMemSize = (Sysinfo.totalPhysicalMemory ~/ kMegaByte).toDouble();
+    final maxMemSize = (SysInfo.totalPhyMem ~/ kMegaByte).toDouble();
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
@@ -85,8 +85,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       children: [
                         Text("内存分配大小：${mem.value} / ${maxMemSize.toInt()} MB"),
                         const SizedBox(width: 15),
-                        Text(
-                            "空闲内存：${Sysinfo.freePhysicalMemory ~/ kMegaByte} MB")
+                        Text("空闲内存：${SysInfo.freePhyMem ~/ kMegaByte} MB")
                       ],
                     ),
                   ),
