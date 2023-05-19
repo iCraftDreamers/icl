@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:icl/widgets/widget_set.dart';
+import 'package:icl/widgets/widget_group.dart';
 
 import '/utils/auth/accounts.dart';
 import '/utils/game/game.dart';
@@ -55,17 +55,23 @@ class SettingPage extends RoutePage {
 class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var mem = 1024.obs;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     final maxMemSize = (SysInfo.totalPhyMem ~/ kMegaByte).toDouble();
+    var mem = 1024.obs;
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        WidgetSet(
-          divider: const Divider(height: 1),
-          dividerPadding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(7.5),
-            color: const Color.fromRGBO(77, 77, 77, 1),
+        WidgetGroup(
+          divider: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Divider(
+              height: 1,
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSecondaryContainer
+                  .withOpacity(.2),
+            ),
           ),
           clipBehavior: Clip.antiAlias,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,17 +86,48 @@ class _GlobalGameSettingPage extends StatelessWidget {
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(
-                    () => Row(
-                      children: [
-                        Text("内存分配大小：${mem.value} / ${maxMemSize.toInt()} MB"),
-                        const SizedBox(width: 15),
-                        Text("空闲内存：${SysInfo.freePhyMem ~/ kMegaByte} MB")
-                      ],
+                  ValueBuilder<bool?>(
+                    initialValue: false,
+                    builder: (value, updater) => SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      title: const Text("自动分配内存"),
+                      value: value!,
+                      onChanged: (value) => updater(value),
                     ),
                   ),
+                  Obx(() {
+                    final freePhyMem = SysInfo.freePhyMem;
+                    final bodyMedia = theme.textTheme.bodyMedium;
+                    final warning = mem.value > freePhyMem ~/ kMegaByte * .8;
+                    return Row(
+                      children: [
+                        RichText(
+                          text: TextSpan(style: bodyMedia, children: [
+                            const TextSpan(text: '内存分配大小：'),
+                            TextSpan(
+                                text: '${mem.value}',
+                                style: TextStyle(
+                                    color: warning ? Colors.red : null)),
+                            const TextSpan(text: ' / '),
+                            TextSpan(
+                                text: '${freePhyMem ~/ kMegaByte}',
+                                style: TextStyle(color: Colors.green[400])),
+                            const TextSpan(text: ' / '),
+                            TextSpan(
+                                text: '${maxMemSize.toInt()}',
+                                style: TextStyle(color: Colors.yellow[600])),
+                            const TextSpan(text: ' MB'),
+                          ]),
+                        ),
+                        if (warning)
+                          const Icon(Icons.warning_rounded, size: 20),
+                      ],
+                    );
+                  }),
                   Obx(
                     () => Slider(
+                      inactiveColor: colors.primary.withOpacity(.2),
                       value: mem.value.toDouble(),
                       min: 0,
                       max: maxMemSize,
@@ -101,7 +138,6 @@ class _GlobalGameSettingPage extends StatelessWidget {
                 ],
               ),
             ),
-            const ListTile(title: Text("第三行")),
           ],
         ),
         Row(

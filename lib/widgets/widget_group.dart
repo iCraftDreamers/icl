@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:icl/theme.dart';
 
-class WidgetSet extends StatelessWidget {
-  const WidgetSet({
+class WidgetGroup extends StatelessWidget {
+  const WidgetGroup({
     super.key,
     required this.divider,
     required this.children,
@@ -11,7 +12,6 @@ class WidgetSet extends StatelessWidget {
     this.padding,
     this.margin,
     this.decoration,
-    this.dividerPadding,
     this.clipBehavior,
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.mainAxisSize = MainAxisSize.max,
@@ -29,7 +29,6 @@ class WidgetSet extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final BoxDecoration? decoration;
-  final EdgeInsetsGeometry? dividerPadding;
   final Clip? clipBehavior;
   final MainAxisAlignment mainAxisAlignment;
   final MainAxisSize mainAxisSize;
@@ -40,30 +39,36 @@ class WidgetSet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = Theme.of(context).colorScheme;
     final children = <Widget>[];
     children.addAll(this.children);
     for (int i = 1; i < children.length; i += 2) {
-      children.insert(
-        i,
-        Padding(padding: dividerPadding ?? EdgeInsets.zero, child: divider),
-      );
+      children.insert(i, divider);
     }
-    return Container(
-      width: width,
-      height: height,
-      alignment: alignment,
-      margin: margin,
-      padding: padding,
-      clipBehavior: clipBehavior ?? Clip.none,
-      decoration: decoration,
-      child: Column(
-        mainAxisAlignment: mainAxisAlignment,
-        mainAxisSize: mainAxisSize,
-        crossAxisAlignment: crossAxisAlignment,
-        textDirection: textDirection,
-        verticalDirection: verticalDirection,
-        textBaseline: textBaseline,
-        children: children,
+    return Theme(
+      data: theme.copyWith(textTheme: theme.textTheme.copyWith()),
+      child: Container(
+        width: width,
+        height: height,
+        alignment: alignment,
+        margin: margin,
+        padding: padding,
+        clipBehavior: clipBehavior ?? Clip.none,
+        decoration: decoration ??
+            BoxDecoration(
+              borderRadius: kBorderRadius,
+              color: colors.secondaryContainer,
+            ),
+        child: Column(
+          mainAxisAlignment: mainAxisAlignment,
+          mainAxisSize: mainAxisSize,
+          crossAxisAlignment: crossAxisAlignment,
+          textDirection: textDirection,
+          verticalDirection: verticalDirection,
+          textBaseline: textBaseline,
+          children: children,
+        ),
       ),
     );
   }

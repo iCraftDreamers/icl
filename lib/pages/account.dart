@@ -24,7 +24,6 @@ class AccountPage extends RoutePage {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AccountController());
-
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.all(15),
@@ -33,7 +32,7 @@ class AccountPage extends RoutePage {
           children: [
             title(),
             const Spacer(),
-            ElevatedButton(
+            FilledButton(
               onPressed: () => showDialog(
                 context: Get.context!,
                 builder: (context) => const _AddAccountDialog(),
@@ -52,19 +51,18 @@ class AccountPage extends RoutePage {
           ],
         ),
         const SizedBox(height: 10),
-        Obx(() {
-          final children = <Widget>[];
-          for (int i = 0; i < Accounts.list.length; i++) {
-            children.add(
-              _AccountItem(
+        Obx(
+          () => Column(
+            children: List.generate(
+              Accounts.list.length,
+              (i) => _AccountItem(
                 account: Accounts.list[i],
                 isSelected: i == controller.currentIndex.value,
                 onTap: () => controller.currentIndex(i),
               ),
-            );
-          }
-          return Column(children: children);
-        }),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -108,16 +106,11 @@ class _AccountItemState extends State<_AccountItem> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor =
-        Theme.of(context).extension<ShadowButtonTheme>()!.background!;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final fontColor = widget.isSelected ?? false ? Colors.white : null;
-    selectedColor() {
-      final r = primaryColor.red + 25;
-      final g = primaryColor.green + 25;
-      final b = primaryColor.blue;
-      return Color.fromARGB(255, r, g, b);
-    }
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final selectedColor = colors.primary;
+    final fontColor =
+        widget.isSelected ?? false ? colors.onPrimary : colors.onSurfaceVariant;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -137,12 +130,12 @@ class _AccountItemState extends State<_AccountItem> {
           padding: const EdgeInsets.symmetric(horizontal: 15),
           duration: const Duration(milliseconds: 120),
           decoration: BoxDecoration(
-            borderRadius: MyTheme.borderRadius,
+            borderRadius: kBorderRadius,
             color: widget.isSelected ?? false
-                ? primaryColor
+                ? selectedColor
                 : _isPressed
-                    ? selectedColor()
-                    : backgroundColor,
+                    ? selectedColor.withOpacity(.5)
+                    : colors.surfaceVariant,
             boxShadow: _isPressed ? null : boxShadow,
           ),
           child: Row(
@@ -201,40 +194,35 @@ class _AccountItemState extends State<_AccountItem> {
                 ],
               ),
               const Spacer(),
-              Theme(
-                data: widget.isSelected ?? false
-                    ? ThemeData(brightness: Brightness.dark)
-                    : Theme.of(context),
-                child: Wrap(
-                  spacing: 5,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.checkroom_rounded),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () => showDialog(
-                        context: Get.context!,
-                        builder: (context) => WarningDialog(
-                          title: const Text("移除用户"),
-                          content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
-                          onConfirmed: () {
-                            Accounts.list.remove(widget.account);
-                            Get.back();
-                            ScaffoldMessenger.of(Get.context!).showSnackBar(
-                              const SnackBar(
-                                content: Text("删除成功！"),
-                                duration: Duration(seconds: 1),
-                              ),
-                            );
-                          },
-                          onCanceled: () => Get.back(),
-                        ),
+              Wrap(
+                spacing: 5,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.checkroom_rounded, color: fontColor),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: fontColor),
+                    onPressed: () => showDialog(
+                      context: Get.context!,
+                      builder: (context) => WarningDialog(
+                        title: const Text("移除用户"),
+                        content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
+                        onConfirmed: () {
+                          Accounts.list.remove(widget.account);
+                          Get.back();
+                          ScaffoldMessenger.of(Get.context!).showSnackBar(
+                            const SnackBar(
+                              content: Text("删除成功！"),
+                              duration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        onCanceled: () => Get.back(),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -253,27 +241,6 @@ class _AddAccountDialog extends StatelessWidget {
     final TextEditingController password = TextEditingController();
     final formKey = GlobalKey<FormState>();
     var loginMode = AccountLoginMode.offline.obs;
-
-    List<Widget> children(AccountLoginMode loginMode) {
-      switch (loginMode) {
-        case AccountLoginMode.offline:
-          return [
-            TitleTextFormFiled(
-              titleText: "用户名：",
-              titleWidth: 75,
-              obscureText: false,
-              readOnly: false,
-              textEditingController: username,
-              validator: (value) => MyTextFormField.checkEmpty(value),
-            ),
-          ];
-        // TODO: 正版验证
-        case AccountLoginMode.ms:
-          return [];
-        case AccountLoginMode.custom:
-          return [];
-      }
-    }
 
     const items = ["离线账户", "微软账户", "外置登录"];
     final dropdownItems = <DropdownMenuItem>[];
@@ -323,7 +290,22 @@ class _AddAccountDialog extends StatelessWidget {
               () => Form(
                 key: formKey,
                 child: Column(
-                  children: children(loginMode.value),
+                  children: switch (loginMode()) {
+                    AccountLoginMode.offline => [
+                        TitleTextFormFiled(
+                          titleText: "用户名：",
+                          titleWidth: 75,
+                          obscureText: false,
+                          readOnly: false,
+                          textEditingController: username,
+                          validator: (value) =>
+                              MyTextFormField.checkEmpty(value),
+                        ),
+                      ],
+                    // TODO: 正版登录等支持
+                    AccountLoginMode.ms => [],
+                    AccountLoginMode.custom => [],
+                  },
                 ),
               ),
             ),
