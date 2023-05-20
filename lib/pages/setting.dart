@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/theme.dart';
 import 'package:icl/widgets/widget_group.dart';
 
 import '/utils/auth/accounts.dart';
@@ -57,8 +60,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final maxMemSize = (SysInfo.totalPhyMem ~/ kMegaByte).toDouble();
-    var mem = 1024.obs;
+    final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
+    var mem = 1024.0.obs;
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
@@ -90,76 +93,51 @@ class _GlobalGameSettingPage extends StatelessWidget {
                     initialValue: false,
                     builder: (value, updater) => SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      dense: true,
                       title: const Text("自动分配内存"),
                       value: value!,
                       onChanged: (value) => updater(value),
                     ),
                   ),
-                  Obx(() {
-                    final freePhyMem = SysInfo.freePhyMem;
-                    final bodyMedia = theme.textTheme.bodyMedium;
-                    final warning = mem.value > freePhyMem ~/ kMegaByte * .8;
-                    return Row(
-                      children: [
-                        RichText(
-                          text: TextSpan(style: bodyMedia, children: [
-                            const TextSpan(text: '内存分配大小：'),
-                            TextSpan(
-                                text: '${mem.value}',
-                                style: TextStyle(
-                                    color: warning ? Colors.red : null)),
-                            const TextSpan(text: ' / '),
-                            TextSpan(
-                                text: '${freePhyMem ~/ kMegaByte}',
-                                style: TextStyle(color: Colors.green[400])),
-                            const TextSpan(text: ' / '),
-                            TextSpan(
-                                text: '${maxMemSize.toInt()}',
-                                style: TextStyle(color: Colors.yellow[600])),
-                            const TextSpan(text: ' MB'),
-                          ]),
-                        ),
-                        if (warning)
-                          const Icon(Icons.warning_rounded, size: 20),
-                      ],
-                    );
-                  }),
                   Obx(
                     () => Slider(
                       inactiveColor: colors.primary.withOpacity(.2),
-                      value: mem.value.toDouble(),
+                      value: mem.value,
                       min: 0,
-                      max: maxMemSize,
+                      max: totalMemSize,
                       label: mem.toString(),
-                      onChanged: (value) => mem(value.toInt()),
+                      onChanged: (value) => mem(value),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  Obx(() => _MemoryAllocationBar(
+                      totalMemSize, SysInfo.freePhyMem / kMegaByte, mem.value))
                 ],
               ),
             ),
-          ],
-        ),
-        Row(
-          children: [
-            FilledButton(
-              onPressed: () => Javas.list.forEach((java) => print(java)),
-              child: const Text("测试"),
-            ),
-            FilledButton(
-              onPressed: () {
-                Games.init();
-                Javas.init();
-              },
-              child: const Text("搜索游戏"),
-            ),
-            FilledButton(
-              onPressed: () => print(Games.installedGames),
-              child: const Text("打印搜索到的游戏"),
-            ),
-            FilledButton(
-              onPressed: () => print(Accounts.list),
-              child: const Text("打印存储的账号"),
+            ListTile(
+              title: Row(
+                children: [
+                  FilledButton(
+                    onPressed: () => Javas.list.forEach((java) => print(java)),
+                    child: const Text("测试"),
+                  ),
+                  FilledButton(
+                    onPressed: () {
+                      Games.init();
+                      Javas.init();
+                    },
+                    child: const Text("搜索游戏"),
+                  ),
+                  FilledButton(
+                    onPressed: () => print(Games.installedGames),
+                    child: const Text("打印搜索到的游戏"),
+                  ),
+                  FilledButton(
+                    onPressed: () => print(Accounts.list),
+                    child: const Text("打印存储的账号"),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -195,3 +173,64 @@ class _TabController extends GetxController
     super.onClose();
   }
 }
+
+class _MemoryAllocationBar extends StatelessWidget {
+  // const _MemoryAllocationBar();
+  const _MemoryAllocationBar(
+      this.totalMemSize, this.freeMemSize, this.allocationMemSize);
+
+  final double totalMemSize;
+  final double freeMemSize;
+  final double allocationMemSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final allocationMemPercent = allocationMemSize / totalMemSize;
+    final usedMemSize = totalMemSize - freeMemSize;
+    final usedPercent = usedMemSize / totalMemSize;
+    return Column(
+      children: [
+        SizedBox(
+          height: 5,
+          child: ClipRRect(
+            clipBehavior: Clip.antiAlias,
+            borderRadius: kBorderRadius,
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: colors.primary.withOpacity(.2),
+                    borderRadius: kBorderRadius,
+                  ),
+                ),
+                AnimatedFractionallySizedBox(
+                  duration: const Duration(milliseconds: 100),
+                  widthFactor: usedPercent + allocationMemPercent,
+                  child: Container(color: colors.primary.withOpacity(.3)),
+                ),
+                AnimatedFractionallySizedBox(
+                  duration: const Duration(milliseconds: 100),
+                  widthFactor: usedPercent,
+                  child: Container(color: colors.primary),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Row(
+          children: [
+            Text(
+                "使用中内存：${_truncateToDecimalPlaces(usedMemSize / 1024, 1)} / ${_truncateToDecimalPlaces(totalMemSize / 1024, 1)} GB"),
+            const Spacer(),
+            Text(
+                "分配内存：${_truncateToDecimalPlaces(allocationMemSize / 1024, 1)} GB"),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+double _truncateToDecimalPlaces(num value, int fractionalDigits) =>
+    (value * pow(10, fractionalDigits)).truncate() / pow(10, fractionalDigits);

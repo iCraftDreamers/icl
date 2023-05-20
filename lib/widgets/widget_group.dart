@@ -40,14 +40,16 @@ class WidgetGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = Theme.of(context).colorScheme;
-    final children = <Widget>[];
-    children.addAll(this.children);
+    final colors = theme.colorScheme;
     for (int i = 1; i < children.length; i += 2) {
       children.insert(i, divider);
     }
     return Theme(
-      data: theme.copyWith(textTheme: theme.textTheme.copyWith()),
+      data: theme.copyWith(
+        textTheme: theme.textTheme.apply(
+          bodyColor: colors.onSecondaryContainer,
+        ),
+      ),
       child: Container(
         width: width,
         height: height,

@@ -44,12 +44,6 @@ class GamePage extends StatelessWidget {
                     builder: (c) => TabBar(
                       controller: c.tabController,
                       dividerColor: Colors.transparent,
-                      labelColor:
-                          Theme.of(context).colorScheme.primary.withGreen(150),
-                      labelStyle:
-                          Theme.of(context).tabBarTheme.labelStyle?.copyWith(
-                                fontSize: 14,
-                              ),
                       tabs: c.tabs.map((e) => Tab(text: e)).toList(),
                     ),
                   ),
