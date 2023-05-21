@@ -32,7 +32,7 @@ class SettingPage extends RoutePage {
         ),
         SizedBox(
           height: 30,
-          child: GetBuilder<_TabController>(
+          child: GetBuilder(
             init: _TabController(),
             builder: (c) => TabBar(
               isScrollable: true,
@@ -42,7 +42,7 @@ class SettingPage extends RoutePage {
           ),
         ),
         Expanded(
-          child: GetBuilder<_TabController>(
+          child: GetBuilder(
             init: _TabController(),
             builder: (c) => TabBarView(
               controller: c.tabController,
@@ -62,6 +62,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
     final colors = theme.colorScheme;
     final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
     var mem = 1024.0.obs;
+    var visible = true.obs;
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
@@ -84,36 +85,68 @@ class _GlobalGameSettingPage extends StatelessWidget {
               title: const Text("Java路径"),
               subtitle: Text(Javas.list[0].path),
             ),
-            ListTile(
-              title: const Text("游戏内存"),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ValueBuilder<bool?>(
-                    initialValue: false,
-                    builder: (value, updater) => SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: const Text("自动分配内存"),
-                      value: value!,
-                      onChanged: (value) => updater(value),
-                    ),
-                  ),
-                  Obx(
-                    () => Slider(
-                      inactiveColor: colors.primary.withOpacity(.2),
-                      value: mem.value,
-                      min: 0,
-                      max: totalMemSize,
-                      label: mem.toString(),
-                      onChanged: (value) => mem(value),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Obx(() => _MemoryAllocationBar(
-                      totalMemSize, SysInfo.freePhyMem / kMegaByte, mem.value))
-                ],
-              ),
-            ),
+            GetBuilder(
+                init: _AnimationController(),
+                builder: (c) {
+                  return Column(
+                    children: [
+                      Obx(
+                        () => SwitchListTile(
+                          title: const Text("游戏内存"),
+                          subtitle: const Text("自动分配"),
+                          value: visible.value,
+                          onChanged: (value) {
+                            visible(value);
+                            if (!value) {
+                              c.animController.forward();
+                            } else {
+                              c.animController.reverse();
+                            }
+                          },
+                        ),
+                      ),
+                      Obx(
+                        () => SizeTransition(
+                          axisAlignment: 1.0,
+                          sizeFactor: c.animation,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 15),
+                                child: Row(
+                                  children: [
+                                    const Text("手动分配"),
+                                    Expanded(
+                                      child: Slider(
+                                        inactiveColor:
+                                            colors.primary.withOpacity(.2),
+                                        value: mem.value,
+                                        min: 0,
+                                        max: totalMemSize,
+                                        label: mem.toString(),
+                                        onChanged: (value) => mem(value),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15, right: 15, bottom: 10),
+                                child: Obx(() => _MemoryAllocationBar(
+                                    totalMemSize,
+                                    SysInfo.freePhyMem / kMegaByte,
+                                    mem.value)),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
             ListTile(
               title: Row(
                 children: [
@@ -218,13 +251,14 @@ class _MemoryAllocationBar extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 5),
         Row(
           children: [
             Text(
                 "使用中内存：${_truncateToDecimalPlaces(usedMemSize / 1024, 1)} / ${_truncateToDecimalPlaces(totalMemSize / 1024, 1)} GB"),
             const Spacer(),
             Text(
-                "分配内存：${_truncateToDecimalPlaces(allocationMemSize / 1024, 1)} GB"),
+                "分配内存：${_truncateToDecimalPlaces(allocationMemSize / 1024, 1)} GB ${allocationMemSize > freeMemSize ? "(仅 ${_truncateToDecimalPlaces(freeMemSize / 1024, 1)} GB 可用)" : ""}"),
           ],
         ),
       ],
@@ -234,3 +268,29 @@ class _MemoryAllocationBar extends StatelessWidget {
 
 double _truncateToDecimalPlaces(num value, int fractionalDigits) =>
     (value * pow(10, fractionalDigits)).truncate() / pow(10, fractionalDigits);
+
+class _AnimationController extends GetxController
+    with GetSingleTickerProviderStateMixin {
+  late Animation<double> animation;
+  late AnimationController animController;
+
+  @override
+  void onInit() {
+    super.onInit();
+    animController = AnimationController(
+      duration: const Duration(milliseconds: 350),
+      vsync: this,
+    );
+    animation = Tween<double>(begin: 0.0, end: 1.0) // 添加tween
+        .animate(CurvedAnimation(
+      parent: animController,
+      curve: Curves.fastOutSlowIn,
+    ));
+  }
+
+  @override
+  void dispose() {
+    animController.dispose();
+    super.dispose();
+  }
+}
