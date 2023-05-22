@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 
 class Java {
   final String path;
   late final String versionNumber;
+  final String? args;
 
-  Java(this.path, {versionNumber}) {
+  Java(this.path, {String? versionNumber, this.args}) {
     this.versionNumber = versionNumber ?? Javas.getVersion(path);
   }
 
@@ -24,13 +26,18 @@ class Java {
     }
   }
 
+  Map<String, dynamic> toJson() => {
+        'path': path,
+        'version': jsonDecode(versionNumber),
+      };
+
   @override
   String toString() {
     return "Path: $path, VersionNumber: $versionNumber, Version: $version";
   }
 }
 
-abstract class Javas {
+abstract final class Javas {
   static List<Java> list = [];
 
   static Future<void> init() async {
@@ -47,7 +54,12 @@ abstract class Javas {
     final releaseFile = File('$javaPath/release');
 
     if (!releaseFile.existsSync()) {
-      return "Unknown";
+      ProcessResult result = Process.runSync(path, ["-version"]);
+      String version = result.stderr.split("\n")[0].split('"')[1];
+      if (version.isEmpty) {
+        return "Unknown";
+      }
+      return version;
     }
 
     final versionLine = releaseFile
@@ -57,12 +69,11 @@ abstract class Javas {
   }
 
   static Future<List<String>> pathOnEnvironment() async {
-    var result = <String>[];
     final command = Platform.isWindows ? "where" : "which";
     var args = Platform.isWindows ? ["\$PATH:java"] : ["-a", "\$PATH", "java"];
     final variables = ["JAVA_HOME", "JRE_HOME"];
     final processResult = await Process.run(command, args, runInShell: true);
-    result = processResult.stdout.trim().split("\r\n");
+    final result = processResult.stdout.trim().split("\r\n");
 
     Future.forEach(variables, (element) async {
       final variable = Platform.environment[element];
