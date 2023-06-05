@@ -1,5 +1,7 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/controller/storage.dart';
 
 import '/widgets/page.dart';
 
@@ -17,45 +19,39 @@ class AppearancePage extends RoutePage {
     );
   }
 
-  static var themeMode = 0.obs;
-
-  Widget radio(e, themeMode) {
-    const labes = ["跟随系统", "浅色", "深色"];
-
-    ThemeMode? themeModeChange(index) {
-      switch (index) {
-        case 0:
-          return ThemeMode.system;
-        case 1:
-          return ThemeMode.light;
-        case 2:
-          return ThemeMode.dark;
-      }
-      return null;
-    }
-
+  Widget radio(
+    ThemeMode themeMode,
+    String text,
+    Rx<ThemeMode> groupValue,
+    void Function(ThemeMode?)? onChanged,
+  ) {
     return Row(
       children: [
         Obx(
           () => Radio(
-            value: e,
-            groupValue: themeMode.value,
-            onChanged: (value) => {
-              themeMode(value),
-              Get.changeThemeMode(themeModeChange(value)!),
-            },
+            value: themeMode,
+            groupValue: groupValue.value,
+            onChanged: onChanged,
           ),
         ),
         Padding(
           padding: const EdgeInsets.only(left: 5),
-          child: Text(labes[e]),
+          child: Text(text),
         )
       ],
     );
   }
 
   Widget body() {
-    const radioValues = [0, 1, 2];
+    const radioValues = {
+      ThemeMode.system: "跟随系统",
+      ThemeMode.light: "浅色",
+      ThemeMode.dark: "深色",
+    };
+    final configController = Get.find<ConfigController>();
+    final theme = configController.jsonData['theme'];
+    Rx<ThemeMode> rxThemeMode =
+        EnumToString.fromString(ThemeMode.values, theme['themeMode'])!.obs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +64,20 @@ class AppearancePage extends RoutePage {
         ),
         const SizedBox(height: 5),
         Column(
-          children: radioValues.map((e) => radio(e, themeMode)).toList(),
+          children: radioValues.entries
+              .map((e) => radio(
+                    e.key,
+                    e.value,
+                    rxThemeMode,
+                    (value) {
+                      rxThemeMode(value);
+                      theme['themeMode'] =
+                          EnumToString.convertToString(rxThemeMode.value);
+                      configController.updateConfig();
+                      Get.changeThemeMode(e.key);
+                    },
+                  ))
+              .toList(),
         ),
       ],
     );

@@ -26,9 +26,16 @@ class Java {
     }
   }
 
+  factory Java.fromJson(Map<String, dynamic> json) => Java(
+        json['path'],
+        versionNumber: json['versionNumber'],
+        args: json['args'],
+      );
+
   Map<String, dynamic> toJson() => {
         'path': path,
         'version': jsonDecode(versionNumber),
+        'args': args,
       };
 
   @override

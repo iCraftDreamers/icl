@@ -1,39 +1,36 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:archive/archive.dart';
+import 'package:path/path.dart' as p;
 
-import 'setting.dart';
+import 'game_setting.dart';
 
 /// Game对象 存储一个游戏的信息
 ///
-/// [jsonData]传入解析好的json数据
-///
-/// [path]传入路径
-///
-/// [jar]传入jar文件路径
+/// [path] 传入路径
 
 class Game {
-  late final String path; //版本文件夹路径
-  late final String jar; //jar文件路径
-  late final String id; //游戏名
-  late final String version; //游戏版本
-  late final String type;
+  final String path; // .minecraft/version
+  late final json = jsonDecode(_convertToFile(path, "json").readAsStringSync());
+  late final String jar = p.join(path, "jar");
 
-  String? forge; //Forge版本
+  late String id = json['id'];
+  late final String version = json['clientVersion'] ?? json['jar'];
+  late final String type = json['type'];
+
+  String? forge;
   String? fabric;
   bool? liteloader;
   String? quilt;
-  String? optifine; //OptiFine版本
-  bool? useGlobalSetting;
-  Setting? _setting;
+  String? optifine;
+  bool useGlobalSetting;
+  GameSetting? _setting;
 
-  Game(Map jsonData, this.path, this.jar) {
-    //初始化对象,并读取该版本的信息
-    _readInfo(jsonData);
-    _readLibraries(jsonData['libraries']);
+  Game(this.path, {this.useGlobalSetting = false}) {
+    readLibraries(json['libraries']);
   }
 
-  Setting get setting => useGlobalSetting ?? false ? _setting! : globalSetting;
+  GameSetting? get setting => _setting;
 
   String shortDescribe() {
     Map<String, String> typeName = {
@@ -54,27 +51,17 @@ class Game {
     return desc.toString();
   }
 
-  Future<void> _readInfo(data) async {
-    //读取版本，发布类型与版本号
-
-    String fromJar() {
-      final by = jsonDecode(
-        utf8.decode(
-          ZipDecoder()
-              .decodeBytes(File(jar).readAsBytesSync())
-              .findFile("version.json")!
-              .content,
-        ),
-      );
-      return by["id"];
+  dynamic readFromJar(String fileName, String key) {
+    final decodeZip = ZipDecoder().decodeBytes(File(jar).readAsBytesSync());
+    final file = decodeZip.findFile(fileName);
+    if (file == null) {
+      return null;
     }
-
-    id = data['id'];
-    type = data['type'];
-    version = data['clientVersion'] ?? data['jar'] ?? fromJar();
+    final by = jsonDecode(utf8.decode(file.content));
+    return by[key];
   }
 
-  Future<void> _readLibraries(libraries) async {
+  void readLibraries(libraries) {
     //读取是否安装Forge,高清修复等
     RegExp expForge = RegExp(
         "(net.minecraftforge:forge|net.minecraftforge:fmlloader):1.[0-9+.]+-");
@@ -99,6 +86,26 @@ class Game {
       }
     });
   }
+
+  void readConfig() async {
+    final file = File(p.join(path, 'iclversion.json'));
+
+    if (!file.existsSync()) {
+      final jsonString = const JsonEncoder.withIndent('  ')
+          .convert(setting)
+          .replaceAll('null', '""');
+      await file.writeAsString(jsonString);
+    }
+
+    print(await file.readAsString());
+  }
+
+  factory Game.fromJson(Map<String, dynamic> json) => Game(json['path']);
+
+  Map<String, dynamic> toJson() => {
+        'useGlobalSetting': useGlobalSetting,
+        'setting': _setting?.toJson(),
+      };
 
   @override
   String toString() {
@@ -135,14 +142,22 @@ class Games {
     {"name": "启动器下游戏目录", "Directory": Directory('.minecraft')},
     {
       "name": "官方启动器游戏目录",
-      "Directory": Directory('%appdata%/Roadming/.minecraft')
+      "Directory": Directory(p.join('%appdata%', 'Roadming', '.minecraft'))
     },
   ];
 
   static List<Map<String, dynamic>> additionGameDir = [
     //额外.minecraft目录，可添加可删除
-    {"name": "", "Directory": Directory('D:/游戏/Minecraft/1.8/.minecraft')},
-    {"name": "", "Directory": Directory('F:/mc/main/.minecraft')},
+    {
+      "name": "",
+      "Directory": Directory(
+        p.join('D:', '游戏', 'Minecraft', '1.8', '.minecraft'),
+      ),
+    },
+    {
+      "name": "",
+      "Directory": Directory(p.join('F:', 'mc', 'main', '.minecraft')),
+    },
   ];
 
   static void addDir(String dir, String? name) {
@@ -152,33 +167,26 @@ class Games {
   static Future<void> init() async {
     installedGames.clear();
 
-    File convertToFile(FileSystemEntity dir, String type) {
-      //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
-      return File(
-          '${dir.path}/${dir.path.split(Platform.isWindows ? '\\' : '/').last}.$type');
-    }
-
     Future<void> searchGame(Directory dir) async {
       //搜索versions文件夹下的文件夹
       if (await dir.exists()) {
-        dir.listSync().whereType<Directory>().forEach((e) => Future(() async {
-              File json = convertToFile(e, "json");
-              File jar = convertToFile(e, "jar");
-              //判断是否为合法的已安装版本目录
-              if (await json.exists()) {
-                installedGames.add(Game(
-                    jsonDecode(await json.readAsString()), dir.path, jar.path));
-              }
-            }));
+        dir.listSync().whereType<Directory>().forEach(
+              (e) => installedGames.add(Game(e.path)),
+            );
       }
     }
 
     //遍历游戏搜索.minecraft目录
     for (Map map in constGameDirs) {
-      searchGame(Directory('${map["Directory"].path}/versions'));
+      searchGame(Directory(p.join(map['Directory'].path, 'versions')));
     }
     for (Map map in additionGameDir) {
-      searchGame(Directory('${map["Directory"].path}/versions'));
+      searchGame(Directory(p.join(map['Directory'].path, 'versions')));
     }
   }
+}
+
+File _convertToFile(String path, String type) {
+  //当系统为Windows时转换斜杠，防止无法获取当前文件夹名
+  return File(p.join(path, '${path.split(Platform.pathSeparator).last}.json'));
 }

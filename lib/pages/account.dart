@@ -144,32 +144,34 @@ class _AccountItemState extends State<_AccountItem> {
                 spacing: 15,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  Container(
-                    decoration: const BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black26, // 阴影的颜色
-                          blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
-                          blurStyle: BlurStyle.outer,
+                  Stack(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26, // 阴影的颜色
+                              blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                              blurStyle: BlurStyle.outer,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: StreamBuilder<Uint8List>(
-                      stream: _streamController.stream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return SizedBox(
-                            width: 36,
-                            height: 36,
-                            child: Image.memory(
+                      ),
+                      StreamBuilder<Uint8List>(
+                        stream: _streamController.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.memory(
                               snapshot.data!,
                               fit: BoxFit.cover,
-                            ),
-                          );
-                        }
-                        return const SizedBox(width: 36, height: 36);
-                      },
-                    ),
+                              width: 40,
+                              height: 40,
+                            );
+                          }
+                          return const SizedBox(width: 36, height: 36);
+                        },
+                      ),
+                    ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

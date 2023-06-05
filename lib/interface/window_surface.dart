@@ -171,7 +171,7 @@ class _NavigationButton extends StatelessWidget {
             ? seletedColor
             : boxShadow == null
                 ? seletedColor.withOpacity(0)
-                : colors.secondaryContainer,
+                : colors.primaryContainer,
         boxShadow: boxShadow,
       ),
       child: Material(
@@ -191,7 +191,7 @@ class _NavigationButton extends StatelessWidget {
                       ? colors.onPrimary
                       : boxShadow == null
                           ? null
-                          : colors.onSecondaryContainer,
+                          : colors.onPrimaryContainer,
                 ),
               ),
             ],

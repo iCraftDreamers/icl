@@ -45,7 +45,7 @@ class Skin {
         copyCrop(source, x: 40 * wratio, y: 8 * lratio, width: 8, height: 8),
         width: 72,
         height: 72);
-    final head = Image(width: 64, height: 64, numChannels: 4);
+    final head = Image(width: 72, height: 72, numChannels: 4);
     head.clear(ColorInt8.rgba(0, 0, 0, 0));
     compositeImage(head, face, center: true);
     compositeImage(head, hair, center: true);

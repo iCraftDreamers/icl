@@ -1,5 +1,7 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/controller/storage.dart';
 
 import '../theme.dart';
 import 'window_bar.dart';
@@ -10,10 +12,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final configController = Get.find<ConfigController>();
+    final themeData = configController.jsonData['theme'];
+    final themeMode = themeData['themeMode'];
+    final themeModeEnum =
+        EnumToString.fromString(ThemeMode.values, themeMode) ??
+            ThemeMode.system;
+    final theme = AppTheme(themeMode: themeModeEnum);
     return GetMaterialApp(
-      theme: MyTheme.lightTheme(),
-      darkTheme: MyTheme.darkTheme(),
-      themeMode: ThemeMode.system,
+      theme: theme.lightTheme(),
+      darkTheme: theme.darkTheme(),
+      themeMode: themeModeEnum,
       debugShowCheckedModeBanner: false,
       home: const Home(),
     );

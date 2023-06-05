@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:icl/theme.dart';
+
+import '../controller/storage.dart';
 
 class WidgetGroup extends StatelessWidget {
   const WidgetGroup({
@@ -72,6 +75,33 @@ class WidgetGroup extends StatelessWidget {
           children: children,
         ),
       ),
+    );
+  }
+}
+
+class ExpandListTile extends StatelessWidget {
+  const ExpandListTile({
+    super.key,
+    required this.tile,
+    required this.expandTile,
+    required this.sizeFactor,
+  });
+
+  final Widget tile;
+  final Widget expandTile;
+  final Animation<double> sizeFactor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        tile,
+        SizeTransition(
+          axisAlignment: 1.0,
+          sizeFactor: sizeFactor,
+          child: expandTile,
+        ),
+      ],
     );
   }
 }

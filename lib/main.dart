@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:get/get.dart';
 
 import '/utils/game/game.dart';
 import '/utils/game/java.dart';
+import 'controller/storage.dart';
 import 'interface/app.dart';
 
 void main() {
@@ -11,7 +13,8 @@ void main() {
   init();
 }
 
-Future<void> init() async {
+void init() {
+  Get.put(ConfigController(), permanent: true);
   Javas.init();
   Games.init();
   doWhenWindowReady(() {
