@@ -61,7 +61,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final globalSetting = configController.jsonData['globalGameSetting'];
+    final globalSetting = configController.data['globalGameSetting'];
     var autoAllocationMemory =
         (globalSetting['autoAllocationMemory'] as bool).obs;
     var maximumMemory = (globalSetting['maximumMemory'] as int).obs;
@@ -295,7 +295,7 @@ class _AnimationController extends GetxController
   void onInit() {
     super.onInit();
     final configController = Get.find<ConfigController>();
-    final globalSetting = configController.jsonData['globalGameSetting'];
+    final globalSetting = configController.data['globalGameSetting'];
     animController = AnimationController(
       duration: const Duration(milliseconds: 250),
       value: globalSetting['autoAllocationMemory'] ? 0.0 : 1.0,

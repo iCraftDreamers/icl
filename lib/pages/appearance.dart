@@ -49,7 +49,7 @@ class AppearancePage extends RoutePage {
       ThemeMode.dark: "深色",
     };
     final configController = Get.find<ConfigController>();
-    final theme = configController.jsonData['theme'];
+    final theme = configController.data['theme'];
     Rx<ThemeMode> rxThemeMode =
         EnumToString.fromString(ThemeMode.values, theme['themeMode'])!.obs;
 

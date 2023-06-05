@@ -13,18 +13,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final themeData = configController.jsonData['theme'];
-    final themeMode = themeData['themeMode'];
-    final themeModeEnum =
-        EnumToString.fromString(ThemeMode.values, themeMode) ??
-            ThemeMode.system;
-    final theme = AppTheme(themeMode: themeModeEnum);
-    return GetMaterialApp(
-      theme: theme.lightTheme(),
-      darkTheme: theme.darkTheme(),
-      themeMode: themeModeEnum,
-      debugShowCheckedModeBanner: false,
-      home: const Home(),
+
+    return configController.obx(
+      (data) {
+        final themeData = configController.data['theme'];
+        final themeMode = themeData['themeMode'];
+        final themeModeEnum =
+            EnumToString.fromString(ThemeMode.values, themeMode)!;
+        final theme = AppTheme(themeMode: themeModeEnum);
+        return GetMaterialApp(
+          theme: theme.lightTheme(),
+          darkTheme: theme.darkTheme(),
+          themeMode: themeModeEnum,
+          debugShowCheckedModeBanner: false,
+          home: const Home(),
+        );
+      },
     );
   }
 }

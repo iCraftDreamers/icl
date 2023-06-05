@@ -7,11 +7,12 @@ import 'package:icl/utils/game/game_setting.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ConfigController extends GetxController {
-  var jsonData = <String, dynamic>{}.obs;
+class ConfigController extends GetxController with StateMixin {
+  var data = <String, dynamic>{}.obs;
+  Directory? jsonPath;
 
   Future<String> getConfigPath() async {
-    final directory = await getApplicationDocumentsDirectory();
+    final directory = jsonPath ??= await getApplicationDocumentsDirectory();
     const fileName = "icl.json";
     return join(directory.path, fileName);
   }
@@ -23,7 +24,7 @@ class ConfigController extends GetxController {
     }
     final contents = await file.readAsString();
     final data = await json.decode(contents);
-    jsonData.value = data;
+    this.data.value = data;
     print(data);
   }
 
@@ -40,13 +41,15 @@ class ConfigController extends GetxController {
   }
 
   void updateConfig() {
-    createConfig(jsonData);
+    createConfig(data);
     update();
   }
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
-    readConfig();
+    change(null, status: RxStatus.loading());
+    await readConfig();
+    change(data, status: RxStatus.success());
   }
 }

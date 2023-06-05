@@ -27,19 +27,19 @@ class WindowSurface extends StatelessWidget {
   }
 
   Widget navigation(context) {
-    const items = {
-      "用户": [Icons.people, Icons.people_outline],
-      "库": [Icons.apps, Icons.apps_outlined],
-      "外观": [Icons.palette, Icons.palette_outlined],
-      "设置": [Icons.settings, Icons.settings_outlined],
-    };
-    const List<String> routeName = [
-      "/account",
-      "/home",
-      "/appearance",
-      "/setting",
-    ];
     List<Widget> children(RxInt currentIndex) {
+      const icons = {
+        [Icons.people, Icons.people_outline],
+        [Icons.apps, Icons.apps_outlined],
+        [Icons.palette, Icons.palette_outlined],
+        [Icons.settings, Icons.settings_outlined],
+      };
+      const routes = {
+        "用户": "/account",
+        "库": "/home",
+        "外观": "/appearance",
+        "设置": "/setting",
+      };
       final boxShadow = [
         BoxShadow(
           color: Colors.black.withOpacity(.1), // 阴影的颜色
@@ -50,16 +50,15 @@ class WindowSurface extends StatelessWidget {
       ];
       final selectedColor = Theme.of(context).colorScheme.onPrimary;
       final children = List<Widget>.generate(
-        items.length,
+        routes.length,
         (i) => _NavigationButton(
-          index: i,
-          route: routeName[i],
-          text: items.keys.elementAt(i),
-          icon: Icon(items.values.elementAt(i)[0], color: selectedColor),
-          unselectIcon: Icon(items.values.elementAt(i)[1]),
+          route: routes.values.elementAt(i),
+          text: routes.keys.elementAt(i),
+          icon: Icon(icons.elementAt(i)[0], color: selectedColor),
+          unselectIcon: Icon(icons.elementAt(i)[1]),
           isSelected: currentIndex.value == i,
           onTap: () {
-            Get.offNamed(id: 1, routeName[i]);
+            Get.offNamed(id: 1, routes.values.elementAt(i));
             currentIndex(i);
           },
           boxShadow: i == 0 ? boxShadow : null,
@@ -70,13 +69,13 @@ class WindowSurface extends StatelessWidget {
       return children;
     }
 
-    final c = Get.put(_NavigatorController());
     return Container(
       width: 200,
       color: Colors.transparent,
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-      child: Obx(
-        () => Column(
+      child: GetX(
+        init: _NavigatorController(),
+        builder: (c) => Column(
           children: children(c.currentIndex),
         ),
       ),
@@ -137,7 +136,6 @@ class WindowSurface extends StatelessWidget {
 
 class _NavigationButton extends StatelessWidget {
   const _NavigationButton({
-    required this.index,
     required this.route,
     required this.text,
     required this.icon,
@@ -147,7 +145,6 @@ class _NavigationButton extends StatelessWidget {
     this.boxShadow,
   });
 
-  final int index;
   final String route;
   final String text;
   final Icon icon;

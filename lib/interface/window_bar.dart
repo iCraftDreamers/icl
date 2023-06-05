@@ -14,7 +14,6 @@ class WindowTitleBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(_AppWindowController());
     final iconColor = Theme.of(context).iconTheme.color;
     final buttonColors = WindowButtonColors(
       normal: Colors.transparent,
@@ -28,19 +27,22 @@ class WindowTitleBar extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: MoveWindow(
-              onDoubleTap: () => {
-                appWindow.maximizeOrRestore(),
-                controller.isMaximize(!appWindow.isMaximized),
-              },
-              child: title ??
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Text("iCraft Launcher"),
+            child: GetBuilder(
+              init: _AppWindowController(),
+              builder: (c) => MoveWindow(
+                onDoubleTap: () => {
+                  appWindow.maximizeOrRestore(),
+                  c.isMaximize(!appWindow.isMaximized),
+                },
+                child: title ??
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 15),
+                        child: Text("iCraft Launcher"),
+                      ),
                     ),
-                  ),
+              ),
             ),
           ),
           WindowButtons(colors: buttonColors),
@@ -58,19 +60,19 @@ class WindowButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(_AppWindowController());
     return Flex(
       direction: Axis.horizontal,
       children: [
         MinimizeWindowButton(colors: colors, animate: animate),
-        Obx(
-          () => controller.isMaximize.value
+        GetX(
+          init: _AppWindowController(),
+          builder: (c) => c.isMaximize.value
               ? RestoreWindowButton(
                   colors: colors,
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
-                    controller.isMaximize(!appWindow.isMaximized),
+                    c.isMaximize(!appWindow.isMaximized),
                   },
                 )
               : MaximizeWindowButton(
@@ -78,7 +80,7 @@ class WindowButtons extends StatelessWidget {
                   animate: true,
                   onPressed: () => {
                     appWindow.maximizeOrRestore(),
-                    controller.isMaximize(!appWindow.isMaximized),
+                    c.isMaximize(!appWindow.isMaximized),
                   },
                 ),
         ),

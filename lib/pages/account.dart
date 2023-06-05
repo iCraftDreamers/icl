@@ -84,10 +84,9 @@ class _AccountItemState extends State<_AccountItem> {
   bool _isPressed = false;
   final List<BoxShadow> boxShadow = const [
     BoxShadow(
-      color: Colors.black26, // 阴影的颜色
-      offset: Offset(0, 5), // 阴影与容器的距离
-      blurRadius: 15.0, // 高斯的标准偏差与盒子的形状卷积。
-      spreadRadius: 0.0, // 在应用模糊之前，框应该膨胀的量。
+      color: Colors.black12,
+      offset: Offset(0, 5),
+      blurRadius: 10,
     ),
   ];
 
@@ -109,8 +108,11 @@ class _AccountItemState extends State<_AccountItem> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final selectedColor = colors.primary;
-    final fontColor =
-        widget.isSelected ?? false ? colors.onPrimary : colors.onSurfaceVariant;
+    final unSelectedColor = colors.primaryContainer;
+    final fontColor = widget.isSelected ?? false
+        ? colors.onPrimary
+        : colors.onPrimaryContainer;
+    bool absorbing = false;
 
     return GestureDetector(
       onTap: widget.onTap,
@@ -119,114 +121,122 @@ class _AccountItemState extends State<_AccountItem> {
       onTapUp: (details) => setState(() => _isPressed = false),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
-        child: AnimatedContainer(
-          height: 60,
-          margin: EdgeInsets.fromLTRB(
-            _isPressed ? 5 : 0,
-            _isPressed ? 5 : 0,
-            _isPressed ? 5 : 0,
-            _isPressed ? 10 : 15,
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          duration: const Duration(milliseconds: 120),
-          decoration: BoxDecoration(
-            borderRadius: kBorderRadius,
-            color: widget.isSelected ?? false
-                ? selectedColor
-                : _isPressed
-                    ? selectedColor.withOpacity(.5)
-                    : colors.surfaceVariant,
-            boxShadow: _isPressed ? null : boxShadow,
-          ),
-          child: Row(
-            children: [
-              Wrap(
-                spacing: 15,
-                crossAxisAlignment: WrapCrossAlignment.center,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: SizedBox(
+            height: 60,
+            child: AnimatedContainer(
+              margin: _isPressed
+                  ? const EdgeInsets.symmetric(vertical: 1, horizontal: 5)
+                  : EdgeInsets.zero,
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              duration: const Duration(milliseconds: 100),
+              decoration: BoxDecoration(
+                borderRadius: kBorderRadius,
+                color: widget.isSelected ?? false
+                    ? selectedColor
+                    : _isPressed
+                        ? selectedColor.withOpacity(.7)
+                        : unSelectedColor,
+                boxShadow: _isPressed ? null : boxShadow,
+              ),
+              child: Row(
                 children: [
-                  Stack(
+                  Wrap(
+                    spacing: 15,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Container(
+                        width: 40,
+                        height: 40,
                         decoration: const BoxDecoration(
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black26, // 阴影的颜色
-                              blurRadius: 10.0, // 高斯的标准偏差与盒子的形状卷积。
+                              color: Colors.black26,
+                              blurRadius: 10,
+                              spreadRadius: -2,
                               blurStyle: BlurStyle.outer,
-                            ),
+                            )
                           ],
                         ),
-                      ),
-                      StreamBuilder<Uint8List>(
-                        stream: _streamController.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Image.memory(
-                              snapshot.data!,
-                              fit: BoxFit.cover,
-                              width: 40,
-                              height: 40,
-                            );
-                          }
-                          return const SizedBox(width: 36, height: 36);
-                        },
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.account.username,
-                        style: TextStyle(
-                          color: fontColor,
-                          fontWeight: FontWeight.bold,
+                        child: StreamBuilder<Uint8List>(
+                          stream: _streamController.stream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Image.memory(
+                                snapshot.data!,
+                                fit: BoxFit.cover,
+                              );
+                            }
+                            return const CircularProgressIndicator();
+                          },
                         ),
                       ),
-                      Text(
-                        widget.account is OfflineAccount
-                            ? "离线账号"
-                            : widget.account is MicrosoftAccount
-                                ? "微软账号"
-                                : "未知账号",
-                        style: TextStyle(color: fontColor),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.account.username,
+                            style: TextStyle(
+                              color: fontColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            widget.account is OfflineAccount
+                                ? "离线账号"
+                                : widget.account is MicrosoftAccount
+                                    ? "微软账号"
+                                    : "未知账号",
+                            style: TextStyle(color: fontColor),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              const Spacer(),
-              Wrap(
-                spacing: 5,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.checkroom_rounded, color: fontColor),
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: fontColor),
-                    onPressed: () => showDialog(
-                      context: Get.context!,
-                      builder: (context) => WarningDialog(
-                        title: const Text("移除用户"),
-                        content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
-                        onConfirmed: () {
-                          Accounts.list.remove(widget.account);
-                          Get.back();
-                          ScaffoldMessenger.of(Get.context!).showSnackBar(
-                            const SnackBar(
-                              content: Text("删除成功！"),
-                              duration: Duration(seconds: 1),
+                  const Spacer(),
+                  Wrap(
+                    spacing: 5,
+                    children: [
+                      AbsorbPointer(
+                        absorbing: absorbing,
+                        child: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              absorbing = !absorbing;
+                            });
+                          },
+                          icon: Icon(Icons.checkroom_rounded, color: fontColor),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: fontColor),
+                        onPressed: () {
+                          showDialog(
+                            context: Get.context!,
+                            builder: (context) => WarningDialog(
+                              title: const Text("移除用户"),
+                              content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
+                              onConfirmed: () {
+                                Accounts.list.remove(widget.account);
+                                Get.back();
+                                ScaffoldMessenger.of(Get.context!).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("删除成功！"),
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                              onCanceled: () => Get.back(),
                             ),
                           );
                         },
-                        onCanceled: () => Get.back(),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
