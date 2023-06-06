@@ -14,6 +14,7 @@ import '/utils/auth/account.dart';
 import '/widgets/page.dart';
 import '/widgets/dialog.dart';
 import '/widgets/typefield.dart';
+import '/widgets/animate.dart';
 
 class AccountPage extends RoutePage {
   const AccountPage({super.key});
@@ -220,12 +221,7 @@ class _AccountItemState extends State<_AccountItem> {
                               onConfirmed: () {
                                 Accounts.list.remove(widget.account);
                                 Get.back();
-                                ScaffoldMessenger.of(Get.context!).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("删除成功！"),
-                                    duration: Duration(seconds: 1),
-                                  ),
-                                );
+                                showcustomsnackbar("移除成功！");
                               },
                               onCanceled: () => Get.back(),
                             ),
@@ -335,10 +331,11 @@ class _AddAccountDialog extends StatelessWidget {
             case AccountLoginMode.custom:
           }
           Get.back();
-          ScaffoldMessenger.of(Get.context!).showSnackBar(
-            const SnackBar(
-                content: Text("添加成功！"), duration: Duration(seconds: 1)),
-          );
+          showcustomsnackbar("添加成功！");
+          // ScaffoldMessenger.of(Get.context!).showSnackBar(
+          //   const SnackBar(
+          //       content: Text("添加成功！"), duration: Duration(seconds: 1)),
+          // );
         }
       },
       onCanceled: () => Get.back(),
