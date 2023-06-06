@@ -24,6 +24,7 @@ class AccountPage extends RoutePage {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(AccountController());
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.all(15),
@@ -51,15 +52,14 @@ class AccountPage extends RoutePage {
           ],
         ),
         const SizedBox(height: 10),
-        GetX(
-          init: AccountController(),
-          builder: (c) => Column(
+        Obx(
+          () => Column(
             children: List.generate(
               Accounts.list.length,
               (i) => _AccountItem(
                 account: Accounts.list[i],
-                isSelected: i == c.currentIndex.value,
-                onTap: () => c.currentIndex(i),
+                isSelected: i == controller.currentIndex.value,
+                onTap: () => controller.currentIndex(i),
               ),
             ),
           ),
@@ -86,7 +86,7 @@ class _AccountItemState extends State<_AccountItem> {
   final List<BoxShadow> boxShadow = const [
     BoxShadow(
       color: Colors.black12,
-      offset: Offset(0, 1),
+      offset: Offset(0, 5),
       blurRadius: 10,
     ),
   ];
@@ -109,9 +109,10 @@ class _AccountItemState extends State<_AccountItem> {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final selectedColor = colors.primary;
-    final unSelectedColor = colorWithValue(colors.surface, .1);
-    final fontColor =
-        widget.isSelected ?? false ? colors.onPrimary : colors.onSurface;
+    final unSelectedColor = colors.primaryContainer;
+    final fontColor = widget.isSelected ?? false
+        ? colors.onPrimary
+        : colors.onPrimaryContainer;
     bool absorbing = false;
 
     return GestureDetector(
@@ -133,12 +134,12 @@ class _AccountItemState extends State<_AccountItem> {
               duration: const Duration(milliseconds: 100),
               decoration: BoxDecoration(
                 borderRadius: kBorderRadius,
-                boxShadow: boxShadow,
                 color: widget.isSelected ?? false
                     ? selectedColor
                     : _isPressed
                         ? selectedColor.withOpacity(.7)
                         : unSelectedColor,
+                boxShadow: _isPressed ? null : boxShadow,
               ),
               child: Row(
                 children: [

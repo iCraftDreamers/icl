@@ -4,7 +4,8 @@ class GameSetting {
   GameSetting({
     this.java,
     this.autoAllocationMemory = true,
-    this.allocationMemory = 2048,
+    this.minimumMemory,
+    this.maximumMemory = 2048,
     this.fullScreen = false,
     this.width = 854,
     this.height = 480,
@@ -15,7 +16,8 @@ class GameSetting {
 
   Java? java;
   bool? autoAllocationMemory;
-  int? allocationMemory;
+  int? minimumMemory;
+  int? maximumMemory;
   bool? fullScreen;
   int? width;
   int? height;
@@ -26,7 +28,8 @@ class GameSetting {
   factory GameSetting.fromJson(Map<String, dynamic> json) => GameSetting(
         java: Java(json['path'], versionNumber: json['version']),
         autoAllocationMemory: json['autoAllocationMemory'],
-        allocationMemory: json["allocationMemory"],
+        minimumMemory: json['minimumMemory'],
+        maximumMemory: json["maximumMemory"],
         fullScreen: json['fullScreen'],
         width: json['width'],
         height: json['height'],
@@ -37,7 +40,8 @@ class GameSetting {
   Map<String, dynamic> toJson() => {
         'java': java?.toJson(),
         'autoAllocationMemory': autoAllocationMemory,
-        'allocationMemory': allocationMemory,
+        'minimumMemory': minimumMemory,
+        'maximumMemory': maximumMemory,
         'fullScreen': fullScreen,
         'width': width,
         'height': height,

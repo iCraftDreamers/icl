@@ -56,8 +56,6 @@ dependencies:
 
   enum_to_string:
 
-  dynamic_color: ^1.6.5
-
 dev_dependencies:
 
   flutter_lints:

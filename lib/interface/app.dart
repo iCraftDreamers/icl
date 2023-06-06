@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget {
     return configController.obx(
       (data) {
         final themeData = configController.data['theme'];
-        final themeMode = themeData['mode'];
+        final themeMode = themeData['themeMode'];
         final themeModeEnum =
             EnumToString.fromString(ThemeMode.values, themeMode)!;
-        final theme = AppTheme(mode: themeModeEnum);
+        final theme = AppTheme(themeMode: themeModeEnum);
         return GetMaterialApp(
           theme: theme.lightTheme(),
           darkTheme: theme.darkTheme(),
