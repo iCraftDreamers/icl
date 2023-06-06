@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/controller/storage.dart';
 import 'package:icl/theme.dart';
-import 'package:icl/utils/game/game_setting.dart';
 import 'package:icl/widgets/widget_group.dart';
 
 import '/utils/auth/accounts.dart';
@@ -64,7 +63,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
     final globalSetting = configController.data['globalGameSetting'];
     var autoAllocationMemory =
         (globalSetting['autoAllocationMemory'] as bool).obs;
-    var maximumMemory = (globalSetting['maximumMemory'] as int).obs;
+    var allocationMemory = (globalSetting['allocationMemory'] as int).obs;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
@@ -72,6 +71,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       children: [
         WidgetGroup(
+          crossAxisAlignment: CrossAxisAlignment.start,
           divider: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Divider(
@@ -82,8 +82,6 @@ class _GlobalGameSettingPage extends StatelessWidget {
                   .withOpacity(.2),
             ),
           ),
-          clipBehavior: Clip.antiAlias,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // TODO: Java版本优选
             ListTile(
@@ -100,6 +98,9 @@ class _GlobalGameSettingPage extends StatelessWidget {
                         title: const Text("游戏内存"),
                         subtitle: const Text("自动分配"),
                         value: autoAllocationMemory.value,
+                        selected: autoAllocationMemory.value,
+                        hoverColor:
+                            colorWithValue(colors.secondaryContainer, -.05),
                         onChanged: (value) {
                           autoAllocationMemory(value);
                           globalSetting['autoAllocationMemory'] = value;
@@ -128,15 +129,15 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                     () => Slider(
                                       inactiveColor:
                                           colors.primary.withOpacity(.2),
-                                      value: maximumMemory.toDouble(),
+                                      value: allocationMemory.toDouble(),
                                       min: 0,
                                       max: totalMemSize,
-                                      label: maximumMemory.toString(),
+                                      label: allocationMemory.toString(),
                                       onChanged: (value) =>
-                                          maximumMemory(value.toInt()),
+                                          allocationMemory(value.toInt()),
                                       onChangeEnd: (value) {
-                                        maximumMemory(value.toInt());
-                                        globalSetting['maximumMemory'] =
+                                        allocationMemory(value.toInt());
+                                        globalSetting['allocationMemory'] =
                                             value.toInt();
                                         configController.updateConfig();
                                       },
@@ -154,7 +155,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                               () => _MemoryAllocationBar(
                                 totalMemSize,
                                 SysInfo.freePhyMem / kMegaByte,
-                                maximumMemory.toDouble(),
+                                allocationMemory.toDouble(),
                               ),
                             ),
                           ),
@@ -275,7 +276,7 @@ class _MemoryAllocationBar extends StatelessWidget {
                 "使用中内存：${_truncateToDecimalPlaces(usedMemSize / 1024, 1)} / ${_truncateToDecimalPlaces(totalMemSize / 1024, 1)} GB"),
             const Spacer(),
             Text(
-                "游戏分配：${_truncateToDecimalPlaces(allocationMemSize / 1024, 1)} GB ${allocationMemSize > freeMemSize ? "(仅 ${_truncateToDecimalPlaces(freeMemSize / 1024, 1)} GB 可用)" : ""}"),
+                "游戏分配：${_truncateToDecimalPlaces(allocationMemSize / 1024, 1)} GB ${allocationMemSize > freeMemSize ? "(${_truncateToDecimalPlaces(freeMemSize / 1024, 1)} GB 可用)" : ""}"),
           ],
         ),
       ],
