@@ -1,21 +1,28 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 final kBorderRadius = BorderRadius.circular(7.5);
 
+Color colorWithValue(Color color, double value) {
+  final hsvColor = HSVColor.fromColor(color);
+  return hsvColor.withValue(min(max(hsvColor.value + value, -1), 1)).toColor();
+}
+
 final class AppTheme {
   AppTheme({
-    this.themeMode = ThemeMode.system,
-    this.seedColor = SeedColor.blue,
+    this.mode = ThemeMode.system,
+    this.color = SeedColor.blue,
   });
 
-  ThemeMode themeMode;
-  SeedColor seedColor;
+  ThemeMode mode;
+  SeedColor color;
 
   ThemeData lightTheme() {
     return ThemeData(
       fontFamily: 'MiSans',
       colorScheme: ColorScheme.fromSeed(
-        seedColor: seedColor.color,
+        seedColor: color.color,
         brightness: Brightness.light,
       ),
       useMaterial3: true,
@@ -26,7 +33,7 @@ final class AppTheme {
     return ThemeData(
       fontFamily: 'MiSans',
       colorScheme: ColorScheme.fromSeed(
-        seedColor: seedColor.color,
+        seedColor: color.color,
         brightness: Brightness.dark,
       ),
       useMaterial3: true,
@@ -34,13 +41,13 @@ final class AppTheme {
   }
 
   factory AppTheme.fromJson(Map<String, dynamic> json) => AppTheme(
-        themeMode: ThemeMode.values.byName(json['themeMode']),
-        seedColor: SeedColor.values.byName(json['seedColor']),
+        mode: ThemeMode.values.byName(json['mode']),
+        color: SeedColor.values.byName(json['color']),
       );
 
   Map<String, dynamic> toJson() => {
-        'themeMode': themeMode.name,
-        'seedColor': seedColor.name,
+        'mode': mode.name,
+        'color': color.name,
       };
 }
 
