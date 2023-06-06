@@ -50,8 +50,9 @@ class AppearancePage extends RoutePage {
     };
     final configController = Get.find<ConfigController>();
     final theme = configController.data['theme'];
+    const themeModeKey = 'mode';
     Rx<ThemeMode> rxThemeMode =
-        EnumToString.fromString(ThemeMode.values, theme['themeMode'])!.obs;
+        EnumToString.fromString(ThemeMode.values, theme[themeModeKey])!.obs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +72,7 @@ class AppearancePage extends RoutePage {
                     rxThemeMode,
                     (value) {
                       rxThemeMode(value);
-                      theme['themeMode'] =
+                      theme[themeModeKey] =
                           EnumToString.convertToString(rxThemeMode.value);
                       configController.updateConfig();
                       Get.changeThemeMode(e.key);
