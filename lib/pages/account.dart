@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide Dialog;
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../controller/account.dart';
@@ -35,7 +36,7 @@ class AccountPage extends RoutePage {
             FilledButton(
               onPressed: () => showDialog(
                 context: Get.context!,
-                builder: (context) => const _AddAccountDialog(),
+                builder: (context) => _AddAccountDialog(),
               ),
               child: const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -54,6 +55,7 @@ class AccountPage extends RoutePage {
         GetX(
           init: AccountController(),
           builder: (c) => Column(
+            // TODO: 每次重构都会遍历，待优化
             children: List.generate(
               Accounts.list.length,
               (i) => _AccountItem(
@@ -214,15 +216,19 @@ class _AccountItemState extends State<_AccountItem> {
                         onPressed: () {
                           showDialog(
                             context: Get.context!,
-                            builder: (context) => WarningDialog(
+                            builder: (_) => DefaultDialog(
                               title: const Text("移除用户"),
-                              content: const Text("你确定要移除这个用户吗？此操作将无法撤销！"),
+                              content: Text(
+                                "你确定要移除这个用户吗？此操作将无法撤销！",
+                                style: theme.textTheme.titleMedium,
+                              ),
                               onConfirmed: () {
+                                Navigator.of(Get.context!).pop();
                                 Accounts.list.remove(widget.account);
-                                Get.back();
                                 showcustomsnackbar("移除成功！");
                               },
-                              onCanceled: () => Get.back(),
+                              onCanceled: () =>
+                                  Navigator.of(Get.context!).pop(),
                             ),
                           );
                         },
@@ -240,33 +246,32 @@ class _AccountItemState extends State<_AccountItem> {
 }
 
 class _AddAccountDialog extends StatelessWidget {
-  const _AddAccountDialog();
+  _AddAccountDialog();
+
+  final TextEditingController username = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  late final items = ["离线账户", "微软账户", "外置登录"];
+  late final dropdownItems = List.generate(
+    items.length,
+    (i) => DropdownMenuItem(
+      value: AccountLoginMode.values[i],
+      child: Container(
+        alignment: Alignment.center,
+        child: Text(
+          items[i],
+          style: Get.textTheme.titleSmall,
+        ),
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController username = TextEditingController();
-    final TextEditingController password = TextEditingController();
-    final formKey = GlobalKey<FormState>();
     var loginMode = AccountLoginMode.offline.obs;
 
-    const items = ["离线账户", "微软账户", "外置登录"];
-    final dropdownItems = <DropdownMenuItem>[];
-    for (int i = 0; i < items.length; i++) {
-      dropdownItems.add(
-        DropdownMenuItem(
-          value: AccountLoginMode.values[i],
-          child: Container(
-            alignment: Alignment.center,
-            child: Text(
-              items[i],
-              style: Get.textTheme.titleSmall,
-            ),
-          ),
-        ),
-      );
-    }
-    return Dialog(
-      title: const Text("添加用户", style: TextStyle(fontWeight: FontWeight.bold)),
+    return DefaultDialog(
+      title: const Text("添加用户"),
       content: SizedBox(
         width: 400,
         child: Column(
@@ -304,9 +309,15 @@ class _AddAccountDialog extends StatelessWidget {
                           titleWidth: 75,
                           obscureText: false,
                           readOnly: false,
-                          textEditingController: username,
+                          maxLength: 20,
+                          controller: username,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp("[\u4e00-\u9fa5_a-zA-Z0-9]"),
+                            ),
+                          ],
                           validator: (value) =>
-                              MyTextFormField.checkEmpty(value),
+                              DefaultTextFormField.checkEmpty(value),
                         ),
                       ],
                     // TODO: 正版登录等支持
@@ -320,6 +331,7 @@ class _AddAccountDialog extends StatelessWidget {
         ),
       ),
       onConfirmed: () {
+        dialogPop();
         if (formKey.currentState!.validate()) {
           switch (loginMode.value) {
             case AccountLoginMode.offline:
@@ -329,15 +341,10 @@ class _AddAccountDialog extends StatelessWidget {
             // TODO: 第三方登录
             case AccountLoginMode.custom:
           }
-          Get.back();
           showcustomsnackbar("添加成功！");
-          // ScaffoldMessenger.of(Get.context!).showSnackBar(
-          //   const SnackBar(
-          //       content: Text("添加成功！"), duration: Duration(seconds: 1)),
-          // );
         }
       },
-      onCanceled: () => Get.back(),
+      onCanceled: () => dialogPop(),
     );
   }
 }

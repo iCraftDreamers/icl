@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class MyTextFormField extends StatelessWidget {
-  const MyTextFormField({
+import '../theme.dart';
+
+class DefaultTextFormField extends StatelessWidget {
+  const DefaultTextFormField({
     super.key,
-    this.textEditingController,
+    this.controller,
     this.validator,
     this.labelText,
     this.hintText,
-    required this.readOnly,
-    required this.obscureText,
+    this.readOnly,
+    this.maxLines,
+    this.maxLength,
+    this.obscureText,
+    this.inputFormatters,
   });
 
-  final TextEditingController? textEditingController;
+  final TextEditingController? controller;
   final String? Function(String?)? validator;
   final String? labelText;
   final String? hintText;
-  final bool readOnly;
-  final bool obscureText;
+  final bool? readOnly;
+  final int? maxLines;
+  final int? maxLength;
+  final bool? obscureText;
+  final List<TextInputFormatter>? inputFormatters;
 
   static String? checkEmpty(value) {
     return (value == null || value.isEmpty) ? "此处不得留空！" : null;
@@ -25,23 +33,21 @@ class MyTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const borderRadius = BorderRadius.all(Radius.circular(7.5));
     return TextFormField(
-      controller: textEditingController,
-      obscureText: obscureText,
+      controller: controller,
+      obscureText: obscureText ?? false,
       validator: validator,
-      readOnly: readOnly,
-      maxLength: 30,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp("[\u4e00-\u9fa5_a-zA-Z0-9]")),
-      ],
+      readOnly: readOnly ?? false,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
-        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        border: const OutlineInputBorder(borderRadius: borderRadius),
+        contentPadding: const EdgeInsets.all(10),
+        border: OutlineInputBorder(borderRadius: kBorderRadius),
         counterText: "",
-        enabledBorder: const OutlineInputBorder(
-          borderRadius: borderRadius,
-          borderSide: BorderSide(color: Colors.grey),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: kBorderRadius,
+          borderSide: const BorderSide(color: Colors.grey),
         ),
         hintText: hintText,
         labelText: labelText,
@@ -50,17 +56,20 @@ class MyTextFormField extends StatelessWidget {
   }
 }
 
-class TitleTextFormFiled extends MyTextFormField {
+class TitleTextFormFiled extends DefaultTextFormField {
   const TitleTextFormFiled({
     super.key,
-    this.titleWidth,
-    required this.titleText,
-    super.textEditingController,
+    super.controller,
     super.validator,
     super.labelText,
     super.hintText,
+    super.maxLines,
+    super.maxLength,
+    super.inputFormatters,
     required super.readOnly,
     required super.obscureText,
+    this.titleWidth,
+    required this.titleText,
   });
 
   final double? titleWidth;

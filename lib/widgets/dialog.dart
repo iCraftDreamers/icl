@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class DialogConfirmButton extends StatelessWidget {
   const DialogConfirmButton({super.key, required this.onPressed});
@@ -32,8 +33,8 @@ class DialogCancelButton extends StatelessWidget {
   }
 }
 
-class Dialog extends StatelessWidget {
-  const Dialog({
+class DefaultDialog extends StatelessWidget {
+  const DefaultDialog({
     super.key,
     this.title,
     this.content,
@@ -48,42 +49,11 @@ class Dialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme.headlineSmall;
     return AlertDialog(
+      titleTextStyle: textTheme!.copyWith(fontWeight: FontWeight.bold),
       title: title,
       content: content,
-      actions: [
-        DialogCancelButton(onPressed: onCanceled),
-        DialogConfirmButton(onPressed: onConfirmed),
-      ],
-    );
-  }
-}
-
-class WarningDialog extends StatelessWidget {
-  const WarningDialog({
-    super.key,
-    this.title,
-    this.content,
-    this.onConfirmed,
-    this.onCanceled,
-  });
-
-  final Widget? title;
-  final Widget? content;
-  final void Function()? onConfirmed;
-  final void Function()? onCanceled;
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: title,
-      content: Row(
-        children: [
-          Icon(Icons.warning_rounded, size: 36, color: Colors.orange[600]),
-          const SizedBox(width: 10),
-          content ?? const SizedBox(),
-        ],
-      ),
       actions: [
         DialogCancelButton(onPressed: onCanceled),
         DialogConfirmButton(onPressed: onConfirmed),
@@ -122,4 +92,8 @@ class ErrorDialog extends StatelessWidget {
       ],
     );
   }
+}
+
+void dialogPop() {
+  Navigator.of(Get.context!).pop();
 }

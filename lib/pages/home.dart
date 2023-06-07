@@ -280,9 +280,7 @@ class _Card extends StatelessWidget {
                   onEnter: (event) => hover(true),
                   onExit: (event) => hover(false),
                   child: FloatingActionButton.small(
-                    onPressed: () => {
-                      print("原神，启动！")
-                    },
+                    onPressed: () => {print("原神，启动！")},
                     heroTag: null,
                     child: const Icon(Icons.play_arrow),
                   ),

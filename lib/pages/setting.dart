@@ -1,9 +1,11 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Dialog;
 import 'package:get/get.dart';
 import 'package:icl/controller/storage.dart';
 import 'package:icl/theme.dart';
+import 'package:icl/widgets/dialog.dart';
+import 'package:icl/widgets/typefield.dart';
 import 'package:icl/widgets/widget_group.dart';
 
 import '/utils/auth/accounts.dart';
@@ -24,11 +26,7 @@ class SettingPage extends RoutePage {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: 15,
-            right: 15,
-            top: 15,
-          ),
+          padding: const EdgeInsets.only(left: 15, right: 15, top: 15),
           child: title(),
         ),
         SizedBox(
@@ -57,6 +55,8 @@ class SettingPage extends RoutePage {
 }
 
 class _GlobalGameSettingPage extends StatelessWidget {
+  const _GlobalGameSettingPage();
+
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
@@ -64,108 +64,161 @@ class _GlobalGameSettingPage extends StatelessWidget {
     var autoAllocationMemory =
         (globalSetting['autoAllocationMemory'] as bool).obs;
     var allocationMemory = (globalSetting['allocationMemory'] as int).obs;
+    var jvmArgs = (globalSetting['jvmArgs'] as String).obs;
+    var defaultJvmArgs = (globalSetting['defaultJvmArgs'] as bool).obs;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
+
     return ListView(
       padding: const EdgeInsets.all(15),
       children: [
-        WidgetGroup(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          divider: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Divider(
-              height: 1,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withOpacity(.2),
-            ),
-          ),
+        TitleWidgetGroup(
+          "Java设置",
           children: [
-            // TODO: Java版本优选
             ListTile(
               title: const Text("Java路径"),
               subtitle: Text(Javas.list[0].path),
             ),
-            GetBuilder(
-              init: _AnimationController(),
-              builder: (c) {
-                return Column(
-                  children: [
-                    Obx(
-                      () => SwitchListTile(
-                        title: const Text("游戏内存"),
-                        subtitle: const Text("自动分配"),
-                        value: autoAllocationMemory.value,
-                        selected: autoAllocationMemory.value,
-                        hoverColor:
-                            colorWithValue(colors.secondaryContainer, -.05),
-                        onChanged: (value) {
-                          autoAllocationMemory(value);
-                          globalSetting['autoAllocationMemory'] = value;
-                          configController.updateConfig();
-                          if (!value) {
-                            c.animController.forward();
-                          } else {
-                            c.animController.reverse();
-                          }
-                        },
-                      ),
-                    ),
-                    SizeTransition(
-                      axisAlignment: 1.0,
-                      sizeFactor: c.animation,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            Obx(
+              () => ListTile(
+                title: const Text("JVM启动参数"),
+                subtitle: Text(jvmArgs.value),
+                onTap: () {
+                  final jvmArgsController =
+                      TextEditingController(text: jvmArgs.value);
+                  RxBool isExpaned = false.obs;
+                  showDialog(
+                    context: Get.context!,
+                    builder: (_) => DefaultDialog(
+                      title: const Text("JVM启动参数"),
+                      onCanceled: () {
+                        dialogPop();
+                        jvmArgsController.text = jvmArgs.value;
+                      },
+                      onConfirmed: () {
+                        dialogPop();
+                        jvmArgs(jvmArgsController.text);
+                        globalSetting['jvmArgs'] = jvmArgsController.text;
+                        configController.updateConfig();
+                      },
+                      // TODO: 判断输入正确
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15),
-                            child: Row(
-                              children: [
-                                const Text("手动分配"),
-                                Expanded(
-                                  child: Obx(
-                                    () => Slider(
-                                      inactiveColor:
-                                          colors.primary.withOpacity(.2),
-                                      value: allocationMemory.toDouble(),
-                                      min: 0,
-                                      max: totalMemSize,
-                                      label: allocationMemory.toString(),
-                                      onChanged: (value) =>
-                                          allocationMemory(value.toInt()),
-                                      onChangeEnd: (value) {
-                                        allocationMemory(value.toInt());
-                                        globalSetting['allocationMemory'] =
-                                            value.toInt();
-                                        configController.updateConfig();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          SizedBox(
+                            width: 400,
+                            child: DefaultTextFormField(
+                              controller: jvmArgsController,
                             ),
                           ),
                           const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, bottom: 10),
+                          // TODO: 圆角
+                          ClipRRect(
+                            borderRadius: kBorderRadius,
+                            clipBehavior: Clip.antiAlias,
                             child: Obx(
-                              () => _MemoryAllocationBar(
-                                totalMemSize,
-                                SysInfo.freePhyMem / kMegaByte,
-                                allocationMemory.toDouble(),
+                              () => ExpansionListTile(
+                                isExpaned: isExpaned.value,
+                                tile: ListTile(
+                                  title: const Text("高级"),
+                                  onTap: () => isExpaned(!isExpaned.value),
+                                  leading: const Icon(Icons.expand_more),
+                                ),
+                                expandTile: SwitchListTile(
+                                  title: const Text("默认参数"),
+                                  value: defaultJvmArgs.value,
+                                  onChanged: (value) {
+                                    defaultJvmArgs(value);
+                                    globalSetting['defaultJvmArgs'] = value;
+                                    configController.updateConfig();
+                                  },
+                                ),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ],
-                );
-              },
-            ),
+                  );
+                },
+              ),
+            )
+          ],
+        ),
+        ValueBuilder<bool?>(
+          initialValue: autoAllocationMemory.value,
+          builder: (snapshot, updater) {
+            return TitleWidgetGroup(
+              "内存设置",
+              children: [
+                ExpansionListTile(
+                  isExpaned: !snapshot!,
+                  tile: SwitchListTile(
+                    title: const Text("游戏内存"),
+                    subtitle: const Text("自动分配"),
+                    value: snapshot,
+                    selected: !snapshot,
+                    hoverColor: colorWithValue(colors.secondaryContainer, -.05),
+                    onChanged: (value) {
+                      autoAllocationMemory(value);
+                      globalSetting['autoAllocationMemory'] = value;
+                      configController.updateConfig();
+                      updater(value);
+                    },
+                  ),
+                  expandTile: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Row(
+                          children: [
+                            const Text("手动分配"),
+                            Expanded(
+                              child: Obx(
+                                () => Slider(
+                                  inactiveColor: colors.primary.withOpacity(.2),
+                                  value: allocationMemory.toDouble(),
+                                  min: 0,
+                                  max: totalMemSize,
+                                  label: allocationMemory.toString(),
+                                  onChanged: (value) =>
+                                      allocationMemory(value.toInt()),
+                                  onChangeEnd: (value) {
+                                    allocationMemory(value.toInt());
+                                    globalSetting['allocationMemory'] =
+                                        value.toInt();
+                                    configController.updateConfig();
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10),
+                        child: Obx(
+                          () => _MemoryAllocationBar(
+                            totalMemSize,
+                            SysInfo.freePhyMem / kMegaByte,
+                            allocationMemory.toDouble(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        TitleWidgetGroup(
+          "测试",
+          children: [
             ListTile(
               title: Row(
                 children: [
@@ -199,6 +252,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
 }
 
 class _LauncherSettingPage extends StatelessWidget {
+  const _LauncherSettingPage();
+
   @override
   Widget build(BuildContext context) {
     return const Placeholder();
@@ -209,8 +264,8 @@ class _TabController extends GetxController
     with GetSingleTickerProviderStateMixin {
   late final TabController tabController;
   final tabs = {
-    "全局游戏设置": _GlobalGameSettingPage(),
-    "启动器": _LauncherSettingPage(),
+    "全局游戏设置": const _GlobalGameSettingPage(),
+    "启动器": const _LauncherSettingPage(),
   };
 
   @override
@@ -286,32 +341,3 @@ class _MemoryAllocationBar extends StatelessWidget {
 
 double _truncateToDecimalPlaces(num value, int fractionalDigits) =>
     (value * pow(10, fractionalDigits)).truncate() / pow(10, fractionalDigits);
-
-class _AnimationController extends GetxController
-    with GetSingleTickerProviderStateMixin {
-  late Animation<double> animation;
-  late AnimationController animController;
-
-  @override
-  void onInit() {
-    super.onInit();
-    final configController = Get.find<ConfigController>();
-    final globalSetting = configController.data['globalGameSetting'];
-    animController = AnimationController(
-      duration: const Duration(milliseconds: 250),
-      value: globalSetting['autoAllocationMemory'] ? 0.0 : 1.0,
-      vsync: this,
-    );
-    animation = Tween<double>(begin: 0.0, end: 1.0) // 添加tween
-        .animate(CurvedAnimation(
-      parent: animController,
-      curve: Curves.fastOutSlowIn,
-    ));
-  }
-
-  @override
-  void dispose() {
-    animController.dispose();
-    super.dispose();
-  }
-}

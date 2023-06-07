@@ -3,6 +3,8 @@ import 'java.dart';
 class GameSetting {
   GameSetting({
     this.java,
+    this.defaultJvmArgs = true,
+    this.jvmArgs,
     this.autoAllocationMemory = true,
     this.allocationMemory = 2048,
     this.fullScreen = false,
@@ -14,6 +16,8 @@ class GameSetting {
   });
 
   Java? java;
+  bool? defaultJvmArgs;
+  String? jvmArgs;
   bool? autoAllocationMemory;
   int? allocationMemory;
   bool? fullScreen;
@@ -25,6 +29,8 @@ class GameSetting {
 
   factory GameSetting.fromJson(Map<String, dynamic> json) => GameSetting(
         java: Java(json['path'], versionNumber: json['version']),
+        defaultJvmArgs: json['defaultJvmArgs'],
+        jvmArgs: json['jvmArgs'],
         autoAllocationMemory: json['autoAllocationMemory'],
         allocationMemory: json["allocationMemory"],
         fullScreen: json['fullScreen'],
@@ -36,6 +42,8 @@ class GameSetting {
 
   Map<String, dynamic> toJson() => {
         'java': java?.toJson(),
+        'jvmArgs': jvmArgs,
+        'defaultJvmArgs': defaultJvmArgs,
         'autoAllocationMemory': autoAllocationMemory,
         'allocationMemory': allocationMemory,
         'fullScreen': fullScreen,
