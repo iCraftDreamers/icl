@@ -47,7 +47,7 @@ class Java {
 abstract final class Javas {
   static List<Java> list = [];
 
-  static Future<void> init() async {
+  static void init() {
     list.clear();
     pathOnEnvironment()
         .then((paths) => {for (final path in paths) list.add(Java(path))});
@@ -69,10 +69,12 @@ abstract final class Javas {
       return version;
     }
 
-    final versionLine = releaseFile
+    var versionLine = releaseFile
         .readAsLinesSync()
         .firstWhere((line) => line.startsWith('JAVA_VERSION='));
-    return versionLine.substring('JAVA_VERSION='.length);
+    versionLine = versionLine.substring('JAVA_VERSION='.length);
+
+    return versionLine.substring(1, versionLine.length - 1);
   }
 
   static Future<List<String>> pathOnEnvironment() async {

@@ -281,7 +281,7 @@ class _AddAccountDialog extends StatelessWidget {
               children: [
                 const SizedBox(
                   width: 75,
-                  child: Text("登录方式:"),
+                  child: Text("登录方式"),
                 ),
                 SizedBox(
                   width: 100,
@@ -305,7 +305,7 @@ class _AddAccountDialog extends StatelessWidget {
                   children: switch (loginMode()) {
                     AccountLoginMode.offline => [
                         TitleTextFormFiled(
-                          titleText: "用户名：",
+                          titleText: "用户名",
                           titleWidth: 75,
                           obscureText: false,
                           readOnly: false,

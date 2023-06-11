@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart' hide Dialog;
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:icl/controller/storage.dart';
 import 'package:icl/theme.dart';
 import 'package:icl/widgets/dialog.dart';
@@ -60,10 +61,9 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final globalSetting = configController.data['globalGameSetting'];
-    var autoAllocationMemory =
-        (globalSetting['autoAllocationMemory'] as bool).obs;
-    var allocationMemory = (globalSetting['allocationMemory'] as int).obs;
+    final globalSetting = configController.data['globalGameConfiguration'];
+    var autoMemory = (globalSetting['autoMemory'] as bool).obs;
+    var maxMemory = (globalSetting['maxMemory'] as int).obs;
     var jvmArgs = (globalSetting['jvmArgs'] as String).obs;
     var defaultJvmArgs = (globalSetting['defaultJvmArgs'] as bool).obs;
     final theme = Theme.of(context);
@@ -74,16 +74,74 @@ class _GlobalGameSettingPage extends StatelessWidget {
       padding: const EdgeInsets.all(15),
       children: [
         TitleWidgetGroup(
-          "Java设置",
+          "Java",
           children: [
             ListTile(
               title: const Text("Java路径"),
-              subtitle: Text(Javas.list[0].path),
+              subtitle: GetBuilder<ConfigController>(
+                init: ConfigController(),
+                builder: (_) {
+                  var text = globalSetting['java'];
+                  if (text == "auto") {
+                    text = "自动选择最佳版本";
+                  }
+                  return Text(text);
+                },
+              ),
+              onTap: () => showDialog(
+                context: Get.context!,
+                builder: (_) {
+                  return DefaultDialog(
+                    title: const Text("Java路径"),
+                    onlyConfirm: true,
+                    onConfirmed: () => dialogPop(),
+                    content: Material(
+                      color: Colors.transparent,
+                      borderRadius: kBorderRadius,
+                      clipBehavior: Clip.antiAlias,
+                      child: GetBuilder<ConfigController>(
+                        builder: (c) {
+                          var groupValue =
+                              (globalSetting['java'] as String).obs;
+                          return Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                                  RadioListTile(
+                                      value: "auto",
+                                      groupValue: groupValue.value,
+                                      title: const Text("自动选择最佳版本"),
+                                      onChanged: (value) {
+                                        globalSetting['java'] = value;
+                                        c.updateConfig();
+                                      })
+                                ] +
+                                Javas.list
+                                    .map(
+                                      (e) => RadioListTile(
+                                        value: e.path,
+                                        groupValue: groupValue.value,
+                                        title: Text(e.versionNumber),
+                                        subtitle: Text(e.path),
+                                        onChanged: (value) {
+                                          globalSetting['java'] = value;
+                                          c.updateConfig();
+                                        },
+                                      ),
+                                    )
+                                    .toList(),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             Obx(
               () => ListTile(
                 title: const Text("JVM启动参数"),
-                subtitle: Text(jvmArgs.value),
+                subtitle: Text(
+                    "${defaultJvmArgs.value ? '默认' : ''}${jvmArgs.value.isEmpty || !defaultJvmArgs.value ? '' : ' + '}${jvmArgs.value}"),
                 onTap: () {
                   final jvmArgsController =
                       TextEditingController(text: jvmArgs.value);
@@ -113,8 +171,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 10),
-                          // TODO: 圆角
-                          ClipRRect(
+                          Material(
+                            color: Colors.transparent,
                             borderRadius: kBorderRadius,
                             clipBehavior: Clip.antiAlias,
                             child: Obx(
@@ -147,10 +205,10 @@ class _GlobalGameSettingPage extends StatelessWidget {
           ],
         ),
         ValueBuilder<bool?>(
-          initialValue: autoAllocationMemory.value,
+          initialValue: autoMemory.value,
           builder: (snapshot, updater) {
             return TitleWidgetGroup(
-              "内存设置",
+              "内存",
               children: [
                 ExpansionListTile(
                   isExpaned: !snapshot!,
@@ -161,8 +219,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                     selected: !snapshot,
                     hoverColor: colorWithValue(colors.secondaryContainer, -.05),
                     onChanged: (value) {
-                      autoAllocationMemory(value);
-                      globalSetting['autoAllocationMemory'] = value;
+                      autoMemory(value);
+                      globalSetting['autoMemory'] = value;
                       configController.updateConfig();
                       updater(value);
                     },
@@ -179,16 +237,15 @@ class _GlobalGameSettingPage extends StatelessWidget {
                               child: Obx(
                                 () => Slider(
                                   inactiveColor: colors.primary.withOpacity(.2),
-                                  value: allocationMemory.toDouble(),
+                                  value: maxMemory.toDouble(),
                                   min: 0,
                                   max: totalMemSize,
-                                  label: allocationMemory.toString(),
+                                  label: maxMemory.toString(),
                                   onChanged: (value) =>
-                                      allocationMemory(value.toInt()),
+                                      maxMemory(value.toInt()),
                                   onChangeEnd: (value) {
-                                    allocationMemory(value.toInt());
-                                    globalSetting['allocationMemory'] =
-                                        value.toInt();
+                                    maxMemory(value.toInt());
+                                    globalSetting['maxMemory'] = value.toInt();
                                     configController.updateConfig();
                                   },
                                 ),
@@ -205,7 +262,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                           () => _MemoryAllocationBar(
                             totalMemSize,
                             SysInfo.freePhyMem / kMegaByte,
-                            allocationMemory.toDouble(),
+                            maxMemory.toDouble(),
                           ),
                         ),
                       ),
@@ -215,6 +272,10 @@ class _GlobalGameSettingPage extends StatelessWidget {
               ],
             );
           },
+        ),
+        TitleWidgetGroup(
+          "游戏",
+          children: [],
         ),
         TitleWidgetGroup(
           "测试",

@@ -2,24 +2,24 @@ import 'java.dart';
 
 class GameSetting {
   GameSetting({
-    this.java,
+    this.java = "auto",
     this.defaultJvmArgs = true,
-    this.jvmArgs,
-    this.autoAllocationMemory = true,
-    this.allocationMemory = 2048,
+    this.jvmArgs = "",
+    this.autoMemory = true,
+    this.maxMemory = 2048,
     this.fullScreen = false,
     this.width = 854,
     this.height = 480,
     this.log = false,
-    this.args,
-    this.serverAddress,
+    this.args = "",
+    this.serverAddress = "",
   });
 
-  Java? java;
+  String? java;
   bool? defaultJvmArgs;
   String? jvmArgs;
-  bool? autoAllocationMemory;
-  int? allocationMemory;
+  bool? autoMemory;
+  int? maxMemory;
   bool? fullScreen;
   int? width;
   int? height;
@@ -28,11 +28,11 @@ class GameSetting {
   String? serverAddress;
 
   factory GameSetting.fromJson(Map<String, dynamic> json) => GameSetting(
-        java: Java(json['path'], versionNumber: json['version']),
+        java: json['java'],
         defaultJvmArgs: json['defaultJvmArgs'],
         jvmArgs: json['jvmArgs'],
-        autoAllocationMemory: json['autoAllocationMemory'],
-        allocationMemory: json["allocationMemory"],
+        autoMemory: json['autoMemory'],
+        maxMemory: json["maxMemory"],
         fullScreen: json['fullScreen'],
         width: json['width'],
         height: json['height'],
@@ -41,11 +41,11 @@ class GameSetting {
       );
 
   Map<String, dynamic> toJson() => {
-        'java': java?.toJson(),
+        'java': java,
         'jvmArgs': jvmArgs,
         'defaultJvmArgs': defaultJvmArgs,
-        'autoAllocationMemory': autoAllocationMemory,
-        'allocationMemory': allocationMemory,
+        'autoMemory': autoMemory,
+        'maxMemory': maxMemory,
         'fullScreen': fullScreen,
         'width': width,
         'height': height,

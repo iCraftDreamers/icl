@@ -38,12 +38,14 @@ class DefaultDialog extends StatelessWidget {
     super.key,
     this.title,
     this.content,
+    this.onlyConfirm = false,
     this.onConfirmed,
     this.onCanceled,
   });
 
   final Widget? title;
   final Widget? content;
+  final bool onlyConfirm;
   final void Function()? onConfirmed;
   final void Function()? onCanceled;
 
@@ -55,7 +57,7 @@ class DefaultDialog extends StatelessWidget {
       title: title,
       content: content,
       actions: [
-        DialogCancelButton(onPressed: onCanceled),
+        if (!onlyConfirm) DialogCancelButton(onPressed: onCanceled),
         DialogConfirmButton(onPressed: onConfirmed),
       ],
     );
