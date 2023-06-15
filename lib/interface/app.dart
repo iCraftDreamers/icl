@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
 
     return configController.obx(
       (data) {
-        final themeData = configController.data['theme'];
+        final themeData = configController.jsonData['theme'];
         final themeMode = themeData['mode'];
         final themeModeEnum =
             EnumToString.fromString(ThemeMode.values, themeMode)!;

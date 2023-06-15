@@ -58,9 +58,15 @@ dependencies:
 
   dynamic_color: ^1.6.5
 
+  json_annotation:
+
 dev_dependencies:
 
   flutter_lints:
+
+  build_runner:
+  
+  json_serializable:
 
 flutter:
 

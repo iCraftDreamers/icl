@@ -104,7 +104,7 @@ class Game {
 
   Map<String, dynamic> toJson() => {
         'useGlobalSetting': useGlobalSetting,
-        'setting': _setting?.toJson(),
+        'setting': _setting!.toJson(),
       };
 
   @override

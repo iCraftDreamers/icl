@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'theme.g.dart';
 
 final kBorderRadius = BorderRadius.circular(7.5);
 
@@ -9,6 +12,7 @@ Color colorWithValue(Color color, double value) {
   return hsvColor.withValue(min(max(hsvColor.value + value, -1), 1)).toColor();
 }
 
+@JsonSerializable()
 final class AppTheme {
   AppTheme({
     this.mode = ThemeMode.system,
@@ -40,21 +44,17 @@ final class AppTheme {
     );
   }
 
-  factory AppTheme.fromJson(Map<String, dynamic> json) => AppTheme(
-        mode: ThemeMode.values.byName(json['mode']),
-        color: SeedColor.values.byName(json['color']),
-      );
+  factory AppTheme.fromJson(Map<String, dynamic> json) =>
+      _$AppThemeFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'mode': mode.name,
-        'color': color.name,
-      };
+  Map<String, dynamic> toJson() => _$AppThemeToJson(this);
 }
 
+@JsonEnum()
 enum SeedColor {
   blue(color: Colors.blue);
 
-  final Color color;
-
   const SeedColor({required this.color});
+
+  final Color color;
 }

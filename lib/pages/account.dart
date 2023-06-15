@@ -55,10 +55,10 @@ class AccountPage extends RoutePage {
         GetX(
           init: AccountController(),
           builder: (c) => Column(
-            // TODO: 每次重构都会遍历，待优化
             children: List.generate(
               Accounts.list.length,
               (i) => _AccountItem(
+                key: ValueKey(i),
                 account: Accounts.list[i],
                 isSelected: i == c.currentIndex.value,
                 onTap: () => c.currentIndex(i),
@@ -72,7 +72,12 @@ class AccountPage extends RoutePage {
 }
 
 class _AccountItem extends StatefulWidget {
-  const _AccountItem({required this.account, this.isSelected, this.onTap});
+  const _AccountItem({
+    super.key,
+    required this.account,
+    this.isSelected,
+    this.onTap,
+  });
 
   final Account account;
   final bool? isSelected;

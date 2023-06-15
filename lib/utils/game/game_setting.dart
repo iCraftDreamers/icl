@@ -1,19 +1,34 @@
-import 'java.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'game_setting.g.dart';
+
+@JsonSerializable()
 class GameSetting {
   GameSetting({
-    this.java = "auto",
-    this.defaultJvmArgs = true,
-    this.jvmArgs = "",
-    this.autoMemory = true,
-    this.maxMemory = 2048,
-    this.fullScreen = false,
-    this.width = 854,
-    this.height = 480,
-    this.log = false,
-    this.args = "",
-    this.serverAddress = "",
-  });
+    this.java,
+    this.defaultJvmArgs,
+    this.jvmArgs,
+    this.autoMemory,
+    this.maxMemory,
+    this.fullScreen,
+    this.width,
+    this.height,
+    this.log,
+    this.args,
+    this.serverAddress,
+  }) {
+    java ??= "auto";
+    defaultJvmArgs ??= true;
+    jvmArgs ??= "";
+    autoMemory ??= true;
+    maxMemory ??= 2048;
+    fullScreen ??= false;
+    width ??= 854;
+    height ??= 480;
+    log ??= false;
+    args ??= "";
+    serverAddress ??= "";
+  }
 
   String? java;
   bool? defaultJvmArgs;
@@ -27,30 +42,8 @@ class GameSetting {
   String? args;
   String? serverAddress;
 
-  factory GameSetting.fromJson(Map<String, dynamic> json) => GameSetting(
-        java: json['java'],
-        defaultJvmArgs: json['defaultJvmArgs'],
-        jvmArgs: json['jvmArgs'],
-        autoMemory: json['autoMemory'],
-        maxMemory: json["maxMemory"],
-        fullScreen: json['fullScreen'],
-        width: json['width'],
-        height: json['height'],
-        log: json['log'],
-        serverAddress: json['serverAddress'],
-      );
+  factory GameSetting.fromJson(Map<String, dynamic> json) =>
+      _$GameSettingFromJson(json);
 
-  Map<String, dynamic> toJson() => {
-        'java': java,
-        'jvmArgs': jvmArgs,
-        'defaultJvmArgs': defaultJvmArgs,
-        'autoMemory': autoMemory,
-        'maxMemory': maxMemory,
-        'fullScreen': fullScreen,
-        'width': width,
-        'height': height,
-        'log': log,
-        'args': args,
-        'serverAddress': serverAddress,
-      };
+  Map<String, dynamic> toJson() => _$GameSettingToJson(this);
 }

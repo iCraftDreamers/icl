@@ -51,6 +51,7 @@ class WindowSurface extends StatelessWidget {
       final children = List<Widget>.generate(
         routes.length,
         (i) => _NavigationButton(
+          key: ValueKey(i),
           route: routes.values.elementAt(i),
           text: routes.keys.elementAt(i),
           icon: Icon(icons.elementAt(i)[0], color: selectedColor),
@@ -135,6 +136,7 @@ class WindowSurface extends StatelessWidget {
 
 class _NavigationButton extends StatelessWidget {
   const _NavigationButton({
+    super.key,
     required this.route,
     required this.text,
     required this.icon,

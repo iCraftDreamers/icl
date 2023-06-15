@@ -61,7 +61,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final globalSetting = configController.data['globalGameConfiguration'];
+    final globalSetting = configController.jsonData['globalGameConfiguration'];
     var autoMemory = (globalSetting['autoMemory'] as bool).obs;
     var maxMemory = (globalSetting['maxMemory'] as int).obs;
     var jvmArgs = (globalSetting['jvmArgs'] as String).obs;
@@ -79,9 +79,9 @@ class _GlobalGameSettingPage extends StatelessWidget {
             ListTile(
               title: const Text("Java路径"),
               subtitle: GetBuilder<ConfigController>(
-                init: ConfigController(),
-                builder: (_) {
-                  var text = globalSetting['java'];
+                id: "javaPath",
+                builder: (c) {
+                  var text = (globalSetting['java'] as String);
                   if (text == "auto") {
                     text = "自动选择最佳版本";
                   }
@@ -100,31 +100,32 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       borderRadius: kBorderRadius,
                       clipBehavior: Clip.antiAlias,
                       child: GetBuilder<ConfigController>(
+                        id: "javaPath",
                         builder: (c) {
-                          var groupValue =
-                              (globalSetting['java'] as String).obs;
+                          var groupValue = (globalSetting['java'] as String);
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                                   RadioListTile(
-                                      value: "auto",
-                                      groupValue: groupValue.value,
-                                      title: const Text("自动选择最佳版本"),
-                                      onChanged: (value) {
-                                        globalSetting['java'] = value;
-                                        c.updateConfig();
-                                      })
+                                    value: "auto",
+                                    groupValue: groupValue,
+                                    title: const Text("自动选择最佳版本"),
+                                    onChanged: (value) {
+                                      globalSetting['java'] = value;
+                                      c.updateConfig(["javaPath"]);
+                                    },
+                                  )
                                 ] +
                                 Javas.list
                                     .map(
                                       (e) => RadioListTile(
                                         value: e.path,
-                                        groupValue: groupValue.value,
+                                        groupValue: groupValue,
                                         title: Text(e.versionNumber),
                                         subtitle: Text(e.path),
                                         onChanged: (value) {
                                           globalSetting['java'] = value;
-                                          c.updateConfig();
+                                          c.updateConfig(["javaPath"]);
                                         },
                                       ),
                                     )
