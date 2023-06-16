@@ -21,10 +21,10 @@ class ConfigController extends GetxController with StateMixin {
           (jsonData == null
               ? AppTheme()
               : AppTheme.fromJson(jsonData['theme'])),
-      'globalGameConfiguration': gameSetting ??
+      'globalSettings': gameSetting ??
           (jsonData == null
               ? GameSetting()
-              : GameSetting.fromJson(jsonData['globalGameConfiguration'])),
+              : GameSetting.fromJson(jsonData['globalSettings'])),
     };
   }
 
@@ -43,14 +43,14 @@ class ConfigController extends GetxController with StateMixin {
   Future<void> readConfig() async {
     final file = File(await getConfigPath());
     if (!await file.exists()) {
-      createConfig();
+      await createConfig();
     }
     final contents = await file.readAsString();
     jsonData = json.decode(
         json.encode(defaultJsonData(jsonData: await json.decode(contents))));
   }
 
-  void createConfig([Map? jsonData]) async {
+  Future<void> createConfig([Map? jsonData]) async {
     final path = await getConfigPath();
     final file = File(path);
     jsonData ??= defaultJsonData();

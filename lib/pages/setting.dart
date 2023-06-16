@@ -59,12 +59,11 @@ class _GlobalGameSettingPage extends StatelessWidget {
 
   Widget resolutionTextField(String key) {
     final configController = Get.find<ConfigController>();
-    final globalGameConfiguration =
-        configController.jsonData['globalGameConfiguration'];
+    final globalSettings = configController.jsonData['globalSettings'];
     final controller =
-        TextEditingController(text: globalGameConfiguration[key].toString());
+        TextEditingController(text: globalSettings[key].toString());
     void onSubmitted(String key, String value) {
-      globalGameConfiguration[key] = int.parse(value);
+      globalSettings[key] = int.parse(value);
       configController.updateConfig();
     }
 
@@ -80,12 +79,10 @@ class _GlobalGameSettingPage extends StatelessWidget {
 
   Widget textField(String key) {
     final configController = Get.find<ConfigController>();
-    final globalGameConfiguration =
-        configController.jsonData['globalGameConfiguration'];
-    final controller =
-        TextEditingController(text: globalGameConfiguration[key]);
+    final globalSettings = configController.jsonData['globalSettings'];
+    final controller = TextEditingController(text: globalSettings[key]);
     void onSubmitted(String key, String value) {
-      globalGameConfiguration[key] = value;
+      globalSettings[key] = value;
       configController.updateConfig();
     }
 
@@ -99,13 +96,11 @@ class _GlobalGameSettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final globalGameConfiguration =
-        configController.jsonData['globalGameConfiguration'];
-    var autoMemory = (globalGameConfiguration['autoMemory'] as bool).obs;
-    var maxMemory = (globalGameConfiguration['maxMemory'] as int).obs;
-    var jvmArgs = (globalGameConfiguration['jvmArgs'] as String).obs;
-    var defaultJvmArgs =
-        (globalGameConfiguration['defaultJvmArgs'] as bool).obs;
+    final globalSettings = configController.jsonData['globalSettings'];
+    var autoMemory = (globalSettings['autoMemory'] as bool).obs;
+    var maxMemory = (globalSettings['maxMemory'] as int).obs;
+    var jvmArgs = (globalSettings['jvmArgs'] as String).obs;
+    var defaultJvmArgs = (globalSettings['defaultJvmArgs'] as bool).obs;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
@@ -121,7 +116,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
               subtitle: GetBuilder<ConfigController>(
                 id: "javaPath",
                 builder: (c) {
-                  var text = (globalGameConfiguration['java'] as String);
+                  var text = (globalSettings['java'] as String);
                   if (text == "auto") {
                     text = "自动选择最佳版本";
                   }
@@ -142,8 +137,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       child: GetBuilder<ConfigController>(
                         id: "javaPath",
                         builder: (c) {
-                          var groupValue =
-                              (globalGameConfiguration['java'] as String);
+                          var groupValue = (globalSettings['java'] as String);
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -152,7 +146,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                     groupValue: groupValue,
                                     title: const Text("自动选择最佳版本"),
                                     onChanged: (value) {
-                                      globalGameConfiguration['java'] = value;
+                                      globalSettings['java'] = value;
                                       c.updateConfig(["javaPath"]);
                                     },
                                   )
@@ -165,8 +159,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                         title: Text(e.versionNumber),
                                         subtitle: Text(e.path),
                                         onChanged: (value) {
-                                          globalGameConfiguration['java'] =
-                                              value;
+                                          globalSettings['java'] = value;
                                           c.updateConfig(["javaPath"]);
                                         },
                                       ),
@@ -200,8 +193,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       onConfirmed: () {
                         dialogPop();
                         jvmArgs(jvmArgsController.text);
-                        globalGameConfiguration['jvmArgs'] =
-                            jvmArgsController.text;
+                        globalSettings['jvmArgs'] = jvmArgsController.text;
                         configController.updateConfig();
                       },
                       // TODO: 判断输入正确
@@ -235,8 +227,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                   value: defaultJvmArgs.value,
                                   onChanged: (value) {
                                     defaultJvmArgs(value);
-                                    globalGameConfiguration['defaultJvmArgs'] =
-                                        value;
+                                    globalSettings['defaultJvmArgs'] = value;
                                     configController.updateConfig();
                                   },
                                 ),
@@ -268,7 +259,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                     hoverColor: colorWithValue(colors.secondaryContainer, -.05),
                     onChanged: (value) {
                       autoMemory(value);
-                      globalGameConfiguration['autoMemory'] = value;
+                      globalSettings['autoMemory'] = value;
                       configController.updateConfig();
                       updater(value);
                     },
@@ -293,8 +284,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                       maxMemory(value.toInt()),
                                   onChangeEnd: (value) {
                                     maxMemory(value.toInt());
-                                    globalGameConfiguration['maxMemory'] =
-                                        value.toInt();
+                                    globalSettings['maxMemory'] = value.toInt();
                                     configController.updateConfig();
                                   },
                                 ),
@@ -326,7 +316,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
           "游戏",
           children: [
             ValueBuilder<bool?>(
-              initialValue: globalGameConfiguration['fullScreen'] as bool,
+              initialValue: globalSettings['fullScreen'] as bool,
               builder: (value, updater) => ExpansionListTile(
                 isExpaned: !value!,
                 tile: SwitchListTile(
@@ -364,13 +354,13 @@ class _GlobalGameSettingPage extends StatelessWidget {
               ),
             ),
             ValueBuilder<bool?>(
-              initialValue: globalGameConfiguration['log'],
+              initialValue: globalSettings['log'],
               builder: (value, updater) => SwitchListTile(
                 value: value!,
                 title: const Text("日志"),
                 onChanged: (value) {
                   updater(value);
-                  globalGameConfiguration['log'] = value;
+                  globalSettings['log'] = value;
                   configController.updateConfig();
                 },
               ),
