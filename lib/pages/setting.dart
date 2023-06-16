@@ -2,11 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart' hide Dialog;
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:icl/controller/storage.dart';
 import 'package:icl/theme.dart';
 import 'package:icl/widgets/dialog.dart';
-import 'package:icl/widgets/typefield.dart';
+import 'package:icl/widgets/textfield.dart';
 import 'package:icl/widgets/widget_group.dart';
 
 import '/utils/auth/accounts.dart';
@@ -58,14 +57,55 @@ class SettingPage extends RoutePage {
 class _GlobalGameSettingPage extends StatelessWidget {
   const _GlobalGameSettingPage();
 
+  Widget resolutionTextField(String key) {
+    final configController = Get.find<ConfigController>();
+    final globalGameConfiguration =
+        configController.jsonData['globalGameConfiguration'];
+    final controller =
+        TextEditingController(text: globalGameConfiguration[key].toString());
+    void onSubmitted(String key, String value) {
+      globalGameConfiguration[key] = int.parse(value);
+      configController.updateConfig();
+    }
+
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      maxLength: 4,
+      decoration: const InputDecoration(counterText: ""),
+      onSubmitted: (value) => onSubmitted(key, value),
+      onTapOutside: (_) => onSubmitted(key, controller.text),
+    );
+  }
+
+  Widget textField(String key) {
+    final configController = Get.find<ConfigController>();
+    final globalGameConfiguration =
+        configController.jsonData['globalGameConfiguration'];
+    final controller =
+        TextEditingController(text: globalGameConfiguration[key]);
+    void onSubmitted(String key, String value) {
+      globalGameConfiguration[key] = value;
+      configController.updateConfig();
+    }
+
+    return TextField(
+      controller: controller,
+      onSubmitted: (value) => onSubmitted(key, value),
+      onTapOutside: (_) => onSubmitted(key, controller.text),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final configController = Get.find<ConfigController>();
-    final globalSetting = configController.jsonData['globalGameConfiguration'];
-    var autoMemory = (globalSetting['autoMemory'] as bool).obs;
-    var maxMemory = (globalSetting['maxMemory'] as int).obs;
-    var jvmArgs = (globalSetting['jvmArgs'] as String).obs;
-    var defaultJvmArgs = (globalSetting['defaultJvmArgs'] as bool).obs;
+    final globalGameConfiguration =
+        configController.jsonData['globalGameConfiguration'];
+    var autoMemory = (globalGameConfiguration['autoMemory'] as bool).obs;
+    var maxMemory = (globalGameConfiguration['maxMemory'] as int).obs;
+    var jvmArgs = (globalGameConfiguration['jvmArgs'] as String).obs;
+    var defaultJvmArgs =
+        (globalGameConfiguration['defaultJvmArgs'] as bool).obs;
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final totalMemSize = SysInfo.totalPhyMem / kMegaByte;
@@ -81,7 +121,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
               subtitle: GetBuilder<ConfigController>(
                 id: "javaPath",
                 builder: (c) {
-                  var text = (globalSetting['java'] as String);
+                  var text = (globalGameConfiguration['java'] as String);
                   if (text == "auto") {
                     text = "自动选择最佳版本";
                   }
@@ -102,7 +142,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       child: GetBuilder<ConfigController>(
                         id: "javaPath",
                         builder: (c) {
-                          var groupValue = (globalSetting['java'] as String);
+                          var groupValue =
+                              (globalGameConfiguration['java'] as String);
                           return Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -111,7 +152,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                     groupValue: groupValue,
                                     title: const Text("自动选择最佳版本"),
                                     onChanged: (value) {
-                                      globalSetting['java'] = value;
+                                      globalGameConfiguration['java'] = value;
                                       c.updateConfig(["javaPath"]);
                                     },
                                   )
@@ -124,7 +165,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                         title: Text(e.versionNumber),
                                         subtitle: Text(e.path),
                                         onChanged: (value) {
-                                          globalSetting['java'] = value;
+                                          globalGameConfiguration['java'] =
+                                              value;
                                           c.updateConfig(["javaPath"]);
                                         },
                                       ),
@@ -158,7 +200,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                       onConfirmed: () {
                         dialogPop();
                         jvmArgs(jvmArgsController.text);
-                        globalSetting['jvmArgs'] = jvmArgsController.text;
+                        globalGameConfiguration['jvmArgs'] =
+                            jvmArgsController.text;
                         configController.updateConfig();
                       },
                       // TODO: 判断输入正确
@@ -167,8 +210,11 @@ class _GlobalGameSettingPage extends StatelessWidget {
                         children: [
                           SizedBox(
                             width: 400,
-                            child: DefaultTextFormField(
-                              controller: jvmArgsController,
+                            child: Theme(
+                              data: simpleInputDecorationTheme(context),
+                              child: TextField(
+                                controller: jvmArgsController,
+                              ),
                             ),
                           ),
                           const SizedBox(height: 10),
@@ -189,7 +235,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                   value: defaultJvmArgs.value,
                                   onChanged: (value) {
                                     defaultJvmArgs(value);
-                                    globalSetting['defaultJvmArgs'] = value;
+                                    globalGameConfiguration['defaultJvmArgs'] =
+                                        value;
                                     configController.updateConfig();
                                   },
                                 ),
@@ -221,7 +268,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                     hoverColor: colorWithValue(colors.secondaryContainer, -.05),
                     onChanged: (value) {
                       autoMemory(value);
-                      globalSetting['autoMemory'] = value;
+                      globalGameConfiguration['autoMemory'] = value;
                       configController.updateConfig();
                       updater(value);
                     },
@@ -246,7 +293,8 @@ class _GlobalGameSettingPage extends StatelessWidget {
                                       maxMemory(value.toInt()),
                                   onChangeEnd: (value) {
                                     maxMemory(value.toInt());
-                                    globalSetting['maxMemory'] = value.toInt();
+                                    globalGameConfiguration['maxMemory'] =
+                                        value.toInt();
                                     configController.updateConfig();
                                   },
                                 ),
@@ -276,7 +324,76 @@ class _GlobalGameSettingPage extends StatelessWidget {
         ),
         TitleWidgetGroup(
           "游戏",
-          children: [],
+          children: [
+            ValueBuilder<bool?>(
+              initialValue: globalGameConfiguration['fullScreen'] as bool,
+              builder: (value, updater) => ExpansionListTile(
+                isExpaned: !value!,
+                tile: SwitchListTile(
+                  value: value,
+                  selected: !value,
+                  title: const Text("全屏"),
+                  onChanged: (value) => updater(value),
+                ),
+                expandTile: ListTile(
+                  title: const Text("自定义分辨率"),
+                  trailing: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 7.5),
+                    child: Theme(
+                      data: simpleInputDecorationTheme(context),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            width: 70,
+                            child: resolutionTextField('width'),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Text("X"),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            child: resolutionTextField('height'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            ValueBuilder<bool?>(
+              initialValue: globalGameConfiguration['log'],
+              builder: (value, updater) => SwitchListTile(
+                value: value!,
+                title: const Text("日志"),
+                onChanged: (value) {
+                  updater(value);
+                  globalGameConfiguration['log'] = value;
+                  configController.updateConfig();
+                },
+              ),
+            ),
+            ListTile(
+              title: const Text("启动参数"),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 300,
+                    child: Theme(
+                      data: simpleInputDecorationTheme(context),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: textField('args'),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
         ),
         TitleWidgetGroup(
           "测试",

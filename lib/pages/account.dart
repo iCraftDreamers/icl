@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart' hide Dialog;
 import 'package:flutter/services.dart';
@@ -14,8 +13,7 @@ import '/utils/auth/offline/offline_account.dart';
 import '/utils/auth/account.dart';
 import '/widgets/page.dart';
 import '/widgets/dialog.dart';
-import '/widgets/typefield.dart';
-import '/widgets/animate.dart';
+import '../widgets/snackbar.dart';
 
 class AccountPage extends RoutePage {
   const AccountPage({super.key});
@@ -221,19 +219,18 @@ class _AccountItemState extends State<_AccountItem> {
                         onPressed: () {
                           showDialog(
                             context: Get.context!,
-                            builder: (_) => DefaultDialog(
+                            builder: (context) => DefaultDialog(
                               title: const Text("移除用户"),
                               content: Text(
                                 "你确定要移除这个用户吗？此操作将无法撤销！",
                                 style: theme.textTheme.titleMedium,
                               ),
                               onConfirmed: () {
-                                Navigator.of(Get.context!).pop();
+                                dialogPop();
                                 Accounts.list.remove(widget.account);
-                                showcustomsnackbar("移除成功！");
+                                Get.showSnackbar(successSnackBar("移除成功"));
                               },
-                              onCanceled: () =>
-                                  Navigator.of(Get.context!).pop(),
+                              onCanceled: () => dialogPop(),
                             ),
                           );
                         },
@@ -309,9 +306,8 @@ class _AddAccountDialog extends StatelessWidget {
                 child: Column(
                   children: switch (loginMode()) {
                     AccountLoginMode.offline => [
-                        TitleTextFormFiled(
-                          titleText: "用户名",
-                          titleWidth: 75,
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: "用户名"),
                           obscureText: false,
                           readOnly: false,
                           maxLength: 20,
@@ -322,7 +318,7 @@ class _AddAccountDialog extends StatelessWidget {
                             ),
                           ],
                           validator: (value) =>
-                              DefaultTextFormField.checkEmpty(value),
+                              value == null || value.isEmpty ? "此处不能为空" : null,
                         ),
                       ],
                     // TODO: 正版登录等支持
@@ -346,7 +342,7 @@ class _AddAccountDialog extends StatelessWidget {
             // TODO: 第三方登录
             case AccountLoginMode.custom:
           }
-          showcustomsnackbar("添加成功！");
+          Get.showSnackbar(successSnackBar("添加成功！"));
         }
       },
       onCanceled: () => dialogPop(),

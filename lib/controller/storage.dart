@@ -58,52 +58,6 @@ class ConfigController extends GetxController with StateMixin {
     await file.writeAsString(data);
   }
 
-  // TODO: 从此方法获取数据，并支持异常处理，自动补全json文件
-  // T readJson<T>(List<String> params) {
-  //   dynamic data = jsonData;
-  //   if (params.isEmpty) {
-  //     return data as T;
-  //   }
-  //   try {
-  //     for (final param in params) {
-  //       if (data is List) {
-  //         data = data[(int.parse(param))];
-  //       } else if (data is Map) {
-  //         data = data.putIfAbsent(
-  //             param, () => throw Exception('Invalid key: $param'));
-  //       } else {
-  //         throw Exception('Invalid JSON data: $data');
-  //       }
-  //     }
-  //     print(data.runtimeType);
-  //     return data as T;
-  //   } catch (e) {
-  //     // 如果发生异常，尝试修复json文件
-  //     print('Error: $e');
-  //     if (data != null) updateJson(params, null);
-  //     final newJsonData = defaultJsonData(
-  //       gameSetting: GameSetting.fromJson(jsonData['globalGameConfiguration']),
-  //       appTheme: AppTheme.fromJson(jsonData['theme']),
-  //     );
-  //     createConfig(newJsonData);
-  //     jsonData = json.decode(json.encoder.convert(newJsonData));
-  //   }
-  //   return readJson<T>(params);
-  // }
-
-  // void updateJson(List<String> params, newData) {
-  //   var jsonData = this.jsonData;
-  //   try {
-  //     var last = params.length - 1;
-  //     for (var i = 0; i < last; i++) {
-  //       jsonData = jsonData[params[i]];
-  //     }
-  //     jsonData[params[last]] = newData;
-  //   } catch (e) {
-  //     print("SLM");
-  //   }
-  // }
-
   void updateConfig([List<String>? tag]) {
     createConfig(jsonData);
     update(tag);
