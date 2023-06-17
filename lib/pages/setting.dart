@@ -407,7 +407,7 @@ class _GlobalGameSettingPage extends StatelessWidget {
                     child: const Text("打印搜索到的游戏"),
                   ),
                   FilledButton(
-                    onPressed: () => print(Accounts.list),
+                    onPressed: () => print(Accounts.map),
                     child: const Text("打印存储的账号"),
                   ),
                 ],

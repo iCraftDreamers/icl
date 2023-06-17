@@ -54,10 +54,10 @@ class AccountPage extends RoutePage {
           init: AccountController(),
           builder: (c) => Column(
             children: List.generate(
-              Accounts.list.length,
+              Accounts.map.length,
               (i) => _AccountItem(
                 key: ValueKey(i),
-                account: Accounts.list[i],
+                account: Accounts.map.values.toList()[i],
                 isSelected: i == c.currentIndex.value,
                 onTap: () => c.currentIndex(i),
               ),
@@ -111,6 +111,7 @@ class _AccountItemState extends State<_AccountItem> {
 
   @override
   Widget build(BuildContext context) {
+    final accountController = Get.find<AccountController>();
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final selectedColor = colors.primary;
@@ -227,7 +228,12 @@ class _AccountItemState extends State<_AccountItem> {
                               ),
                               onConfirmed: () {
                                 dialogPop();
-                                Accounts.list.remove(widget.account);
+                                Accounts.delete(widget.account);
+                                final currentIndex =
+                                    accountController.currentIndex;
+                                if (currentIndex.value == Accounts.map.length) {
+                                  currentIndex(currentIndex.value - 1);
+                                }
                                 Get.showSnackbar(successSnackBar("移除成功"));
                               },
                               onCanceled: () => dialogPop(),

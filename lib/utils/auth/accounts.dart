@@ -3,12 +3,20 @@ import 'package:get/get.dart';
 import '/utils/auth/account.dart';
 
 abstract class Accounts {
-  static final list = <Account>[].obs;
+  static final _map = <String, Account>{}.obs;
+  static Map get map => _map;
+
   static bool add(Account account) {
-    if (list.contains(account)) {
+    if (_map.containsValue(account)) return true;
+    _map.addAll({account.username: account});
+    return false;
+  }
+
+  static bool delete(Account account) {
+    if (_map.containsValue(account)) {
+      _map.remove(account.username);
       return true;
     }
-    Accounts.list.add(account);
     return false;
   }
 
