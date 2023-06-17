@@ -231,7 +231,8 @@ class _AccountItemState extends State<_AccountItem> {
                                 Accounts.delete(widget.account);
                                 final currentIndex =
                                     accountController.currentIndex;
-                                if (currentIndex.value == Accounts.map.length) {
+                                if (currentIndex.value != 0 &&
+                                    currentIndex.value == Accounts.map.length) {
                                   currentIndex(currentIndex.value - 1);
                                 }
                                 Get.showSnackbar(successSnackBar("移除成功"));
