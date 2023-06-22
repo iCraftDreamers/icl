@@ -64,7 +64,7 @@ dev_dependencies:
 
   flutter_lints:
 
-  build_runner:
+  build_runner: any
   
   json_serializable:
 
@@ -77,7 +77,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/background/2020-04-11_20.30.41.png
+    - assets/images/background/2018-12-15_10.01.04.jpg
     - assets/images/background/2020-04-11_20.37.54.png
     - assets/images/skins/steve.png
     - assets/images/skins/alex.png

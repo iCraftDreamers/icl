@@ -7,17 +7,17 @@ part of 'game_setting.dart';
 // **************************************************************************
 
 GameSetting _$GameSettingFromJson(Map<String, dynamic> json) => GameSetting(
-      java: json['java'] as String?,
-      defaultJvmArgs: json['defaultJvmArgs'] as bool?,
-      jvmArgs: json['jvmArgs'] as String?,
-      autoMemory: json['autoMemory'] as bool?,
-      maxMemory: json['maxMemory'] as int?,
-      fullScreen: json['fullScreen'] as bool?,
-      width: json['width'] as int?,
-      height: json['height'] as int?,
-      log: json['log'] as bool?,
-      args: json['args'] as String?,
-      serverAddress: json['serverAddress'] as String?,
+      java: json['java'] as String? ?? "auto",
+      defaultJvmArgs: json['defaultJvmArgs'] as bool? ?? true,
+      jvmArgs: json['jvmArgs'] as String? ?? "",
+      autoMemory: json['autoMemory'] as bool? ?? true,
+      maxMemory: json['maxMemory'] as int? ?? 2048,
+      fullScreen: json['fullScreen'] as bool? ?? false,
+      width: json['width'] as int? ?? 854,
+      height: json['height'] as int? ?? 480,
+      log: json['log'] as bool? ?? false,
+      args: json['args'] as String? ?? "",
+      serverAddress: json['serverAddress'] as String? ?? "",
     );
 
 Map<String, dynamic> _$GameSettingToJson(GameSetting instance) =>

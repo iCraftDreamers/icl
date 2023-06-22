@@ -1,4 +1,3 @@
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:icl/controller/storage.dart';
@@ -49,10 +48,8 @@ class AppearancePage extends RoutePage {
       ThemeMode.dark: "深色",
     };
     final configController = Get.find<ConfigController>();
-    final theme = configController.jsonData['theme'];
-    const themeModeKey = 'mode';
-    Rx<ThemeMode> rxThemeMode =
-        EnumToString.fromString(ThemeMode.values, theme[themeModeKey])!.obs;
+    final theme = configController.appTheme;
+    final rxThemeMode = theme.mode.obs;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,18 +63,19 @@ class AppearancePage extends RoutePage {
         const SizedBox(height: 5),
         Column(
           children: radioValues.entries
-              .map((e) => radio(
-                    e.key,
-                    e.value,
-                    rxThemeMode,
-                    (value) {
-                      rxThemeMode(value);
-                      theme[themeModeKey] =
-                          EnumToString.convertToString(rxThemeMode.value);
-                      configController.updateConfig();
-                      Get.changeThemeMode(e.key);
-                    },
-                  ))
+              .map(
+                (e) => radio(
+                  e.key,
+                  e.value,
+                  rxThemeMode,
+                  (value) {
+                    rxThemeMode(value);
+                    theme.mode = rxThemeMode.value;
+                    configController.updateConfig();
+                    Get.changeThemeMode(e.key);
+                  },
+                ),
+              )
               .toList(),
         ),
       ],

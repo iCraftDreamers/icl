@@ -6,6 +6,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'theme.g.dart';
 
 final kBorderRadius = BorderRadius.circular(7.5);
+final kMediaBorderRadius = BorderRadius.circular(10);
+final kLagerBorderRadius = BorderRadius.circular(12.5);
 
 Color colorWithValue(Color color, double value) {
   final hsvColor = HSVColor.fromColor(color);

@@ -88,7 +88,7 @@ class _AccountItem extends StatefulWidget {
 class _AccountItemState extends State<_AccountItem> {
   final _streamController = StreamController<Uint8List>();
   bool _isPressed = false;
-  final List<BoxShadow> boxShadow = const [
+  final boxShadow = const <BoxShadow>[
     BoxShadow(
       color: Colors.black26,
       offset: Offset(0, 2),

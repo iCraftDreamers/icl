@@ -3,17 +3,30 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:icl/theme.dart';
+import 'package:icl/utils/game/game.dart';
 import 'package:icl/utils/game/game_setting.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ConfigController extends GetxController with StateMixin {
-  var jsonData = <String, dynamic>{};
+  late Map<String, dynamic> _jsonData;
   Directory? _jsonPath;
 
-  Map<String, dynamic> defaultJsonData({
+  Future<Directory> get jsonPath async =>
+      _jsonPath ??= await getApplicationDocumentsDirectory();
+
+  AppTheme? _appTheme;
+  GameSetting? _gameSetting;
+  List<Path>? _paths;
+
+  AppTheme get appTheme => _appTheme!;
+  GameSetting get gameSetting => _gameSetting!;
+  List<Path> get pathSetting => _paths!;
+
+  Map<String, dynamic> createJsonData({
     AppTheme? appTheme,
     GameSetting? gameSetting,
+    List<Path>? paths,
     Map<String, dynamic>? jsonData,
   }) {
     return {
@@ -21,17 +34,11 @@ class ConfigController extends GetxController with StateMixin {
           (jsonData == null
               ? AppTheme()
               : AppTheme.fromJson(jsonData['theme'])),
-      'globalSettings': gameSetting ??
+      'globalGameSettings': gameSetting ??
           (jsonData == null
               ? GameSetting()
-              : GameSetting.fromJson(jsonData['globalSettings'])),
+              : GameSetting.fromJson(jsonData['globalGameSettings'])),
     };
-  }
-
-  Future<Directory> get jsonPath async {
-    // 使用一个私有的变量来缓存结果
-    _jsonPath ??= await getApplicationDocumentsDirectory();
-    return _jsonPath!;
   }
 
   Future<String> getConfigPath() async {
@@ -42,24 +49,29 @@ class ConfigController extends GetxController with StateMixin {
 
   Future<void> readConfig() async {
     final file = File(await getConfigPath());
-    if (!await file.exists()) {
+    if (!await file.exists() || (await file.readAsString()).isEmpty) {
       await createConfig();
+      print("LauncherConfig:${file.path} is not found or empty!");
     }
     final contents = await file.readAsString();
-    jsonData = json.decode(
-        json.encode(defaultJsonData(jsonData: await json.decode(contents))));
+    _jsonData = json.decode(
+        json.encode(createJsonData(jsonData: await json.decode(contents))));
   }
 
-  Future<void> createConfig([Map? jsonData]) async {
+  Future<void> createConfig() async {
     final path = await getConfigPath();
     final file = File(path);
-    jsonData ??= defaultJsonData();
-    final data = const JsonEncoder.withIndent('  ').convert(jsonData);
+    _jsonData = createJsonData(
+      appTheme: _appTheme,
+      gameSetting: _gameSetting,
+      paths: _paths,
+    );
+    final data = const JsonEncoder.withIndent('  ').convert(_jsonData);
     await file.writeAsString(data);
   }
 
   void updateConfig([List<String>? tag]) {
-    createConfig(jsonData);
+    createConfig();
     update(tag);
   }
 
@@ -68,6 +80,8 @@ class ConfigController extends GetxController with StateMixin {
     super.onInit();
     change(null, status: RxStatus.loading());
     await readConfig();
-    change(jsonData, status: RxStatus.success());
+    _appTheme = AppTheme.fromJson(_jsonData['theme']);
+    _gameSetting = GameSetting.fromJson(_jsonData['globalGameSettings']);
+    change(_jsonData, status: RxStatus.success());
   }
 }

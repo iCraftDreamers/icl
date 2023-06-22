@@ -3,14 +3,15 @@ import 'package:get/get.dart';
 import 'package:icl/interface/window_bar.dart';
 
 class GamePage extends StatelessWidget {
-  const GamePage({super.key});
+  const GamePage({super.key, this.assetName});
+  final String? assetName;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/images/background/2020-04-11_20.30.41.png"),
+          image: AssetImage(assetName!),
           fit: BoxFit.cover,
         ),
       ),

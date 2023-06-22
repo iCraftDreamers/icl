@@ -4,10 +4,10 @@ import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:icl/theme.dart';
 
 import '/pages/game.dart';
 import '/utils/file_picker.dart';
-import '/utils/game/game.dart';
 import '/widgets/page.dart';
 import '/widgets/dialog.dart';
 
@@ -38,7 +38,7 @@ class HomePage extends RoutePage {
               ),
               IconButton(
                 icon: const Icon(Icons.more_horiz),
-                onPressed: () => Games.init(),
+                onPressed: () {},
               )
             ],
           ),
@@ -122,18 +122,19 @@ class HomePage extends RoutePage {
   }
 
   Widget gridView() {
-    const versions = ["1.8"];
-    final children = versions
-        .map(
-          (e) => _OpenContainerWrapper(
-            closedBuilder: (_, openContainer) =>
-                _Card(title: e, openContainer: openContainer),
-            transitionType: ContainerTransitionType.fade,
-            onClosed: (bool? _) {},
-            page: const GamePage(),
-          ),
-        )
-        .toList();
+    const versions = ["1.8", "1.20"];
+    const assets = [
+      "assets/images/background/2020-04-11_20.37.54.png",
+      "assets/images/background/2018-12-15_10.01.04.jpg",
+    ];
+    final children = List.generate(
+      versions.length,
+      (i) => _Card(
+        key: ValueKey(i),
+        title: versions[i],
+        assetName: assets[i],
+      ),
+    );
     return GridView.extent(
       maxCrossAxisExtent: 150,
       mainAxisSpacing: 10,
@@ -189,136 +190,141 @@ class IconTextField extends StatelessWidget {
 }
 
 class _Card extends StatelessWidget {
-  const _Card({required this.title, required this.openContainer});
+  const _Card({super.key, required this.title, this.assetName});
 
   final String title;
-  final VoidCallback openContainer;
+  final String? assetName;
 
   @override
   Widget build(BuildContext context) {
     var hover = false.obs;
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(
-                  "assets/images/background/2020-04-11_20.30.41.png"),
-              fit: BoxFit.cover,
+    return _OpenContainerWrapper(
+      openPage: GamePage(assetName: assetName),
+      closedBuilder: (_, openContainer) => Stack(
+        children: [
+          Container(
+            decoration: assetName == null
+                ? null
+                : BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(assetName!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+          ),
+          Flex(
+            direction: Axis.vertical,
+            children: [
+              const Expanded(child: SizedBox()),
+              Expanded(
+                flex: 0,
+                child: Container(
+                  clipBehavior: Clip.hardEdge,
+                  decoration: const BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black38,
+                        blurRadius: 15,
+                        blurStyle: BlurStyle.outer,
+                      ),
+                    ],
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      alignment: Alignment.centerLeft,
+                      color: Colors.white.withOpacity(.1),
+                      child: Text(
+                        title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleLarge!
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              splashColor: Colors.black.withOpacity(.1),
+              onTap: () {
+                openContainer();
+                hover(false);
+              },
+              onHover: (value) => hover(value),
             ),
           ),
-        ),
-        Flex(
-          direction: Axis.vertical,
-          children: [
-            const Expanded(child: SizedBox()),
-            Expanded(
-              flex: 0,
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black38,
-                      blurRadius: 15,
-                      blurStyle: BlurStyle.outer,
-                    ),
-                  ],
-                ),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    alignment: Alignment.centerLeft,
-                    color: Colors.white.withOpacity(.1),
-                    child: Text(
-                      title,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge!
-                          .copyWith(color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.all(5),
+            child: Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.more_horiz, color: Colors.white),
+              ),
+            ),
+          ),
+          Obx(
+            () => TweenAnimationBuilder(
+              tween: Tween<Offset>(
+                begin: const Offset(0, 51),
+                end: hover.value ? const Offset(0, 0) : const Offset(0, 51),
+              ),
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.linearToEaseOut,
+              builder: (context, offset, child) =>
+                  Transform.translate(offset: offset, child: child),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 10, right: 10),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: MouseRegion(
+                    onEnter: (event) => hover(true),
+                    onExit: (event) => hover(false),
+                    child: FloatingActionButton.small(
+                      onPressed: () => {print("原神，启动！")},
+                      heroTag: null,
+                      child: const Icon(Icons.play_arrow),
                     ),
                   ),
                 ),
               ),
             ),
-          ],
-        ),
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            splashColor: Colors.black.withOpacity(.1),
-            onTap: openContainer,
-            onHover: (value) => hover(value),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(5),
-          child: Align(
-            alignment: Alignment.topRight,
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.more_horiz, color: Colors.white),
-            ),
-          ),
-        ),
-        Obx(
-          () => TweenAnimationBuilder(
-            tween: Tween<Offset>(
-              begin: const Offset(0, 51),
-              end: hover.value ? const Offset(0, 0) : const Offset(0, 51),
-            ),
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.linearToEaseOut,
-            builder: (context, offset, child) =>
-                Transform.translate(offset: offset, child: child),
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 10, right: 10),
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: MouseRegion(
-                  onEnter: (event) => hover(true),
-                  onExit: (event) => hover(false),
-                  child: FloatingActionButton.small(
-                    onPressed: () => {print("原神，启动！")},
-                    heroTag: null,
-                    child: const Icon(Icons.play_arrow),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
+    this.transitionType = ContainerTransitionType.fade,
+    this.onClosed,
+    required this.openPage,
     required this.closedBuilder,
-    required this.transitionType,
-    required this.onClosed,
-    required this.page,
   });
 
-  final CloseContainerBuilder closedBuilder;
   final ContainerTransitionType transitionType;
-  final ClosedCallback<bool?> onClosed;
-  final Widget page;
+  final ClosedCallback<bool?>? onClosed;
+  final Widget openPage;
+  final CloseContainerBuilder closedBuilder;
 
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
       useRootNavigator: true,
       clipBehavior: Clip.antiAliasWithSaveLayer,
-      closedShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.5),
-      ),
+      closedShape: RoundedRectangleBorder(borderRadius: kLagerBorderRadius),
+      openColor: Colors.transparent,
+      closedColor: Colors.transparent,
       transitionType: transitionType,
-      openBuilder: (BuildContext context, VoidCallback _) {
-        return const GamePage();
-      },
+      openBuilder: (BuildContext context, VoidCallback _) => openPage,
       onClosed: onClosed,
       tappable: false,
       closedBuilder: closedBuilder,
