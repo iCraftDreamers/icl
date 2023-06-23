@@ -19,13 +19,3 @@ Map<String, dynamic> _$GameToJson(Game instance) => <String, dynamic>{
       'useGlobalSetting': instance.useGlobalSetting,
       'setting': instance.setting,
     };
-
-Path _$PathFromJson(Map<String, dynamic> json) => Path(
-      name: json['name'] as String?,
-      path: json['path'] as String?,
-    );
-
-Map<String, dynamic> _$PathToJson(Path instance) => <String, dynamic>{
-      'name': instance.name,
-      'path': instance.path,
-    };

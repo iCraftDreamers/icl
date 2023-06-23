@@ -162,7 +162,7 @@ class WidgetGroupBlock extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    List<Widget> children = () {
+    final List<Widget> children = () {
       var children = this.children;
       children = children.map((e) => surface(e, colors)).toList();
       return [title] + children;

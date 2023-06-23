@@ -3,10 +3,11 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:icl/theme.dart';
-import 'package:icl/utils/game/game.dart';
 import 'package:icl/utils/game/game_setting.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../utils/game/path.dart';
 
 class ConfigController extends GetxController with StateMixin {
   late Map<String, dynamic> _jsonData;
@@ -17,16 +18,16 @@ class ConfigController extends GetxController with StateMixin {
 
   AppTheme? _appTheme;
   GameSetting? _gameSetting;
-  List<Path>? _paths;
+  List<GamePath> _paths = GamePath.paths;
 
   AppTheme get appTheme => _appTheme!;
   GameSetting get gameSetting => _gameSetting!;
-  List<Path> get pathSetting => _paths!;
+  List<GamePath> get pathSetting => _paths;
 
   Map<String, dynamic> createJsonData({
     AppTheme? appTheme,
     GameSetting? gameSetting,
-    List<Path>? paths,
+    List<GamePath>? paths,
     Map<String, dynamic>? jsonData,
   }) {
     return {
@@ -34,6 +35,10 @@ class ConfigController extends GetxController with StateMixin {
           (jsonData == null
               ? AppTheme()
               : AppTheme.fromJson(jsonData['theme'])),
+      'paths': paths ??
+          (jsonData == null
+              ? GamePath.toJsonList()
+              : GamePath.fromJsonList(jsonData['paths'])),
       'globalGameSettings': gameSetting ??
           (jsonData == null
               ? GameSetting()
@@ -51,7 +56,7 @@ class ConfigController extends GetxController with StateMixin {
     final file = File(await getConfigPath());
     if (!await file.exists() || (await file.readAsString()).isEmpty) {
       await createConfig();
-      print("LauncherConfig:${file.path} is not found or empty!");
+      print("LauncherConfig: '${file.path}' is not found or empty!");
     }
     final contents = await file.readAsString();
     _jsonData = json.decode(
@@ -82,6 +87,7 @@ class ConfigController extends GetxController with StateMixin {
     await readConfig();
     _appTheme = AppTheme.fromJson(_jsonData['theme']);
     _gameSetting = GameSetting.fromJson(_jsonData['globalGameSettings']);
+    _paths = GamePath.fromJsonList(_jsonData['paths']);
     change(_jsonData, status: RxStatus.success());
   }
 }
