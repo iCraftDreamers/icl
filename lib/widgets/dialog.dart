@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class DialogConfirmButton extends StatelessWidget {
-  const DialogConfirmButton({super.key, required this.onPressed});
+  const DialogConfirmButton({super.key, this.onPressed, this.confirmText});
 
   final void Function()? onPressed;
+  final Widget? confirmText;
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +15,22 @@ class DialogConfirmButton extends StatelessWidget {
             color: Theme.of(context).colorScheme.primary, width: 1.0)),
       ),
       onPressed: onPressed,
-      child: const Text("确定", style: TextStyle(fontSize: 16)),
+      child: confirmText ?? const Text("确定", style: TextStyle(fontSize: 16)),
     );
   }
 }
 
 class DialogCancelButton extends StatelessWidget {
-  const DialogCancelButton({super.key, required this.onPressed});
+  const DialogCancelButton({super.key, this.onPressed, this.cancelText});
 
   final void Function()? onPressed;
+  final Widget? cancelText;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onPressed,
-      child: const Text("取消", style: TextStyle(fontSize: 16)),
+      child: cancelText ?? const Text("取消", style: TextStyle(fontSize: 16)),
     );
   }
 }
@@ -41,6 +43,8 @@ class DefaultDialog extends StatelessWidget {
     this.onlyConfirm = false,
     this.onConfirmed,
     this.onCanceled,
+    this.confirmText,
+    this.cancelText,
   });
 
   final Widget? title;
@@ -48,6 +52,8 @@ class DefaultDialog extends StatelessWidget {
   final bool onlyConfirm;
   final void Function()? onConfirmed;
   final void Function()? onCanceled;
+  final Widget? confirmText;
+  final Widget? cancelText;
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +63,15 @@ class DefaultDialog extends StatelessWidget {
       title: title,
       content: content,
       actions: [
-        if (!onlyConfirm) DialogCancelButton(onPressed: onCanceled),
-        DialogConfirmButton(onPressed: onConfirmed),
+        if (!onlyConfirm)
+          DialogCancelButton(
+            onPressed: onCanceled,
+            cancelText: cancelText,
+          ),
+        DialogConfirmButton(
+          onPressed: onConfirmed,
+          confirmText: confirmText,
+        ),
       ],
     );
   }

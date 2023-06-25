@@ -17,11 +17,25 @@ class GamePath {
   final String path;
 
   static final _availableGames = <Game>[];
-  static List<GamePath> _paths = [];
+  static final _paths = [
+    GamePath(
+      name: "启动器目录",
+      path: p.join(File(Platform.resolvedExecutable).parent.path, '.minecraft'),
+    ),
+    // TODO: Linux & Macos 官方启动器目录
+    GamePath(
+      name: "官方启动器目录",
+      path: p.join(
+          Platform.environment['APPDATA'] ??
+              "C:\\Users\\${Platform.environment['USERNAME']}\\AppData",
+          'Roadming',
+          '.minecraft'),
+    ),
+  ].obs;
 
   static List<Game> get availableGames => _availableGames;
   static void addAvailableGame(Game game) => _availableGames.add(game);
-  static List<GamePath> get paths => _paths;
+  static List<GamePath> get paths => _paths.value;
 
   static bool addPath(String name, String path) {
     if (Directory(path).existsSync()) {
@@ -59,24 +73,7 @@ class GamePath {
 
   static List<GamePath> fromJsonList(List<dynamic>? paths) {
     if (paths != null) {
-      _paths = paths.map((path) => GamePath.fromJson(path)).toList();
-    } else {
-      _paths = [
-        GamePath(
-          name: "启动器目录",
-          path: p.join(
-              File(Platform.resolvedExecutable).parent.path, '.minecraft'),
-        ),
-        // TODO: Linux & Macos 官方启动器目录
-        GamePath(
-          name: "官方启动器目录",
-          path: p.join(
-              Platform.environment['APPDATA'] ??
-                  "C:\\Users\\${Platform.environment['USERNAME']}\\AppData",
-              'Roadming',
-              '.minecraft'),
-        ),
-      ];
+      _paths.value = paths.map((path) => GamePath.fromJson(path)).toList();
     }
     return _paths;
   }

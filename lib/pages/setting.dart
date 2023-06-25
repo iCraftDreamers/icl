@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart' hide Dialog;
 import 'package:get/get.dart';
 import 'package:icl/controller/storage.dart';
 import 'package:icl/theme.dart';
+import 'package:icl/utils/file_picker.dart';
 import 'package:icl/widgets/dialog.dart';
 import 'package:icl/widgets/textfield.dart';
 import 'package:icl/widgets/widget_group.dart';
@@ -79,22 +79,38 @@ class _GlobalGameSettingPage extends _SettingBasePage {
     void Function(String value)? onSubmitted,
   }) {
     final controller = TextEditingController(text: value.toString());
+    final focusNode = FocusNode();
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus && onSubmitted != null) {
+        onSubmitted(controller.text);
+      }
+      return;
+    });
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: TextInputType.number,
       maxLength: 4,
-      decoration: const InputDecoration(counterText: ""),
+      decoration: const InputDecoration(
+        counterText: "",
+      ),
       onSubmitted: onSubmitted,
-      onTapOutside: (_) => onSubmitted ??= () {}(),
     );
   }
 
   Widget textField(String text, {void Function(String value)? onSubmitted}) {
     final controller = TextEditingController(text: text);
+    final focusNode = FocusNode();
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus && onSubmitted != null) {
+        onSubmitted(controller.text);
+      }
+      return;
+    });
     return TextField(
       controller: controller,
+      focusNode: focusNode,
       onSubmitted: onSubmitted,
-      onTapOutside: (_) => onSubmitted ??= () {}(),
     );
   }
 
@@ -339,7 +355,7 @@ class _GlobalGameSettingPage extends _SettingBasePage {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         SizedBox(
-                          width: 70,
+                          width: 65,
                           child: resolutionTextField(
                             gameSetting.width,
                             onSubmitted: (value) {
@@ -353,7 +369,7 @@ class _GlobalGameSettingPage extends _SettingBasePage {
                           child: Text("X"),
                         ),
                         SizedBox(
-                          width: 70,
+                          width: 65,
                           child: resolutionTextField(
                             gameSetting.height,
                             onSubmitted: (value) {
@@ -440,7 +456,9 @@ class _GlobalGameSettingPage extends _SettingBasePage {
 }
 
 class _LauncherSettingPage extends _SettingBasePage {
-  const _LauncherSettingPage();
+  _LauncherSettingPage();
+  final configController = Get.find<ConfigController>();
+  final formKey = GlobalKey<FormState>();
 
   @override
   List<Widget> children(context) {
@@ -449,8 +467,128 @@ class _LauncherSettingPage extends _SettingBasePage {
         "游戏目录",
         children: [
           ListTile(
-            title: const Text("游戏目录"),
-            onTap: () {},
+            title: const Text("游戏搜索目录"),
+            onTap: () => showDialog(
+              context: Get.context!,
+              builder: (_) => DefaultDialog(
+                title: Row(
+                  children: [
+                    const Text("游戏搜索目录"),
+                    const Spacer(),
+                    FloatingActionButton(
+                      child: const Icon(Icons.add),
+                      onPressed: () => showDialog(
+                        context: Get.context!,
+                        builder: (_) {
+                          final name = TextEditingController();
+                          final path = TextEditingController();
+                          return DefaultDialog(
+                            title: const Text("添加游戏搜索目录"),
+                            onConfirmed: () {
+                              if (formKey.currentState!.validate()) {
+                                GamePath.paths.add(
+                                  GamePath(name: name.text, path: path.text),
+                                );
+                                dialogPop();
+                                configController.updateConfig();
+                              }
+                            },
+                            onCanceled: dialogPop,
+                            confirmText: const Text("添加"),
+                            content: SizedBox(
+                              width: 500,
+                              child: Form(
+                                key: formKey,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    TextFormField(
+                                      controller: name,
+                                      maxLength: 20,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '不能为空';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderRadius: kBorderRadius),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius: kBorderRadius,
+                                          borderSide: const BorderSide(
+                                              color: Colors.grey),
+                                        ),
+                                        labelText: "别名",
+                                      ),
+                                    ),
+                                    const SizedBox(height: 0),
+                                    TextFormField(
+                                      readOnly: true,
+                                      controller: path,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return '不能为空';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        hintText: "请选择一个目录",
+                                        icon: IconButton(
+                                          onPressed: () async {
+                                            final folder = await folderPicker();
+                                            if (folder != null) {
+                                              path.text = folder.path;
+                                            }
+                                          },
+                                          icon: const Icon(Icons.folder_open),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                onlyConfirm: true,
+                onConfirmed: dialogPop,
+                content: SizedBox(
+                  width: 500,
+                  child: Obx(
+                    () => ListView(
+                      shrinkWrap: true,
+                      children: List.generate(GamePath.paths.length, (i) {
+                        final path = GamePath.paths[i];
+                        return Card(
+                          key: ValueKey(i),
+                          child: ListTile(
+                            title: Text(path.name),
+                            subtitle: Text(
+                              path.path,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.delete),
+                              onPressed: () {
+                                GamePath.paths.remove(path);
+                                configController.updateConfig();
+                              },
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -463,7 +601,7 @@ class _TabController extends GetxController
   late final TabController tabController;
   final tabs = {
     "全局游戏设置": _GlobalGameSettingPage(),
-    "启动器": const _LauncherSettingPage(),
+    "启动器": _LauncherSettingPage(),
   };
 
   @override
